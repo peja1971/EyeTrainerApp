@@ -19,9 +19,10 @@
         }
 
         :root {
-            --vh: 1vh;
-            /* default, JS će odmah overwrite */
-        }
+  --vh: 1vh;                 /* default, JS ce odmah overwrite */
+  --androidInsetTop: 0px;
+  --androidInsetBottom: 0px;
+}
 
         .app {
             position: relative;
@@ -157,10 +158,6 @@
             border: 1px solid transparent;
         }
 
-        .mode-radio:hover {
-            background: rgba(15, 23, 42, 0.03);
-        }
-
         .mode-radio input[type="radio"] {
             margin-top: 2px;
         }
@@ -226,21 +223,13 @@
             box-shadow: 0 10px 20px rgba(15, 118, 110, 0.4);
         }
 
-        .btn-primary:hover {
-            background: #115e58;
-            box-shadow: 0 12px 24px rgba(15, 118, 110, 0.5);
-            transform: translateY(-1px);
-        }
 
         .btn-secondary {
             background: #e5e7eb;
             color: #111827;
         }
 
-        .btn-secondary:hover {
-            background: #d1d5db;
-            transform: translateY(-1px);
-        }
+
 
         .btn-ghost {
             flex: 0;
@@ -253,10 +242,7 @@
             line-height: 1;
         }
 
-        .btn-ghost:hover {
-            background: rgba(148, 163, 184, 0.15);
-            transform: translateY(-1px);
-        }
+
 
         .hint {
             font-size: 11px;
@@ -374,9 +360,6 @@
             z-index: 16;
         }
 
-        .hamburger-btn:hover {
-            background: #f3f4f6;
-        }
 
         .app.is-training .sidebar {
             position: absolute;
@@ -426,21 +409,7 @@ body.phone-fullscreen-training .app {
             display: none !important;
         }
 
-        /* Overlay: okreni telefon u landscape */
-.rotate-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 99999;
-  background: rgba(15, 23, 42, 0.85);
-  padding: 20px;
-  display: none;              /* default */
-  align-items: center;
-  justify-content: center;
-}
 
-.rotate-overlay.active {
-  display: flex;
-}
 
 
         .rotate-overlay-box {
@@ -472,10 +441,6 @@ body.phone-fullscreen-training .app {
             font-size: 12px;
             opacity: 0.75;
         }
-:root {
-  --androidInsetTop: 0px;
-  --androidInsetBottom: 0px;
-}
 
 
 
@@ -884,7 +849,6 @@ body.is-phone .training-area {
             <div class="controls-row">
                 <button id="startBtn" class="btn btn-primary">Start</button>
                 <button id="stopBtn" class="btn btn-secondary">Stop</button>
-                <button id="fullscreenBtn" class="btn btn-ghost" title="Ceo ekran">⛶</button>
             </div>
 
             <div class="checkbox-row">
@@ -961,7 +925,6 @@ window.__setAndroidInsets = function(top, bottom) {
   const startBtn = document.getElementById("startBtn");
   console.log("JS LOADED OK");
   const stopBtn = document.getElementById("stopBtn");
-  const fullscreenBtn = document.getElementById("fullscreenBtn");
   const statusEl = document.getElementById("status");
   const showHelpCheckbox = document.getElementById("showHelp");
   const helpBubbleEl = document.getElementById("helpBubble");
@@ -1733,63 +1696,6 @@ window.addEventListener("load", () => {
       stopAnimation();
   }
 
-  // --------------------------------------
-  // FULLSCREEN - standardni eventovi
-  // --------------------------------------
-  function isDomFullscreen() {
-      return (
-          document.fullscreenElement ||
-          document.webkitFullscreenElement ||
-          document.mozFullScreenElement ||
-          document.msFullscreenElement
-      );
-  }
-
-  function enterDomFullscreen() {
-      const el = document.documentElement;
-      if (el.requestFullscreen) el.requestFullscreen();
-      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-      else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
-      else if (el.msRequestFullscreen) el.msRequestFullscreen();
-  }
-
-  function exitDomFullscreen() {
-      if (document.exitFullscreen) document.exitFullscreen();
-      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-      else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
-      else if (document.msExitFullscreen) document.msExitFullscreen();
-  }
-
-  // ⛶ - naš toggle za DOM fullscreen
-  fullscreenBtn.addEventListener("click", () => {
-      if (isDomFullscreen()) {
-          exitDomFullscreen();
-      } else {
-          enterDomFullscreen();
-      }
-  });
-
-  // Reagujemo na fullscreenchange (ESC, X u browser overlay-u, naš btn…)
-  ["fullscreenchange", "webkitfullscreenchange", "mozfullscreenchange", "MSFullscreenChange"]
-      .forEach(evt => {
-          document.addEventListener(evt, () => {
-              // ako smo izašli iz fullscreen-a, skloni specijalni phone state
-              if (!isDomFullscreen()) {
-                  document.body.classList.remove("phone-fullscreen-training");
-              }
-
-              updateRealVh();
-              resizeCanvas();
-              updateRotateOverlay();
-
-              // mali delay jer neki browseri prvo sklone UI, pa tek onda jave pravu visinu
-              setTimeout(() => {
-                  updateRealVh();
-                  resizeCanvas();
-                  updateRotateOverlay();
-              }, 400);
-          });
-      });
 
 
   // F11 fullscreen, promene UI bara itd.
@@ -2748,21 +2654,16 @@ if (isPortraitOnPhone()) {
       if (!isRunning) {
           // ako smo na telefonu – probaj fullscreen i landscape
           if (isPhoneDevice()) {
-              // DOM fullscreen (sklanja browser bara, footere itd. koliko može)
-              if (!isDomFullscreen()) {
-                  enterDomFullscreen();
-              }
+  // pokušaj landscape lock (radi samo na nekim browserima, i samo iz user gesture-a)
+  if (screen.orientation && screen.orientation.lock) {
+    screen.orientation.lock("landscape").catch(() => {
+      // ignorisi ako ne uspe
+    });
+  }
 
-              // pokušaj landscape lock (radi samo na nekim browserima, i samo iz user gesture-a)
-              if (screen.orientation && screen.orientation.lock) {
-                  screen.orientation.lock("landscape").catch(() => {
-                      // ignorisi ako ne uspe (iOS / stari browseri)
-                  });
-              }
-
-              // stanje za CSS – sakrij footer, zabrani scroll, 100vh itd.
-              document.body.classList.add("phone-fullscreen-training");
-          }
+  // stanje za CSS – sakrij footer, zabrani scroll, 100vh itd.
+  document.body.classList.add("phone-fullscreen-training");
+}
 
           startAnimation();
       }
