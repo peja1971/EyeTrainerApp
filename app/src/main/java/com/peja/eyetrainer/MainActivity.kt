@@ -12,6 +12,7 @@ import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
 import android.graphics.Color
 import android.view.View
+import android.view.WindowManager
 
 class MainActivity : ComponentActivity() {
     private fun hideSystemBarsAlways() {
@@ -26,7 +27,7 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+      window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         hideSystemBarsAlways()
 
 // PATCH: boja sistema = boja aplikacije (da nema crnih traka)
@@ -39,6 +40,7 @@ class MainActivity : ComponentActivity() {
         sys.isAppearanceLightNavigationBars = true
 
         val webView = WebView(this)
+        webView.addJavascriptInterface(ScreenControl(this), "AndroidScreen")
         webView.setBackgroundColor(appBg)
         webView.overScrollMode = View.OVER_SCROLL_NEVER
 
@@ -74,4 +76,17 @@ class MainActivity : ComponentActivity() {
         // Ako zelis hard cleanup:
         // (nije obavezno, ali moze)
     }
+}
+
+class ScreenControl(private val activity: MainActivity) {
+  @android.webkit.JavascriptInterface
+  fun keepScreenOn(on: Boolean) {
+    activity.runOnUiThread {
+      if (on) {
+        activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+      } else {
+        activity.window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+      }
+    }
+  }
 }
