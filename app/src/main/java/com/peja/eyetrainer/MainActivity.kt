@@ -13,8 +13,12 @@ import androidx.activity.ComponentActivity
 import android.graphics.Color
 import android.view.View
 import android.view.WindowManager
+import android.speech.tts.TextToSpeech
+import android.webkit.JavascriptInterface
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
+  private var tts: TextToSpeech? = null
     private fun hideSystemBarsAlways() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         val controller = WindowInsetsControllerCompat(window, window.decorView)
@@ -29,6 +33,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
       window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         hideSystemBarsAlways()
+      tts = TextToSpeech(this) { status ->
+        if (status == TextToSpeech.SUCCESS) {
+          //tts?.language = Locale("hr", "HR")
+          //tts?.language = Locale("sr", "RS")
+          tts?.setSpeechRate(1.05f)
+        }
+      }
 
 // PATCH: boja sistema = boja aplikacije (da nema crnih traka)
         val appBg = Color.parseColor("#e8ecef")
@@ -40,6 +51,7 @@ class MainActivity : ComponentActivity() {
         sys.isAppearanceLightNavigationBars = true
 
         val webView = WebView(this)
+      webView.addJavascriptInterface(TtsBridge(), "AndroidTTS")
         webView.addJavascriptInterface(ScreenControl(this), "AndroidScreen")
         webView.setBackgroundColor(appBg)
         webView.overScrollMode = View.OVER_SCROLL_NEVER
@@ -71,11 +83,20 @@ class MainActivity : ComponentActivity() {
         hideSystemBarsAlways()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        // Ako zelis hard cleanup:
-        // (nije obavezno, ali moze)
+  override fun onDestroy() {
+    super.onDestroy()
+    tts?.stop()
+    tts?.shutdown()
+    tts = null
+  }
+  inner class TtsBridge {
+    @JavascriptInterface
+    fun speak(text: String) {
+      runOnUiThread {
+        tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "eyetrainer_tts")
+      }
     }
+  }
 }
 
 class ScreenControl(private val activity: MainActivity) {
