@@ -460,6 +460,29 @@ flex: 1 !important;
 .hide-voice-ui { display: none !important; }
 .mode-block.hide-mode-ui { display: none !important; }
 
+    .lang-toggle {
+  display: inline-flex;
+  border: 1px solid rgba(148, 163, 184, 0.9);
+  border-radius: 999px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.lang-btn {
+  border: none;
+  background: transparent;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  color: #4b5563;
+}
+
+.lang-btn.active {
+  background: rgba(15, 118, 110, 0.12);
+  color: #0f766e;
+  font-weight: 700;
+}
+
   </style>
 </head>
 
@@ -467,31 +490,27 @@ flex: 1 !important;
 <div class="app">
   <aside class="sidebar">
     <div>
-      <div class="title">Očni Trener</div>
-      <div class="subtitle">
-        Pravilna udaljenost + modovi sa tajmerom i auto sekvencom.
-      </div>
+      <div class="title" data-i18n="app_title">Trening za oči</div>
     </div>
 
     <div class="section">
       <div class="section-header">
-        <div>v 2.00.002</div>
-        <span>1. Uređaj i udaljenost</span>
+        <span data-i18n="section_device_title">1. Uređaj i udaljenost</span>
       </div>
 
-      <label for="deviceSelect">Na čemu treniraš?</label>
-      <select id="deviceSelect">
-        <option value="phone">Telefon</option>
-        <option value="laptop14">Laptop 13-15"</option>
-        <option value="laptop17">Laptop 17"</option>
-        <option value="monitor24">Monitor 24"</option>
-        <option value="monitor27">Monitor 27"</option>
-        <option value="monitor34">Monitor 32-34"</option>
-        <option value="ultrawide">Ultra-wide 34"+</option>
-      </select>
+      <div class="mode-config-row" style="margin-top:2px; margin-bottom:4px;">
+        <span data-i18n="device_detected_label">Uređaj:</span>
+        <span class="distance-highlight" id="deviceDetectedText">Telefon</span>
+
+        <span style="margin-left:10px;" data-i18n="language_label">Jezik:</span>
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button type="button" class="lang-btn" data-lang="en">EN</button>
+          <button type="button" class="lang-btn" data-lang="sr">SR</button>
+        </div>
+      </div>
 
       <div class="distance-info">
-        Preporučena udaljenost: <br/>
+        <span data-i18n="distance_label">Preporučena udaljenost:</span><br/>
         <span class="distance-highlight" id="distanceText">30-40 cm od očiju</span><br/>
         <span class="small-label">
                         Gornja ivica ekrana malo ispod nivoa očiju, glava uspravna, ramena opuštena.
@@ -501,13 +520,13 @@ flex: 1 !important;
 
     <div class="section">
       <div class="section-header">
-        <span>2. Modovi i tajmer</span>
-        <span class="small-label">trajanje + sekvenca</span>
+        <span data-i18n="section_modes_title">2. Modovi i tajmer</span>
+        <span class="small-label" data-i18n="section_modes_sub">trajanje + sekvenca</span>
       </div>
 
       <!-- Programi / gotove sekvence -->
       <div class="mode-config-row" style="margin-top:2px; margin-bottom:4px;">
-        <span>Program:</span>
+        <span data-i18n="program_label">Program:</span>
         <select id="programSelect" style="min-width: 220px;">
           <option value="none">Ručno biranje</option>
           <option value="screen_relief">Odmor od ekrana - 5 min</option>
@@ -873,28 +892,29 @@ flex: 1 !important;
 
       <div class="checkbox-row" style="margin-top:10px;">
         <input type="checkbox" id="enableAutoSequence"/>
-        <label for="enableAutoSequence">
+        <label for="enableAutoSequence" data-i18n="auto_sequence_label">
           Auto sekvenca (pokreni čekirane modove redom)
         </label>
       </div>
 
       <div class="controls-row">
-        <button id="startBtn" class="btn btn-primary">Start</button>
-        <button id="stopBtn" class="btn btn-secondary">Stop</button>
+        <button id="startBtn" class="btn btn-primary" data-i18n="btn_start">Start</button>
+        <button id="stopBtn" class="btn btn-secondary" data-i18n="btn_stop">Stop</button>
       </div>
 
       <div class="checkbox-row">
         <input type="checkbox" id="showHelp"/>
-        <label for="showHelp">Prikaži uputstvo u balonu tokom treninga</label>
+        <label for="showHelp" data-i18n="show_help_label">Prikaži uputstvo u balonu tokom treninga</label>
       </div>
       <div class="checkbox-row hide-voice-ui">
         <input type="checkbox" id="useVoice"/>
         <label for="useVoice">Glas (umesto beep)</label>
       </div>
       <div class="hint">
-        <strong>Tip:</strong> Pre starta zauzmi pravilan položaj. Tokom treninga ne pomeraj
-        glavu, prati
-        samo očima.
+        <strong data-i18n="tip_label">Tip:</strong>
+        <span data-i18n="tip_text">
+          Pre starta zauzmi pravilan položaj. Tokom treninga ne pomeraj glavu, prati samo očima.
+        </span>
       </div>
 
       <div id="status" class="status">Spreman za trening.</div>
@@ -912,11 +932,11 @@ flex: 1 !important;
       <div id="rotateOverlay" class="rotate-overlay">
         <div class="rotate-overlay-box">
           <div class="rotate-overlay-icon">📱↻</div>
-          <div class="rotate-overlay-title">Okreni telefon vodoravno</div>
-          <div class="rotate-overlay-text">
+          <div class="rotate-overlay-title" data-i18n="rotate_title">Okreni telefon vodoravno</div>
+          <div class="rotate-overlay-text" data-i18n="rotate_text">
             Za vežbu očiju koristi horizontalni položaj (landscape).
           </div>
-          <div class="rotate-overlay-hint">
+          <div class="rotate-overlay-hint" data-i18n="rotate_hint">
             Okreni telefon u stranu. Overlay će nestati automatski.
           </div>
         </div>
@@ -936,18 +956,10 @@ flex: 1 !important;
     setTimeout(reflowNow, 250);
   };
 
-  const deviceDistances = {
-      phone: "30-40 cm od očiju",
-      laptop14: "40-50 cm od očiju",
-      laptop17: "50-60 cm od očiju",
-      monitor24: "60-70 cm od očiju",
-      monitor27: "70-80 cm od očiju",
-      monitor34: "80-100 cm od očiju",
-      ultrawide: "80-110 cm od očiju"
-  };
 
+const deviceDetectedTextEl = document.getElementById("deviceDetectedText");
+const langBtns = Array.from(document.querySelectorAll(".lang-btn"));
   const appEl = document.querySelector(".app");
-  const deviceSelect = document.getElementById("deviceSelect");
   const distanceText = document.getElementById("distanceText");
   const startBtn = document.getElementById("startBtn");
   const stopBtn = document.getElementById("stopBtn");
@@ -958,7 +970,6 @@ flex: 1 !important;
   const enableAutoSequenceEl = document.getElementById("enableAutoSequence");
   const timerOverlayEl = document.getElementById("timerOverlay");
   const programSelect = document.getElementById("programSelect");
-
   const durationWarmupEl = document.getElementById("duration_warmup");
   const durationCircleEl = document.getElementById("duration_circle");
   const durationSaccadeLREl = document.getElementById("duration_saccade_lr");
@@ -972,7 +983,7 @@ flex: 1 !important;
   const durationZoomFocusEl = document.getElementById("duration_zoom_focus");
   const durationVergenceEl = document.getElementById("duration_vergence");
   const durationNearFarEl = document.getElementById("duration_near_far");
-const durationPalmingEl = document.getElementById("duration_palming");
+  const durationPalmingEl = document.getElementById("duration_palming");
   const readingRowsEl = document.getElementById("reading_rows");
   const readingColsEl = document.getElementById("reading_cols");
   const seqWarmupEl = document.getElementById("seq_warmup");
@@ -1130,15 +1141,456 @@ function cue(text) {
   const w = window.innerWidth || 0;
   const h = window.innerHeight || 0;
   const shortSide = Math.min(w, h);
-
   // Telefon: mobile UA + kratka stranica mala
   return isUaMobile() && shortSide > 0 && shortSide < 600;
   }
 
+function getDeviceType() {
+  // telefon: mobile UA + kratka stranica mala (tvoj postojeci kriterijum)
+  // tablet: sve ostalo sto je mobile, ali veca kratka stranica
+  const ua = navigator.userAgent || "";
+  const uaDataMobile = navigator.userAgentData && navigator.userAgentData.mobile;
+  const isMobile = (typeof uaDataMobile === "boolean") ? uaDataMobile : /Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(ua);
+
+  const w = window.innerWidth || 0;
+  const h = window.innerHeight || 0;
+  const shortSide = Math.min(w, h);
+
+  if (isMobile && shortSide > 0 && shortSide < 600) return "phone";
+  if (isMobile) return "tablet";
+
+  // desktop/laptop/monitor - tretiraj kao tablet po velicini mete (manje agresivno)
+  return "tablet";
+}
+
+let deviceType = "phone";
+
+function applyDeviceType() {
+  deviceType = getDeviceType();
+
+  if (deviceDetectedTextEl) {
+    deviceDetectedTextEl.textContent =
+      (deviceType === "phone") ? t("device_phone") : t("device_tablet");
+  }
+
+  if (distanceText) {
+    distanceText.textContent =
+      (deviceType === "phone") ? t("distance_phone") : t("distance_tablet");
+  }
+}
+
+// -------------------------
+// i18n (EN default + SR)
+// -------------------------
+const LS_LANG = "eyeTrainerLang_v1";
+
+const I18N = {
+  en: {
+    app_title: "Eye training",
+
+    distance_phone: "30-40 cm from eyes",
+    distance_tablet: "40-50 cm from eyes",
+
+    section_device_title: "1. Device and distance",
+    device_detected_label: "Device:",
+    language_label: "Language:",
+    device_phone: "Phone",
+    device_tablet: "Tablet",
+    distance_label: "Recommended distance:",
+    posture_hint:
+      "Top edge of the screen slightly below eye level, head upright, shoulders relaxed.",
+
+    section_modes_title: "2. Modes and timer",
+    section_modes_sub: "duration + sequence",
+
+    program_label: "Program:",
+    program_none: "Manual selection",
+    program_screen_relief: "Screen relief - 5 min",
+    program_focus_reset: "Focus reset - 10 min",
+    program_intense_15: "Intense - 15 min",
+
+    duration_label: "Duration:",
+    seconds_short: "s",
+    in_sequence: "in sequence",
+    rows_label: "rows:",
+    cols_label: "cols:",
+
+    auto_sequence_label: "Auto sequence (run checked modes in order)",
+    btn_start: "Start",
+    btn_stop: "Stop",
+    show_help_label: "Show instruction bubble during training",
+
+    tip_label: "Tip:",
+    tip_text:
+      "Before starting, take a proper posture. During training keep your head still and move only your eyes.",
+
+    rotate_title: "Rotate your phone to landscape",
+    rotate_text: "For eye training use landscape orientation.",
+    rotate_hint: "Rotate the phone. The overlay will disappear automatically.",
+
+    // Status messages
+    status_ready: "Ready.",
+    status_running:
+      "Training in progress... Stop if you feel stronger fatigue or discomfort.",
+    status_stopped:
+      "Training stopped. Blink a few times and rest for a few seconds.",
+    status_program_prefix: "Program: ",
+    status_program_suffix: " Check posture and press Start.",
+
+    // Near/Far cues + labels
+    cue_near: "Near",
+    cue_far: "Far",
+    near_label: "NEAR - look at the dot on the screen",
+    far_label: "FAR - look at a chosen distant point",
+
+    // Help bubble title
+    help_title: "Instruction:"
+  },
+
+  sr: {
+    app_title: "Trening za oči",
+
+    distance_phone: "30-40 cm od očiju",
+    distance_tablet: "40-50 cm od očiju",
+
+    section_device_title: "1. Uređaj i udaljenost",
+    device_detected_label: "Uređaj:",
+    language_label: "Jezik:",
+    device_phone: "Telefon",
+    device_tablet: "Tablet",
+    distance_label: "Preporučena udaljenost:",
+    posture_hint:
+      "Gornja ivica ekrana malo ispod nivoa očiju, glava uspravna, ramena opuštena.",
+
+    section_modes_title: "2. Modovi i tajmer",
+    section_modes_sub: "trajanje + sekvenca",
+
+    program_label: "Program:",
+    program_none: "Ručno biranje",
+    program_screen_relief: "Odmor od ekrana - 5 min",
+    program_focus_reset: "Fokus reset - 10 min",
+    program_intense_15: "Intenzivni - 15 min",
+
+    duration_label: "Trajanje:",
+    seconds_short: "s",
+    in_sequence: "u sekvenci",
+    rows_label: "redova:",
+    cols_label: "kolona:",
+
+    auto_sequence_label: "Auto sekvenca (pokreni čekirane modove redom)",
+    btn_start: "Start",
+    btn_stop: "Stop",
+    show_help_label: "Prikaži uputstvo u balonu tokom treninga",
+
+    tip_label: "Tip:",
+    tip_text:
+      "Pre starta zauzmi pravilan položaj. Tokom treninga ne pomeraj glavu, prati samo očima.",
+
+    rotate_title: "Okreni telefon vodoravno",
+    rotate_text: "Za vežbu očiju koristi horizontalni položaj (landscape).",
+    rotate_hint: "Okreni telefon u stranu. Overlay će nestati automatski.",
+
+    // Status messages
+    status_ready: "Spreman za trening.",
+    status_running:
+      "Trening u toku... Zaustavi ako osetiš jači umor ili nelagodnost.",
+    status_stopped:
+      "Trening je zaustavljen. Trepni nekoliko puta i odmori par sekundi.",
+    status_program_prefix: "Program: ",
+    status_program_suffix: ". Proveri položaj i klikni Start.",
+
+    // Near/Far cues + labels
+    cue_near: "Blizu",
+    cue_far: "Daleko",
+    near_label: "BLIZU - gledaj tačku na ekranu",
+    far_label: "DALEKO - gledaj izabranu tačku u prostoru",
+
+    // Help bubble title
+    help_title: "Uputstvo:"
+  }
+};
+
+let currentLang = "en";
+
+function t(key) {
+  const lang = (currentLang === "sr") ? "sr" : "en";
+  return (I18N[lang] && I18N[lang][key]) ? I18N[lang][key] : key;
+}
+
+function detectLangDefault() {
+  // Default EN, ali ako je sistemski jezik "nasi" -> SR
+  const raw = String(navigator.language || "").toLowerCase(); // "sr-rs", "hr-hr", "en-us"
+  const primary = raw.split("-")[0];
+  const supportedSr = new Set(["sr", "hr", "bs", "sh", "cnr", "me"]);
+  return supportedSr.has(primary) ? "sr" : "en";
+}
+
+function applyI18n() {
+  // 1) Generic data-i18n
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.getAttribute("data-i18n");
+    el.textContent = t(key);
+  });
+
+  // 2) Program options text (values are stable)
+  if (programSelect) {
+    Array.from(programSelect.options).forEach(opt => {
+      if (opt.value === "none") opt.textContent = t("program_none");
+      if (opt.value === "screen_relief") opt.textContent = t("program_screen_relief");
+      if (opt.value === "focus_reset") opt.textContent = t("program_focus_reset");
+      if (opt.value === "intense_15") opt.textContent = t("program_intense_15");
+    });
+  }
+
+  // 3) Mode titles + descriptions (by data-mode)
+  const MODE_I18N = {
+    warmup: {
+      enTitle: "Warm-up",
+      enDesc: "A fixation point in the center with gentle 'breathing'. Minimal effort - just hold your gaze.",
+      srTitle: "Zagrejavanje",
+      srDesc: "Fiksaciona tačka u centru, blago 'disanje' mete. Minimalan napor, samo držanje pogleda."
+    },
+    circle: {
+      enTitle: "Circle",
+      enDesc: "The target moves along a large circular path - smooth pursuit training.",
+      srTitle: "Krug",
+      srDesc: "Meta kruži po velikoj kružnoj putanji - trening glatkog praćenja po velikoj putanji."
+    },
+    figure8: {
+      enTitle: "Infinity",
+      enDesc: "The target moves in a figure-eight (∞) - smooth tracking across two planes.",
+      srTitle: "Infiniti",
+      srDesc: "Meta se kreće po ležećoj osmici (∞) - glatko praćenje u dve ravni."
+    },
+    saccade_lr: {
+      enTitle: "Saccades left-right",
+      enDesc: "Fast jumps to far left/right. Keep head still - eyes only.",
+      srTitle: "Skokovi levo-desno",
+      srDesc: "Meta skače maksimalno levo-desno. Brzi skokovi - bez pomeranja glave."
+    },
+    saccade_ud: {
+      enTitle: "Saccades up-down",
+      enDesc: "Fast jumps to top/bottom. Keep head still - eyes only.",
+      srTitle: "Skokovi gore-dole",
+      srDesc: "Meta skače maksimalno gore-dole. Aktivira vertikalne napete mišiće od ekrana."
+    },
+    saccade_lcr: {
+      enTitle: "Saccades L-C-R (3 points)",
+      enDesc: "Left - center - right - center... Like scanning a line of text.",
+      srTitle: "Skokovi L-C-R (3 tačke)",
+      srDesc: "Meta skače: levo - centar - desno - centar... Kombinuje kratke i duge skokove, kao skeniranje reda teksta."
+    },
+    saccade_cross: {
+      enTitle: "Saccades cross (C + 4 sides)",
+      enDesc: "Center - left/right/up/down. A scanning pattern with constant return to center.",
+      srTitle: "Skokovi krst (C + 4 strane)",
+      srDesc: "Meta skače centar ↔ levo/desno/gore/dole. Brzi skokovi sa stalnim povratkom u centar - šablon za skeniranje."
+    },
+    saccade_star8: {
+      enTitle: "Saccades 8 directions",
+      enDesc: "Center plus 8 directions (cross + diagonals). Engages peripheral vision.",
+      srTitle: "Skokovi 8 smerova (krst + dijagonale)",
+      srDesc: "Centar + 8 smerova (gore, dole, levo, desno i 4 dijagonale). Maksimalno angažuje periferiju u svim pravcima."
+    },
+    reading_basic: {
+      enTitle: "Reading",
+      enDesc: "Rows of points like text lines - quick saccades and line transitions.",
+      srTitle: "Čitanje",
+      srDesc: "Tri 'reda teksta' sa 5 tačaka po redu - simulira horizontalne skokove i prelazak na sledeći red."
+    },
+    rain_basic: {
+      enTitle: "Rain (main + background)",
+      enDesc: "Multiple faint drops plus one main drop you follow - calming motion.",
+      srTitle: "Kiša (glavna + pozadinske)",
+      srDesc: "Više bledih kapljica + jedna glavna koju pratiš - pada kroz 5 kolona levo-desno, smirujuće."
+    },
+    zoom_focus: {
+      enTitle: "Zoom focus",
+      enDesc: "A single centered dot 'breathes' in size - steady focus on the center.",
+      srTitle: "Zoom fokus (centrirana tačka)",
+      srDesc: "Jedna tačka u centru ekrana menja veličinu kao 'disanje' - fokus na mirnom pogledu u centar."
+    },
+    vergence: {
+      enTitle: "Vergence (in-out)",
+      enDesc: "Two symmetric dots move toward the center and back to the periphery.",
+      srTitle: "Približavanje/udaljavanje (dve tačke levo/desno)",
+      srDesc: "Dve tačke simetrično levo i desno ritmično se približavaju centru i razmiču ka periferiji."
+    },
+    near_far: {
+      enTitle: "Near - far",
+      enDesc: "Alternate between the on-screen dot and a chosen distant point in the room.",
+      srTitle: "Blizu - daleko",
+      srDesc: "Gledaj naizmenično u tačku na ekranu pa u izabranu dalju tačku u prostoru - ekran daje tempo i uputstvo."
+    },
+    palming: {
+      enTitle: "Palming (rest)",
+      enDesc: "Cover your eyes with your palms without pressure. Warmth + darkness, calm breathing.",
+      srTitle: "Palming (odmor)",
+      srDesc: "Prekrij oči dlanovima bez pritiska. Toplina + mrak, mirno disanje."
+    }
+  };
+
+  document.querySelectorAll(".mode-block").forEach(block => {
+    const mode = block.dataset.mode;
+    const meta = MODE_I18N[mode];
+    if (!meta) return;
+
+    const titleEl = block.querySelector(".mode-title");
+    const descEl = block.querySelector(".mode-description");
+    if (titleEl) titleEl.textContent = (currentLang === "sr") ? meta.srTitle : meta.enTitle;
+    if (descEl) descEl.textContent = (currentLang === "sr") ? meta.srDesc : meta.enDesc;
+
+    // "Trajanje / Duration" + "u sekvenci / in sequence" - pokupi postojece span/label tekstove unutar config-row
+    const row = block.querySelector(".mode-config-row");
+    if (row) {
+      const spans = row.querySelectorAll("span");
+      // prvi span u config-row je "Trajanje:" u tvojoj strukturi
+      if (spans && spans[0]) spans[0].textContent = t("duration_label");
+      // span za "s"
+      // obicno je spans[1] = "s" ali nekad ima dodatnih spanova (reading)
+      spans.forEach(s => {
+        if (s.textContent.trim() === "s" || s.textContent.trim() === "sec" || s.textContent.trim() === "s.") {
+          s.textContent = t("seconds_short");
+        }
+      });
+      const seqLabel = row.querySelector("label");
+      if (seqLabel && seqLabel.textContent.toLowerCase().includes("sekv")) {
+        // label sadrzi checkbox + tekst, ostavi checkbox, promeni samo tekst node
+        const nodes = Array.from(seqLabel.childNodes);
+        nodes.forEach(n => {
+          if (n.nodeType === Node.TEXT_NODE) n.textContent = " " + t("in_sequence");
+        });
+      }
+    }
+
+    // reading rows/cols labeli
+    if (mode === "reading_basic") {
+      const row = block.querySelector(".mode-config-row");
+      if (row) {
+        const rowSpans = row.querySelectorAll("span");
+        // posle trajanja i s imas "| redova:" i "kolona:"
+        rowSpans.forEach(sp => {
+          const txt = sp.textContent.trim().toLowerCase();
+          if (txt.includes("redova") || txt.includes("rows")) sp.textContent = "| " + t("rows_label");
+          if (txt.includes("kolona") || txt.includes("cols")) sp.textContent = t("cols_label");
+        });
+      }
+    }
+  });
+
+  // 4) Posture hint (small-label unutar distance-info)
+  const posture = document.querySelector(".distance-info .small-label");
+  if (posture) posture.textContent = t("posture_hint");
+}
+
+function setLang(lang) {
+  currentLang = (lang === "sr") ? "sr" : "en";
+  try { localStorage.setItem(LS_LANG, currentLang); } catch (e) {}
+
+  // dugmici
+  if (Array.isArray(langBtns)) {
+    langBtns.forEach(b => b.classList.toggle("active", b.dataset.lang === currentLang));
+  }
+
+  applyI18n();
+  applyDeviceType();
+  updateModeTexts();
+  updateModeVisibilityForProgram();
+
+  // status u idle stanju
+  if (!isRunning && statusEl) {
+    statusEl.textContent = t("status_ready");
+    statusEl.style.color = "#10b981";
+  }
+}
+
+function initLang() {
+  let saved = null;
+  try { saved = localStorage.getItem(LS_LANG); } catch (e) {}
+  if (saved === "sr" || saved === "en") currentLang = saved;
+  else currentLang = detectLangDefault();
+
+  if (Array.isArray(langBtns)) {
+    langBtns.forEach(btn => btn.addEventListener("click", () => setLang(btn.dataset.lang)));
+  }
+
+  // Default EN kao sto si hteo
+  // Ako je sistemski "nas" - prebacice na SR, ali user moze da vrati EN
+  setLang(currentLang);
+}
+
+// -------------------------
+// Help texts (EN + SR)
+// -------------------------
+const HELP_TEXTS = {
+  en: {
+    warmup:
+      "Warm-up: sit upright, head still. Gaze at the center calmly. Blink naturally and breathe.",
+    circle:
+      "Circle: track the target along a large circle near the edges. Smooth movement, no head turning.",
+    figure8:
+      "Infinity: track the target along a figure-eight (∞). Smooth pursuit, no head turning.",
+    saccade_lr:
+      "Left-right saccades: fast jumps between far left and far right. Keep head still.",
+    saccade_ud:
+      "Up-down saccades: fast jumps between top and bottom. Keep head still.",
+    saccade_lcr:
+      "L-C-R saccades: left - center - right - center... Like scanning a text line.",
+    saccade_cross:
+      "Cross saccades: center to left/right/up/down with constant return to center.",
+    saccade_star8:
+      "8-direction saccades: center plus 8 directions (including diagonals). Engage peripheral vision.",
+    reading_basic:
+      "Reading: follow points across rows like text lines. Quick saccades, calm fixation between jumps.",
+    rain_basic:
+      "Rain: ignore faint background drops and follow the main drop falling down the screen.",
+    zoom_focus:
+      "Zoom focus: keep gaze on the center while the dot 'breathes' in size. Relaxed blinking.",
+    vergence:
+      "Vergence: two dots move toward the center and back out. Notice the rhythm, keep head still.",
+    near_far:
+      "Near-far: when it says NEAR, look at the on-screen dot. When it says FAR, look at a chosen distant point."
+  },
+  sr: {
+    warmup:
+      "Zagrejavanje: sedi uspravno, glava mirna. Gledaj u centar mete bez napora. Trepći prirodno i diši mirno.",
+    circle:
+      "Krug: prati metu po velikoj kružnoj putanji skoro do ivica. Pokret očiju glatko, bez okretanja glave.",
+    figure8:
+      "Infiniti: prati metu po ležećoj osmici (∞). Glatko praćenje, bez trzaja i bez okretanja glave.",
+    saccade_lr:
+      "Skokovi levo-desno: brzi skokovi između krajnje leve i desne tačke. Glava mirna - rade samo oči.",
+    saccade_ud:
+      "Skokovi gore-dole: brzi skokovi između gornje i donje tačke. Glava mirna - rade samo oči.",
+    saccade_lcr:
+      "Skokovi L-C-R: levo - centar - desno - centar... Kao skeniranje reda teksta.",
+    saccade_cross:
+      "Skokovi krst: centar pa levo/desno/gore/dole uz stalni povratak u centar.",
+    saccade_star8:
+      "Skokovi 8 smerova: centar plus 8 smerova (uklj. dijagonale). Aktivira periferni vid.",
+    reading_basic:
+      "Čitanje: prati tačke kroz redove kao linije teksta. Brzi skokovi, mirna fiksacija između skokova.",
+    rain_basic:
+      "Kiša: ignoriši blede pozadinske kapljice i prati glavnu koja pada niz ekran.",
+    zoom_focus:
+      "Zoom fokus: gledaj u centar dok tačka 'diše' (menja veličinu). Trepći opušteno.",
+    vergence:
+      "Približavanje/udaljavanje: dve tačke idu ka centru pa nazad. Oseti ritam, glava mirna.",
+    near_far:
+      "Blizu-daleko: kad piše BLIZU gledaj tačku na ekranu; kad piše DALEKO gledaj izabranu dalju tačku u prostoru."
+  }
+};
+
+function getHelpTextForMode() {
+  const pack = (currentLang === "sr") ? HELP_TEXTS.sr : HELP_TEXTS.en;
+  return pack[currentMode] || "";
+}
+
+
   function collectUiState() {
   const modeRadio = document.querySelector('input[name="mode"]:checked');
   return {
-    device: deviceSelect.value,
+    device: deviceType,
     program: programSelect.value,
     mode: modeRadio ? modeRadio.value : currentMode,
     autoSeq: enableAutoSequenceEl.checked,
@@ -1198,15 +1650,9 @@ function cue(text) {
     if (!raw) return false;
     const st = JSON.parse(raw);
 
-    // Telefon: uvek phone (ignorisemo sacuvani display)
-  // Tablet: moze da restore-uje
-  if (isRealPhoneScreen()) {
-  deviceSelect.value = "phone";
-  } else if (st.device) {
-  deviceSelect.value = st.device;
-  }
-  distanceText.textContent =
-  deviceDistances[deviceSelect.value] || distanceText.textContent;
+    // Device se sada detektuje automatski (phone/tablet)
+    applyDeviceType();
+
     if (st.program) programSelect.value = st.program;
 
     // durations
@@ -1231,6 +1677,8 @@ function cue(text) {
     enableAutoSequenceEl.checked = !!st.autoSeq;
     showHelpCheckbox.checked = !!st.showHelp;
     if (useVoiceEl) useVoiceEl.checked = !!st.useVoice;
+    if (useVoiceEl) useVoiceEl.checked = false;    //  temp
+    if (seqPalmingEl) seqPalmingEl.checked = false;  // temp
     if (st.mode) {
       currentMode = st.mode;
       const radio = document.querySelector(`input[name="mode"][value="${st.mode}"]`);
@@ -1364,18 +1812,16 @@ allModes.forEach(m => setModeInSequence(m, false));
       updateModeTexts();
       updateModeVisibilityForProgram();   // sakrij/ prikaži relevantne modove
 
-      statusEl.textContent = `Program: ${program.label}. Proveri položaj i klikni Start.`;
+      const labelKey =
+        (value === "screen_relief") ? "program_screen_relief" :
+        (value === "focus_reset") ? "program_focus_reset" :
+        (value === "intense_15") ? "program_intense_15" : "program_none";
+
+      statusEl.textContent = t("status_program_prefix") + t(labelKey) + t("status_program_suffix");
       statusEl.style.color = "#0f766e";
       playBeep();
   });
 
-
-  // Udaljenost po uređaju
-  deviceSelect.addEventListener("change", () => {
-      const value = deviceSelect.value;
-      const text = deviceDistances[value] || "oko dužine ispružene ruke";
-      distanceText.textContent = text;
-  });
 
   // Izbor moda (radio)
   document.querySelectorAll('input[name="mode"]').forEach((radio) => {
@@ -1392,20 +1838,24 @@ allModes.forEach(m => setModeInSequence(m, false));
     return isRealPhoneScreen();
   }
 
-  function reflowNow() {
+function reflowNow() {
   updateRealVh();
   resizeCanvas();
   updateRotateOverlay();
-  }
+  applyDeviceType();
+}
 
-  window.addEventListener("load", () => {
+window.addEventListener("load", () => {
   updateRealVh();
 
   if (isPhoneDevice()) {
     document.body.classList.add("is-phone");
   }
 
-  // 1) restore UI state (OVDE se odlucuje device)
+  initLang();        // setLang() u sebi radi applyI18n + aktivira dugmice
+  applyDeviceType(); // koristi t(), pa mora posle initLang()
+
+  // 1) restore UI state
   const restored = restoreUiState();
 
   // 2) ako nema state-a, tek onda default program
@@ -1419,12 +1869,14 @@ allModes.forEach(m => setModeInSequence(m, false));
 
   // 3) snimi konsistentno stanje
   saveUiState();
+
   updateRotateOverlay();
-updateModeVisibilityForProgram();
-updateModeTexts();
-drawBackground();
-reflowNow();
-  });
+  updateModeVisibilityForProgram();
+  updateModeTexts();
+  drawBackground();
+  reflowNow();
+});
+
 
 
 
@@ -1528,65 +1980,8 @@ function setModeInSequence(mode, inSeq) {
       return seq[idx + 1];
   }
 
-const HELP_TEXTS = {
-  warmup:
-    "Zagrejavanje: sedi uspravno, glava ravno. Gledaj u centar mete " +
-    "bez pomeranja očiju. Oči mirno drže fiksaciju 30-60 sekundi. Diši mirno, trepći prirodno.",
 
-  circle:
-    "Krug: prati metu koja kruži skoro do ivica ekrana. " +
-    "Pokušaj da pokret pogleda bude glatko klizanje, bez skokova i bez okretanja glave.",
 
-  figure8:
-    "Infiniti / osmica: prati metu koja se kreće po ležećoj osmici (∞), skoro do ivica ekrana. " +
-    "Oči prate glatko, bez trzaja, bez okretanja glave - kao da crtaš znak ∞ pogledom.",
-
-  saccade_lr:
-    "Skokovi levo-desno: fokusiraj se na metu koja skače maksimalno levo i desno. " +
-    "Glava mirna, samo oči rade brze skokove. Vežbu drži kratko (30-60 s).",
-
-  saccade_ud:
-    "Skokovi gore-dole: prati metu koja skače maksimalno gore i dole. " +
-    "Rasterećuje mišiće koji trpe od dugog gledanja u ekran. Glava mirna, samo oči.",
-
-  saccade_lcr:
-    "Skokovi L-C-R: meta ide levo → centar → desno → centar… " +
-    "Kombinuje kratke i duge skokove, slično skeniranju reda teksta. " +
-    "Pazi da ne zadržavaš dah, trepći prirodno.",
-
-  saccade_cross:
-    "Skokovi krst: meta skače centar ↔ levo/desno/gore/dole. " +
-    "Zamisli kao šablon za skeniranje stranice - uvek se vratiš u centar, pa u sledeći smer.",
-
-  saccade_star8:
-    "Skokovi 8 smerova: centar + gore, dole, levo, desno i 4 dijagonale. " +
-    "Prati metu koja skače kroz svih 8 smerova uz povratak u centar - budi celu periferiju pogleda.",
-
-  reading_basic:
-    "Čitanje: gledaj u tačku koja skače kroz 3 reda, kao po linijama teksta. " +
-    "Pokušaj da skokovi budu brzi, a između skokova pogled miran - kao da pratiš redove u knjizi.",
-
-  rain_basic:
-    "Kiša: više bledih kapljica za pozadinu, ali ti pratiš jednu glavnu koja polako pada. " +
-    "Glavna kap se povremeno pojavljuje levo, u sredini ili desno - glava mirna, samo oči prate pad.",
-
-  zoom_focus:
-    "Zoom fokus: gledaj u centar tačke dok ona mirno “diše” - menja veličinu polako. " +
-    "Ne juri veličinu, samo drži pogled na centru i trepći opušteno.",
-
-  vergence:
-    "Približavanje/udaljavanje: dve tačke levo i desno prilaze centru pa se vraćaju ka periferiji. " +
-    "Možeš da pratiš naizmenično levu i desnu ili samo da registruješ ritam približavanja i udaljavanja.",
-
-  near_far:
-    "Blizu - daleko: izaberi jednu dalju tačku u prostoru (npr. kroz prozor ili na zidu). " +
-    "Kad piše BLIZU, gledaj u tačku na ekranu; kad piše DALEKO, gledaj u tu dalju tačku - ekran ti daje tempo."
-};
-
-  // Tekst za balon
-function getHelpTextForMode() {
-  return HELP_TEXTS[currentMode] || "";
-}
 
 
   function updateHelpBubble() {
@@ -1599,7 +1994,7 @@ function getHelpTextForMode() {
           helpBubbleEl.style.display = "none";
           return;
       }
-      helpBubbleEl.innerHTML = "<strong>Uputstvo:</strong> " + txt;
+      helpBubbleEl.innerHTML = "<strong>" + t("help_title") + "</strong> " + txt;
       helpBubbleEl.style.display = "block";
   }
 
@@ -1827,7 +2222,7 @@ function getHelpTextForMode() {
   // Helper za baznu veličinu mete – veći target na manjim ekranima
   function baseR(rect, factor = 0.024, minPx = 10) {
       // veća meta na telefonu
-      const scale = deviceSelect.value === "phone" ? 1.4 : 1;
+      const scale = deviceType === "phone" ? 1.4 : 1;
 
       const dim = Math.min(rect.width, rect.height);
       const raw = dim * factor * scale;
@@ -2379,7 +2774,7 @@ function getHelpTextForMode() {
         nearFarLastPhase = nearPhase;
       } else if (nearFarLastPhase !== nearPhase) {
         nearFarLastPhase = nearPhase;
-      cue(nearPhase ? "Blizu" : "Daleko");
+      cue(nearPhase ? t("cue_near") : t("cue_far"));
       }
 
       // 🎨 nežna near pozadina (mnogo blaža)
@@ -2403,9 +2798,7 @@ function getHelpTextForMode() {
       }
 
       // 📝 veći, čitljiviji tekst
-      const label = nearPhase
-          ? "BLIZU - gledaj tačku na ekranu"
-          : "DALEKO - gledaj izabranu tačku u prostoru";
+      const label = nearPhase ? t("near_label") : t("far_label");
 
       ctx.font = Math.min(width, height) * 0.04 + "px system-ui";  // veće
       ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
@@ -2490,7 +2883,7 @@ function animationLoop(timestamp) {
   function startAnimation() {
   isRunning = true;
   setAndroidKeepScreenOn(true);
-  statusEl.textContent = "Trening u toku... Zaustavi ako osetis jaci umor ili nelagodnost.";
+  statusEl.textContent = t("status_running");
   statusEl.style.color = "#10b981";
 
   appEl.classList.add("is-training");
@@ -2561,7 +2954,7 @@ document.addEventListener("visibilitychange", () => {
 
   clearTimer();
 
-  statusEl.textContent = "Trening je zaustavljen. Trepni nekoliko puta i odmori par sekundi.";
+  statusEl.textContent = t("status_stopped");
   statusEl.style.color = "#6b7280";
 
   helpBubbleEl.style.display = "none";
@@ -2625,7 +3018,6 @@ document.addEventListener("visibilitychange", () => {
   });
 
   [
-  deviceSelect,
   programSelect,
   enableAutoSequenceEl,
   showHelpCheckbox,
