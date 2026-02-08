@@ -5,40 +5,41 @@ plugins {
 }
 
 android {
-    namespace = "com.peja.eyetrainer"
-    compileSdk {
-        version = release(36)
-    }
+  namespace = "com.peja.eyetrainer"
+  compileSdk = 35
 
-    defaultConfig {
-        applicationId = "com.peja.eyetrainer"
-        minSdk = 24
-        targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+  defaultConfig {
+    applicationId = "com.peja.eyetrainer"
+    minSdk = 24
+    targetSdk = 35
+    versionCode = 4
+    versionName = "2.0.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
+    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+  }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
+  buildTypes {
+    release {
+      isMinifyEnabled = false
+      proguardFiles(
+        getDefaultProguardFile("proguard-android-optimize.txt"),
+        "proguard-rules.pro"
+      )
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
-    buildFeatures {
-        compose = true
-    }
+  }
+
+  compileOptions {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+  }
+
+  kotlinOptions {
+    jvmTarget = "11"
+  }
+
+  buildFeatures {
+    compose = true
+  }
 }
 
 dependencies {
