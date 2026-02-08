@@ -18,10 +18,10 @@
     }
 
     :root {
---vh: 1vh;                 /* default, JS ce odmah overwrite */
---androidInsetTop: 0px;
---androidInsetBottom: 0px;
-}
+        --vh: 1vh;                 /* default, JS ce odmah overwrite */
+        --androidInsetTop: 0px;
+        --androidInsetBottom: 0px;
+        }
 
     .app {
         position: relative;
@@ -157,10 +157,6 @@
         border: 1px solid transparent;
     }
 
-    .mode-radio input[type="radio"] {
-        margin-top: 2px;
-    }
-
     .mode-title {
         font-weight: 600;
     }
@@ -170,17 +166,17 @@
         color: #6b7280;
     }
 
-.mode-config-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 6px;
-    margin-top: 4px;
-    font-size: 11px;
-    color: #4b5563;
-    margin-left: 26px; /* poravnava sa tekstom moda */
-    padding-left: 6px; /* mali odmak */
-}
+    .mode-config-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        margin-top: 4px;
+        font-size: 11px;
+        color: #4b5563;
+        margin-left: 26px; /* poravnava sa tekstom moda */
+        padding-left: 6px; /* mali odmak */
+    }
 
     .mode-config-row input[type="number"] {
         width: 60px;
@@ -276,10 +272,10 @@
         margin: 0;
     }
 
-.training-area {
-flex: 1 1 auto;
-min-width: 0; /* KLJUČNO za canvas */
-}
+    .training-area {
+    flex: 1 1 auto;
+    min-width: 0; /* KLJUČNO za canvas */
+    }
 
     .canvas-wrapper {
         flex: 1;
@@ -369,7 +365,7 @@ min-width: 0; /* KLJUČNO za canvas */
         left: 0;
         transform: translateX(-100%);
         width: min(80vw, 570px);
-max-width: none;
+        max-width: none;
         border-right: none;
         border-bottom: none;
         box-shadow: 0 18px 35px rgba(15, 23, 42, 0.35);
@@ -388,10 +384,10 @@ max-width: none;
         background: #000;
     }
 
-/* Tokom treninga: nema paddinga, canvas dobija 100% */
-body.phone-fullscreen-training .app {
-height: calc(var(--vh) * 100);
-}
+    /* Tokom treninga: nema paddinga, canvas dobija 100% */
+    body.phone-fullscreen-training .app {
+    height: calc(var(--vh) * 100);
+    }
 
     /* Ako postoji footer na stranici, skloni ga na telefonu u treningu */
     body.phone-fullscreen-training footer {
@@ -431,56 +427,204 @@ height: calc(var(--vh) * 100);
         opacity: 0.75;
     }
 
-/* rotate overlay mora da bude FULLSCREEN i iznad svega */
-#rotateOverlay.rotate-overlay {
-position: fixed !important;
-inset: 0 !important;
-z-index: 99999 !important;
-display: none;
-align-items: center;
-justify-content: center;
-background: rgba(15, 23, 42, 0.85);
-padding: 20px;
-}
+    /* rotate overlay mora da bude FULLSCREEN i iznad svega */
+    #rotateOverlay.rotate-overlay {
+        position: fixed !important;
+        inset: 0 !important;
+        z-index: 99999 !important;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(15, 23, 42, 0.85);
+        padding: 20px;
+    }
 
-body.needs-rotate #rotateOverlay.rotate-overlay {
-display: flex !important;
-}
-/* PHONE: uvek horizontalni layout (ne sme column posle stop) */
-body.is-phone .app {
-flex-direction: row !important;
-}
+    body.needs-rotate #rotateOverlay.rotate-overlay {
+        display: flex !important;
+    }
+    /* PHONE: uvek horizontalni layout (ne sme column posle stop) */
+    body.is-phone .app {
+        flex-direction: row !important;
+    }
 
+    body.is-phone .training-area {
+        flex: 1 !important;
+    }
 
-body.is-phone .training-area {
-flex: 1 !important;
-}
-
-/* UI hide: voice toggle (TTS ostaje u kodu) */
-.hide-voice-ui { display: none !important; }
-.mode-block.hide-mode-ui { display: none !important; }
+    /* UI hide: voice toggle (TTS ostaje u kodu) */
+    .hide-voice-ui { display: none !important; }
+    .mode-block.hide-mode-ui { display: none !important; }
 
     .lang-toggle {
-  display: inline-flex;
-  border: 1px solid rgba(148, 163, 184, 0.9);
+      display: inline-flex;
+      border: 1px solid rgba(148, 163, 184, 0.9);
+      border-radius: 999px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .lang-btn {
+      border: none;
+      background: transparent;
+      padding: 6px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      color: #4b5563;
+    }
+
+    .lang-btn.active {
+      background: rgba(15, 118, 110, 0.12);
+      color: #0f766e;
+      font-weight: 700;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%);
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.2;
+      background: rgba(15, 23, 42, 0.85);
+      color: #f9fafb;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.35);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      z-index: 9999;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-6px);
+    }
+
+    /* default (running / stopped) */
+    .toast-default {
+      background: rgba(15, 118, 110, 0.92); /* tvoja zelena */
+    }
+
+    /* error (no sequence) */
+    .toast-error {
+      background: rgba(220, 38, 38, 0.92); /* crvena, ali čista */
+    }
+    .hide-auto-seq { display: none !important; }
+
+/* =====================================================
+   Buttons - unified, hardened, with clear pressed state
+   ===================================================== */
+
+/* Global disabled stanje (i dalje vazi i za druge btn ako ih ima) */
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Osnovni btn reset i hardening */
+.btn {
+  /* ukloni native izgled */
+  -webkit-appearance: none;
+  appearance: none;
+
+  /* nema select / copy / long-press callout */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+
+  /* nema tap flash-a */
+  -webkit-tap-highlight-color: transparent;
+
+  /* nema drag-a */
+  -webkit-user-drag: none;
+
+  /* brzi click, bez gesture gluposti */
+  touch-action: manipulation;
+
+  /* vizuelna konzistentnost */
+  outline: none;
   border-radius: 999px;
-  overflow: hidden;
-  background: #fff;
 }
 
-.lang-btn {
-  border: none;
-  background: transparent;
-  padding: 6px 10px;
+/* Isto važi i za sadržaj u dugmetu (tekst, span, icon...) */
+.btn,
+.btn * {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Pressed state - vidi se i na short i na long press */
+.btn:active {
+  transform: translateY(1px) scale(0.99);
+  filter: brightness(0.92);
+  border-radius: 999px;
+}
+
+/* Fokus (tastatura / accessibility) */
+.btn:focus-visible {
+  outline: 2px solid rgba(15, 118, 110, 0.45);
+  outline-offset: 2px;
+  border-radius: 999px;
+}
+
+/* Disabled dugme nema pressed efekat */
+.btn:disabled,
+.btn:disabled:active {
+  transform: none;
+  filter: none;
+}
+
+
+    /* opciono: ako želiš da ceo sidebar nema selekciju */
+    .sidebar {
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+    }
+
+    /* Header blok sidebara */
+.sidebar-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Red ispod naslova */
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+/* Header row: title levo, desni blok skroz desno */
+.sidebar-header-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Desni blok: device + lang */
+.header-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Device debug - diskretno */
+.device-debug {
   font-size: 12px;
-  cursor: pointer;
-  color: #4b5563;
+  color: #9ca3af;
+  opacity: 0.7;
+  user-select: none;
+  white-space: nowrap;
 }
 
-.lang-btn.active {
-  background: rgba(15, 118, 110, 0.12);
-  color: #0f766e;
-  font-weight: 700;
+/* Language toggle ostaje desno */
+.lang-toggle {
+  display: flex;
+  gap: 6px;
 }
 
   </style>
@@ -488,26 +632,30 @@ flex: 1 !important;
 
 <body>
 <div class="app">
+  <div id="toast" class="toast"></div>
   <aside class="sidebar">
-    <div>
+    <div class="sidebar-header-row">
+      <!-- levo: title -->
       <div class="title" data-i18n="app_title">Trening za oči</div>
-    </div>
-
-    <div class="section">
-      <div class="section-header">
-        <span data-i18n="section_device_title">1. Uređaj i udaljenost</span>
-      </div>
-
-      <div class="mode-config-row" style="margin-top:2px; margin-bottom:4px;">
-        <span data-i18n="device_detected_label">Uređaj:</span>
-        <span class="distance-highlight" id="deviceDetectedText">Telefon</span>
-
-        <span style="margin-left:10px;" data-i18n="language_label">Jezik:</span>
+      <!-- desno: device + lang -->
+      <div class="header-right">
+        <span class="device-debug" id="deviceDetectedText">Telefon</span>
         <div class="lang-toggle" role="group" aria-label="Language">
           <button type="button" class="lang-btn" data-lang="en">EN</button>
           <button type="button" class="lang-btn" data-lang="sr">SR</button>
         </div>
       </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <!--span data-i18n="section_device_title">1. Uređaj i udaljenost</span-->
+      </div>
+
+      <!--div class="mode-config-row" style="margin-top:2px; margin-bottom:4px;">
+        <span data-i18n="device_detected_label">Uređaj:</span>
+        <span style="margin-left:10px;" data-i18n="language_label">Jezik:</span>
+      </div-->
 
       <div class="distance-info">
         <span data-i18n="distance_label">Preporučena udaljenost:</span><br/>
@@ -519,14 +667,14 @@ flex: 1 !important;
     </div>
 
     <div class="section">
-      <div class="section-header">
+      <!--div class="section-header">
         <span data-i18n="section_modes_title">2. Modovi i tajmer</span>
         <span class="small-label" data-i18n="section_modes_sub">trajanje + sekvenca</span>
-      </div>
+      </div-->
 
       <!-- Programi / gotove sekvence -->
       <div class="mode-config-row" style="margin-top:2px; margin-bottom:4px;">
-        <span data-i18n="program_label">Program:</span>
+        <!--span data-i18n="program_label">Program:</span-->
         <select id="programSelect" style="min-width: 220px;">
           <option value="none">Ručno biranje</option>
           <option value="screen_relief">Odmor od ekrana - 5 min</option>
@@ -539,7 +687,7 @@ flex: 1 !important;
         <!-- WARMUP -->
         <div class="mode-block" data-mode="warmup">
           <label class="mode-radio">
-            <input type="radio" name="mode" value="warmup" checked/>
+            <input type="checkbox" id="seq_warmup" checked/>
             <div>
               <div class="mode-title">Zagrejavanje</div>
               <div class="mode-description">
@@ -554,17 +702,13 @@ flex: 1 !important;
             <input type="number" id="duration_warmup" min="5" max="600" step="5"
                    value="45"/>
             <span>s</span>
-            <label>
-              <input type="checkbox" id="seq_warmup" checked/>
-              u sekvenci
-            </label>
           </div>
         </div>
 
         <!-- CIRCLE -->
         <div class="mode-block" data-mode="circle">
           <label class="mode-radio">
-            <input type="radio" name="mode" value="circle"/>
+            <input type="checkbox" id="seq_circle" checked/>
             <div>
               <div class="mode-title">Krug</div>
               <div class="mode-description">
@@ -578,17 +722,13 @@ flex: 1 !important;
             <input type="number" id="duration_circle" min="5" max="600" step="5"
                    value="60"/>
             <span>s</span>
-            <label>
-              <input type="checkbox" id="seq_circle" checked/>
-              u sekvenci
-            </label>
           </div>
         </div>
 
         <!-- FIGURE 8 -->
         <div class="mode-block" data-mode="figure8">
           <label class="mode-radio">
-            <input type="radio" name="mode" value="figure8"/>
+            <input type="checkbox" id="seq_figure8" checked/>
             <div>
               <div class="mode-title">Infiniti</div>
               <div class="mode-description">
@@ -601,17 +741,13 @@ flex: 1 !important;
             <input type="number" id="duration_figure8" min="5" max="600" step="5"
                    value="60"/>
             <span>s</span>
-            <label>
-              <input type="checkbox" id="seq_figure8" checked/>
-              u sekvenci
-            </label>
           </div>
         </div>
 
         <!-- SACCADE L-R -->
         <div class="mode-block" data-mode="saccade_lr">
           <label class="mode-radio">
-            <input type="radio" name="mode" value="saccade_lr"/>
+            <input type="checkbox" id="seq_saccade_lr" checked/>
             <div>
               <div class="mode-title">Skokovi levo-desno</div>
               <div class="mode-description">
@@ -625,17 +761,13 @@ flex: 1 !important;
             <input type="number" id="duration_saccade_lr" min="5" max="600" step="5"
                    value="45"/>
             <span>s</span>
-            <label>
-              <input type="checkbox" id="seq_saccade_lr" checked/>
-              u sekvenci
-            </label>
           </div>
         </div>
 
         <!-- SACCADE U-D -->
         <div class="mode-block" data-mode="saccade_ud">
           <label class="mode-radio">
-            <input type="radio" name="mode" value="saccade_ud"/>
+            <input type="checkbox" id="seq_saccade_ud" checked/>
             <div>
               <div class="mode-title">Skokovi gore-dole</div>
               <div class="mode-description">
@@ -649,17 +781,13 @@ flex: 1 !important;
             <input type="number" id="duration_saccade_ud" min="5" max="600" step="5"
                    value="45"/>
             <span>s</span>
-            <label>
-              <input type="checkbox" id="seq_saccade_ud" checked/>
-              u sekvenci
-            </label>
           </div>
         </div>
 
         <!-- SACCADE L-C-R -->
         <div class="mode-block" data-mode="saccade_lcr">
           <label class="mode-radio">
-            <input type="radio" name="mode" value="saccade_lcr"/>
+            <input type="checkbox" id="seq_saccade_lcr" checked/>
             <div>
               <div class="mode-title">Skokovi L-C-R (3 tačke)</div>
               <div class="mode-description">
@@ -674,17 +802,13 @@ flex: 1 !important;
             <input type="number" id="duration_saccade_lcr" min="5" max="600" step="5"
                    value="30"/>
             <span>s</span>
-            <label>
-              <input type="checkbox" id="seq_saccade_lcr" checked/>
-              u sekvenci
-            </label>
           </div>
         </div>
 
         <!-- SACCADE CROSS (C + 4 strane) -->
         <div class="mode-block" data-mode="saccade_cross">
           <label class="mode-radio">
-            <input type="radio" name="mode" value="saccade_cross"/>
+            <input type="checkbox" id="seq_saccade_cross" checked/>
             <div>
               <div class="mode-title">Skokovi krst (C + 4 strane)</div>
               <div class="mode-description">
@@ -699,17 +823,13 @@ flex: 1 !important;
             <input type="number" id="duration_saccade_cross" min="5" max="600" step="5"
                    value="40"/>
             <span>s</span>
-            <label>
-              <input type="checkbox" id="seq_saccade_cross" checked/>
-              u sekvenci
-            </label>
           </div>
         </div>
 
         <!-- SACCADE STAR8 (C + 8 smerova) -->
         <div class="mode-block" data-mode="saccade_star8">
           <label class="mode-radio">
-            <input type="radio" name="mode" value="saccade_star8"/>
+            <input type="checkbox" id="seq_saccade_star8" checked/>
             <div>
               <div class="mode-title">Skokovi 8 smerova (krst + dijagonale)</div>
               <div class="mode-description">
@@ -724,17 +844,13 @@ flex: 1 !important;
             <input type="number" id="duration_saccade_star8" min="5" max="600" step="5"
                    value="45"/>
             <span>s</span>
-            <label>
-              <input type="checkbox" id="seq_saccade_star8" checked/>
-              u sekvenci
-            </label>
           </div>
         </div>
 
         <!-- READING BASIC -->
         <div class="mode-block" data-mode="reading_basic">
           <label class="mode-radio">
-            <input type="radio" name="mode" value="reading_basic"/>
+            <input type="checkbox" id="seq_reading_basic" checked/>
             <div>
               <div class="mode-title">Čitanje</div>
               <div class="mode-description">
@@ -755,18 +871,13 @@ flex: 1 !important;
 
             <span>kolona:</span>
             <input type="number" id="reading_cols" min="2" max="9" step="1" value="5"/>
-
-            <label>
-              <input type="checkbox" id="seq_reading_basic" checked/>
-              u sekvenci
-            </label>
           </div>
         </div>
 
         <!-- RAIN BASIC -->
         <div class="mode-block" data-mode="rain_basic">
           <label class="mode-radio">
-            <input type="radio" name="mode" value="rain_basic"/>
+            <input type="checkbox" id="seq_rain_basic" checked/>
             <div>
               <div class="mode-title">Kiša (glavna + pozadinske)</div>
               <div class="mode-description">
@@ -781,17 +892,13 @@ flex: 1 !important;
             <input type="number" id="duration_rain_basic" min="5" max="600" step="5"
                    value="60"/>
             <span>s</span>
-            <label>
-              <input type="checkbox" id="seq_rain_basic" checked/>
-              u sekvenci
-            </label>
           </div>
         </div>
 
         <!-- ZOOM FOCUS -->
         <div class="mode-block" data-mode="zoom_focus">
           <label class="mode-radio">
-            <input type="radio" name="mode" value="zoom_focus"/>
+            <input type="checkbox" id="seq_zoom_focus" checked/>
             <div>
               <div class="mode-title">Zoom fokus (centrirana tačka)</div>
               <div class="mode-description">
@@ -806,17 +913,13 @@ flex: 1 !important;
             <input type="number" id="duration_zoom_focus" min="5" max="600" step="5"
                    value="40"/>
             <span>s</span>
-            <label>
-              <input type="checkbox" id="seq_zoom_focus" checked/>
-              u sekvenci
-            </label>
           </div>
         </div>
 
         <!-- VERGENCE (2 tačke levo/desno) -->
         <div class="mode-block" data-mode="vergence">
           <label class="mode-radio">
-            <input type="radio" name="mode" value="vergence"/>
+            <input type="checkbox" id="seq_vergence" checked/>
             <div>
               <div class="mode-title">Približavanje/udaljavanje (dve tačke
                 levo/desno)
@@ -833,17 +936,13 @@ flex: 1 !important;
             <input type="number" id="duration_vergence" min="5" max="600" step="5"
                    value="40"/>
             <span>s</span>
-            <label>
-              <input type="checkbox" id="seq_vergence" checked/>
-              u sekvenci
-            </label>
           </div>
         </div>
 
         <!-- NEAR-FAR (blizu / daleko) -->
         <div class="mode-block" data-mode="near_far">
           <label class="mode-radio">
-            <input type="radio" name="mode" value="near_far"/>
+            <input type="checkbox" id="seq_near_far" checked/>
             <div>
               <div class="mode-title">Blizu - daleko</div>
               <div class="mode-description">
@@ -858,17 +957,13 @@ flex: 1 !important;
             <input type="number" id="duration_near_far" min="10" max="600" step="5"
                    value="60"/>
             <span>s</span>
-            <label>
-              <input type="checkbox" id="seq_near_far" checked/>
-              u sekvenci
-            </label>
           </div>
         </div>
 
         <!-- PALMING (manual, non-screen) -->
         <div class="mode-block hide-mode-ui"  data-mode="palming">
           <label class="mode-radio">
-            <input type="radio" name="mode" value="palming"/>
+            <input type="checkbox" id="seq_palming" checked/>
             <div>
               <div class="mode-title">Palming (odmor)</div>
               <div class="mode-description">
@@ -881,17 +976,13 @@ flex: 1 !important;
             <span>Trajanje:</span>
             <input type="number" id="duration_palming" min="10" max="600" step="5" value="60"/>
             <span>s</span>
-            <label>
-              <input type="checkbox" id="seq_palming" checked/>
-              u sekvenci
-            </label>
           </div>
         </div>
 
       </div>
 
-      <div class="checkbox-row" style="margin-top:10px;">
-        <input type="checkbox" id="enableAutoSequence"/>
+      <div class="checkbox-row hide-auto-seq" style="margin-top:10px;">
+        <input type="checkbox" id="enableAutoSequence" checked />
         <label for="enableAutoSequence" data-i18n="auto_sequence_label">
           Auto sekvenca (pokreni čekirane modove redom)
         </label>
@@ -957,12 +1048,14 @@ flex: 1 !important;
   };
 
 
-const deviceDetectedTextEl = document.getElementById("deviceDetectedText");
-const langBtns = Array.from(document.querySelectorAll(".lang-btn"));
+  const deviceDetectedTextEl = document.getElementById("deviceDetectedText");
+  const langBtns = Array.from(document.querySelectorAll(".lang-btn"));
   const appEl = document.querySelector(".app");
   const distanceText = document.getElementById("distanceText");
   const startBtn = document.getElementById("startBtn");
   const stopBtn = document.getElementById("stopBtn");
+  enableLongPressAsClick(startBtn);
+  enableLongPressAsClick(stopBtn);
   const statusEl = document.getElementById("status");
   const showHelpCheckbox = document.getElementById("showHelp");
   const helpBubbleEl = document.getElementById("helpBubble");
@@ -1002,39 +1095,98 @@ const langBtns = Array.from(document.querySelectorAll(".lang-btn"));
   const seqPalmingEl = document.getElementById("seq_palming");
   const useVoiceEl = document.getElementById("useVoice");
 
-  const durationEls = {
-  warmup: durationWarmupEl,
-  circle: durationCircleEl,
-  figure8: durationFigure8El,
-  saccade_lr: durationSaccadeLREl,
-  saccade_ud: durationSaccadeUDEl,
-  saccade_lcr: durationSaccadeLCREl,
-  saccade_cross: durationSaccadeCrossEl,
-  saccade_star8: durationSaccadeStar8El,
-  reading_basic: durationReadingBasicEl,
-  rain_basic: durationRainBasicEl,
-  zoom_focus: durationZoomFocusEl,
-  vergence: durationVergenceEl,
-  near_far: durationNearFarEl,
-  palming: durationPalmingEl
-};
 
-const seqEls = {
-  warmup: seqWarmupEl,
-  circle: seqCircleEl,
-  figure8: seqFigure8El,
-  saccade_lr: seqSaccadeLREl,
-  saccade_ud: seqSaccadeUDEl,
-  saccade_lcr: seqSaccadeLCREl,
-  saccade_cross: seqSaccadeCrossEl,
-  saccade_star8: seqSaccadeStar8El,
-  reading_basic: seqReadingBasicEl,
-  rain_basic: seqRainBasicEl,
-  zoom_focus: seqZoomFocusEl,
-  vergence: seqVergenceEl,
-  near_far: seqNearFarEl,
-  palming: seqPalmingEl
-};
+
+  const durationEls = {
+    warmup: durationWarmupEl,
+    circle: durationCircleEl,
+    figure8: durationFigure8El,
+    saccade_lr: durationSaccadeLREl,
+    saccade_ud: durationSaccadeUDEl,
+    saccade_lcr: durationSaccadeLCREl,
+    saccade_cross: durationSaccadeCrossEl,
+    saccade_star8: durationSaccadeStar8El,
+    reading_basic: durationReadingBasicEl,
+    rain_basic: durationRainBasicEl,
+    zoom_focus: durationZoomFocusEl,
+    vergence: durationVergenceEl,
+    near_far: durationNearFarEl,
+    palming: durationPalmingEl
+  };
+
+  const seqEls = {
+    warmup: seqWarmupEl,
+    circle: seqCircleEl,
+    figure8: seqFigure8El,
+    saccade_lr: seqSaccadeLREl,
+    saccade_ud: seqSaccadeUDEl,
+    saccade_lcr: seqSaccadeLCREl,
+    saccade_cross: seqSaccadeCrossEl,
+    saccade_star8: seqSaccadeStar8El,
+    reading_basic: seqReadingBasicEl,
+    rain_basic: seqRainBasicEl,
+    zoom_focus: seqZoomFocusEl,
+    vergence: seqVergenceEl,
+    near_far: seqNearFarEl,
+    palming: seqPalmingEl
+  };
+
+  Object.entries(seqEls).forEach(([mode, el]) => {
+    if (!el) return;
+
+    el.addEventListener("change", () => {
+        if (!enableAutoSequenceEl.checked) return;
+
+        // Ako nema vise nijednog moda u sekvenci
+        if (!hasAnyModeInSequence()) {
+          showNoSequenceStatus();
+
+          // ako trening radi – odmah ga zaustavi
+          if (isRunning) {
+            stopAnimation();
+          }
+          return;
+      }
+// Ako trening radi i korisnik čekira mod - NE prebacuj odmah (da ne seče animaciju),
+// ali zapamti da sledeći Start krene od njega.
+if (isRunning && el.checked) {
+  pendingStartMode = mode;
+  return;
+}
+// Ako je korisnik odčekirao mod koji je bio pending - očisti pending
+if (!el.checked && pendingStartMode === mode) {
+  pendingStartMode = null;
+  // ne return - pusti dalje logiku (može da utiče na currentMode ako je aktivan)
+}
+      // 1) Ako je korisnik upravo čekirao neki mod i trening NE radi:
+      // odmah ga postavi kao aktivan (ovo rešava "čekirao warmup ali krene circle")
+      if (!isRunning && el.checked) {
+        syncActiveModeToFirstInSequence({ preferMode: mode });
+        updateModeTexts();
+        return;
+      }
+
+      // 2) Ako je iskljucen trenutno aktivan mod (i u idle-u i u run-u):
+      if (!el.checked && currentMode === mode) {
+        const next = getNextCheckedModeAfter(mode) || getFirstModeInSequence();
+        if (next) {
+          setActiveMode(next);
+          resetModeState(next);
+          updateModeTexts();
+          if (isRunning) startTimerForCurrentMode();
+        }
+        return;
+    }
+
+    // 3) U idle-u, ako je korisnik isključio neki mod koji nije aktivan,
+    // i dalje držimo pravilo: aktivni = prvi čekirani (da bude stabilno)
+    if (!isRunning) {
+      syncActiveModeToFirstInSequence();
+      updateModeTexts();
+    }
+  });
+});
+
 
 const modeFrames = {
   warmup: warmupFrame,
@@ -1057,7 +1209,7 @@ const modeFrames = {
   const trainingAreaEl = document.querySelector(".training-area");
   const canvas = document.getElementById("trainingCanvas");
   const ctx = canvas.getContext("2d");
-
+  let pendingStartMode = null; // poslednji čekiran mod tokom treninga
   let isRunning = false;
   let currentMode = "warmup";
   let animationFrameId = null;
@@ -1231,9 +1383,9 @@ const I18N = {
     // Status messages
     status_ready: "Ready.",
     status_running:
-      "Training in progress... Stop if you feel stronger fatigue or discomfort.",
+      "Stop if you feel stronger fatigue or discomfort.",
     status_stopped:
-      "Training stopped. Blink a few times and rest for a few seconds.",
+      "Blink a few times and rest for a few seconds.",
     status_program_prefix: "Program: ",
     status_program_suffix: " Check posture and press Start.",
 
@@ -1242,7 +1394,7 @@ const I18N = {
     cue_far: "Far",
     near_label: "NEAR - look at the dot on the screen",
     far_label: "FAR - look at a chosen distant point",
-
+    status_no_sequence: "No modes selected for sequence.",
     // Help bubble title
     help_title: "Instruction:"
   },
@@ -1293,9 +1445,9 @@ const I18N = {
     // Status messages
     status_ready: "Spreman za trening.",
     status_running:
-      "Trening u toku... Zaustavi ako osetiš jači umor ili nelagodnost.",
+      "Zaustavi ako osetiš jači umor ili nelagodnost.",
     status_stopped:
-      "Trening je zaustavljen. Trepni nekoliko puta i odmori par sekundi.",
+      "Trepni nekoliko puta i odmori par sekundi.",
     status_program_prefix: "Program: ",
     status_program_suffix: ". Proveri položaj i klikni Start.",
 
@@ -1304,7 +1456,7 @@ const I18N = {
     cue_far: "Daleko",
     near_label: "BLIZU - gledaj tačku na ekranu",
     far_label: "DALEKO - gledaj izabranu tačku u prostoru",
-
+    status_no_sequence: "Nema izabranih modova za sekvencu.",
     // Help bubble title
     help_title: "Uputstvo:"
   }
@@ -1453,14 +1605,6 @@ function applyI18n() {
           s.textContent = t("seconds_short");
         }
       });
-      const seqLabel = row.querySelector("label");
-      if (seqLabel && seqLabel.textContent.toLowerCase().includes("sekv")) {
-        // label sadrzi checkbox + tekst, ostavi checkbox, promeni samo tekst node
-        const nodes = Array.from(seqLabel.childNodes);
-        nodes.forEach(n => {
-          if (n.nodeType === Node.TEXT_NODE) n.textContent = " " + t("in_sequence");
-        });
-      }
     }
 
     // reading rows/cols labeli
@@ -1586,13 +1730,15 @@ function getHelpTextForMode() {
   return pack[currentMode] || "";
 }
 
+function getSelectedModes() {
+  return allModes.filter(m => seqEls[m]?.checked);
+}
 
   function collectUiState() {
-  const modeRadio = document.querySelector('input[name="mode"]:checked');
   return {
     device: deviceType,
     program: programSelect.value,
-    mode: modeRadio ? modeRadio.value : currentMode,
+    mode: currentMode,
     autoSeq: enableAutoSequenceEl.checked,
     showHelp: showHelpCheckbox.checked,
     useVoice: !!useVoiceEl?.checked,
@@ -1681,10 +1827,7 @@ function getHelpTextForMode() {
     if (seqPalmingEl) seqPalmingEl.checked = false;  // temp
     if (st.mode) {
       currentMode = st.mode;
-      const radio = document.querySelector(`input[name="mode"][value="${st.mode}"]`);
-      if (radio) radio.checked = true;
     }
-
     // refresh UI texts + visibility
     updateModeVisibilityForProgram();
     updateModeTexts();
@@ -1781,106 +1924,203 @@ function getHelpTextForMode() {
 
   // Učitavanje programa
   programSelect.addEventListener("change", () => {
-      const value = programSelect.value;
-      const program = programs[value];
-      if (!program) {
-          updateModeVisibilityForProgram();
-          return;
+    const value = programSelect.value;
+    const program = programs[value];
+    if (!program) {
+        updateModeVisibilityForProgram();
+        return;
+    }
+    allModes.forEach(m => setModeInSequence(m, false));
+
+    // primeni trajanja i uključi modove iz programa
+    program.sequence.forEach((step, index) => {
+        setModeDuration(step.mode, step.duration);
+        setModeInSequence(step.mode, true);
+        // prvi mod iz programa postaje aktivan
+      if (index === 0) {
+        currentMode = step.mode;
       }
-allModes.forEach(m => setModeInSequence(m, false));
+    });
+    syncActiveModeToFirstInSequence();
+    // podešavanje reading parametara ako ih ima
+    if (program.reading && readingRowsEl && readingColsEl) {
+      readingRowsEl.value = program.reading.rows;
+      readingColsEl.value = program.reading.cols;
+    }
 
-      // primeni trajanja i uključi modove iz programa
-      program.sequence.forEach((step, index) => {
-          setModeDuration(step.mode, step.duration);
-          setModeInSequence(step.mode, true);
+    enableAutoSequenceEl.checked = true;
+    updateModeTexts();
+    updateModeVisibilityForProgram();   // sakrij/ prikaži relevantne modove
 
-          // prvi mod iz programa postaje aktivan
-          if (index === 0) {
-              currentMode = step.mode;
-              const radio = document.querySelector(`input[name="mode"][value="${step.mode}"]`);
-              if (radio) radio.checked = true;
-          }
-      });
+    const labelKey =
+      (value === "screen_relief") ? "program_screen_relief" :
+      (value === "focus_reset") ? "program_focus_reset" :
+      (value === "intense_15") ? "program_intense_15" : "program_none";
 
-      // podešavanje reading parametara ako ih ima
-      if (program.reading && readingRowsEl && readingColsEl) {
-          readingRowsEl.value = program.reading.rows;
-          readingColsEl.value = program.reading.cols;
-      }
-
-      enableAutoSequenceEl.checked = true;
-      updateModeTexts();
-      updateModeVisibilityForProgram();   // sakrij/ prikaži relevantne modove
-
-      const labelKey =
-        (value === "screen_relief") ? "program_screen_relief" :
-        (value === "focus_reset") ? "program_focus_reset" :
-        (value === "intense_15") ? "program_intense_15" : "program_none";
-
-      statusEl.textContent = t("status_program_prefix") + t(labelKey) + t("status_program_suffix");
-      statusEl.style.color = "#0f766e";
-      playBeep();
+    statusEl.textContent = t("status_program_prefix") + t(labelKey) + t("status_program_suffix");
+    statusEl.style.color = "#0f766e";
+    playBeep();
   });
 
+  function enableLongPressAsClick(btn, delay = 450) {
+    let pressTimer = null;
+    let longPressTriggered = false;
 
-  // Izbor moda (radio)
-  document.querySelectorAll('input[name="mode"]').forEach((radio) => {
-      radio.addEventListener("change", () => {
-          currentMode = radio.value;
-          updateModeTexts();
-          if (isRunning) {
-              startTimerForCurrentMode();
-          }
-      });
-  });
+    const start = (e) => {
+      if (btn.disabled) return;
+
+      longPressTriggered = false;
+
+      pressTimer = setTimeout(() => {
+        longPressTriggered = true;
+        btn.click(); // ista akcija kao običan klik
+      }, delay);
+    };
+
+    const cancel = () => {
+      clearTimeout(pressTimer);
+      pressTimer = null;
+    };
+
+    // pointer events (radi i za touch i za mouse)
+    btn.addEventListener("pointerdown", start);
+    btn.addEventListener("pointerup", cancel);
+    btn.addEventListener("pointerleave", cancel);
+    btn.addEventListener("pointercancel", cancel);
+
+    // spreči dupli click posle long-pressa
+    btn.addEventListener("click", (e) => {
+      if (longPressTriggered) {
+        e.preventDefault();
+        e.stopPropagation();
+        longPressTriggered = false;
+      }
+    });
+  }
+
+  function getFirstModeInSequence() {
+    const seq = getSequenceList();
+    return seq.length ? seq[0] : null;
+  }
+
+  // "next" mod u odnosu na allModes redosled, ali samo cekirani
+  function getNextCheckedModeAfter(mode) {
+    const seq = getSequenceList();
+    if (!seq.length) return null;
+
+    // ako trenutni mod nije u sekvenci, kreni od pocetka sekvence
+    if (!seq.includes(mode)) return seq[0];
+
+    const idx = seq.indexOf(mode);
+    if (idx >= 0 && idx < seq.length - 1) return seq[idx + 1];
+    return null; // nema sledeceg -> kraj sekvence
+  }
+
+  function setActiveMode(mode) {
+    if (!mode) return;
+    currentMode = mode;
+    const radio = document.querySelector(`input[name="mode"][value="${mode}"]`);
+    if (radio) radio.checked = true;
+    updateModeTexts();
+  }
+
+    function ensureActiveModeIsInSequence() {
+      // radi samo kad je auto sekvenca ukljucena
+      if (!enableAutoSequenceEl.checked) return;
+
+      const seq = getSequenceList();
+      if (!seq.length) return;
+
+      if (!seq.includes(currentMode)) {
+        setActiveMode(seq[0]);
+      }
+    }
+
+    function hasAnyModeInSequence() {
+      return getSequenceList().length > 0;
+    }
+
+    function showNoSequenceStatus() {
+      showToast(t("status_no_sequence"), { type: "error" });
+    }
+
+    let toastTimeoutId = null;
+
+
+    function showToast(message, { type = "default", duration = 2200 } = {}) {
+      const toast = document.getElementById("toast");
+      if (!toast) return;
+
+      toast.textContent = message;
+
+      // reset klasa (bitno)
+      toast.className = "toast";
+
+      if (type === "error") {
+        toast.classList.add("toast-error");
+      } else {
+        toast.classList.add("toast-default");
+      }
+
+      // force reflow da bi animacija uvek radila
+      toast.offsetHeight;
+
+      toast.classList.add("show");
+
+      if (toastTimeoutId) {
+        clearTimeout(toastTimeoutId);
+      }
+
+      toastTimeoutId = setTimeout(() => {
+        toast.classList.remove("show");
+      }, duration);
+    }
+
+
 
   function isPhoneDevice() {
     return isRealPhoneScreen();
   }
 
-function reflowNow() {
-  updateRealVh();
-  resizeCanvas();
-  updateRotateOverlay();
-  applyDeviceType();
-}
-
-window.addEventListener("load", () => {
-  updateRealVh();
-
-  if (isPhoneDevice()) {
-    document.body.classList.add("is-phone");
+  function reflowNow() {
+    updateRealVh();
+    resizeCanvas();
+    updateRotateOverlay();
+    applyDeviceType();
   }
 
-  initLang();        // setLang() u sebi radi applyI18n + aktivira dugmice
-  applyDeviceType(); // koristi t(), pa mora posle initLang()
+  window.addEventListener("load", () => {
+    updateRealVh();
 
-  // 1) restore UI state
-  const restored = restoreUiState();
+    if (isPhoneDevice()) {
+      document.body.classList.add("is-phone");
+    }
 
-  // 2) ako nema state-a, tek onda default program
-  if (!restored) {
-    programSelect.value = "screen_relief";
-    programSelect.dispatchEvent(new Event("change"));
-  } else {
+    initLang();        // setLang() u sebi radi applyI18n + aktivira dugmice
+    applyDeviceType(); // koristi t(), pa mora posle initLang()
+
+    // 1) restore UI state
+    const restored = restoreUiState();
+
+    // 2) ako nema state-a, tek onda default program
+    if (!restored) {
+      programSelect.value = "screen_relief";
+      programSelect.dispatchEvent(new Event("change"));
+    } else {
+      updateModeVisibilityForProgram();
+      updateModeTexts();
+    }
+
+    // 3) snimi konsistentno stanje
+    saveUiState();
+
+    updateRotateOverlay();
     updateModeVisibilityForProgram();
     updateModeTexts();
-  }
-
-  // 3) snimi konsistentno stanje
-  saveUiState();
-
-  updateRotateOverlay();
-  updateModeVisibilityForProgram();
-  updateModeTexts();
-  drawBackground();
-  reflowNow();
-});
-
-
-
-
-
+    drawBackground();
+    reflowNow();
+    updateStartStopButtons();
+  });
 
   function updateModeTexts() {
       updateHelpBubble();
@@ -1941,47 +2181,70 @@ window.addEventListener("load", () => {
   }
 
   // Trajanje po modu
-function getModeDurationSeconds(mode) {
-  const el = durationEls[mode];
-  if (!el) return 0;
-  const val = parseInt(el.value, 10);
-  if (isNaN(val) || val <= 0) return 0;
-  return val;
-}
+  function getModeDurationSeconds(mode) {
+    const el = durationEls[mode];
+    if (!el) return 0;
+    const val = parseInt(el.value, 10);
+    if (isNaN(val) || val <= 0) return 0;
+    return val;
+  }
 
-function isModeInSequence(mode) {
-  const el = seqEls[mode];
-  return !!(el && el.checked);
-}
+  function isModeInSequence(mode) {
+    const el = seqEls[mode];
+    return !!(el && el.checked);
+  }
 
-  // Pomoćne fn za setovanje trajanja i učešća u sekvenci
- function setModeDuration(mode, seconds) {
-  const el = durationEls[mode];
-  if (!el) return;
-  const val = Math.max(5, Math.min(600, seconds | 0));
-  el.value = val;
-}
+    // Pomoćne fn za setovanje trajanja i učešća u sekvenci
+   function setModeDuration(mode, seconds) {
+    const el = durationEls[mode];
+    if (!el) return;
+    const val = Math.max(5, Math.min(600, seconds | 0));
+    el.value = val;
+  }
 
-function setModeInSequence(mode, inSeq) {
-  const el = seqEls[mode];
-  if (!el) return;
-  el.checked = !!inSeq;
-}
+  function setModeInSequence(mode, inSeq) {
+    const el = seqEls[mode];
+    if (!el) return;
+    el.checked = !!inSeq;
+  }
 
   function getSequenceList() {
-      return allModes.filter(isModeInSequence);
+    return allModes.filter(m => isModeInSequence(m));
   }
 
   function getNextModeInSequence(mode) {
-      const seq = getSequenceList();
-      if (!seq.length) return null;
-      const idx = seq.indexOf(mode);
-      if (idx === -1 || idx === seq.length - 1) return null;
-      return seq[idx + 1];
+    const seq = getSequenceList();
+    if (!seq.length) return null;
+    const idx = seq.indexOf(mode);
+    if (idx === -1) return seq[0];              // ako iz nekog razloga nije u listi
+    if (idx >= seq.length - 1) return null;     // nema sledećeg
+    return seq[idx + 1];
   }
 
+  function syncActiveModeToFirstInSequence({ preferMode = null } = {}) {
+    if (!enableAutoSequenceEl.checked) return;
 
+    const seq = getSequenceList();
+    if (!seq.length) return;
 
+    // Ako je korisnik baš čekirao neki mod (preferMode), i on je u sekvenci,
+    // možemo da ga forsiramo kao aktivnog.
+    if (preferMode && seq.includes(preferMode)) {
+      setActiveMode(preferMode);
+      return;
+    }
+
+    // U suprotnom - u idle-u uvek prvi čekirani.
+    if (!isRunning) {
+      setActiveMode(seq[0]);
+      return;
+    }
+
+    // Dok radi trening: samo obezbedi da je validan (fallback)
+    if (!seq.includes(currentMode)) {
+      setActiveMode(seq[0]);
+    }
+  }
 
 
   function updateHelpBubble() {
@@ -2058,12 +2321,10 @@ function setModeInSequence(mode, inSeq) {
       if (!isRunning) return;
 
       if (enableAutoSequenceEl.checked) {
-          const nextMode = getNextModeInSequence(currentMode);
+          const nextMode = getNextCheckedModeAfter(currentMode);
           if (nextMode) {
               currentMode = nextMode;
               resetModeState(nextMode);
-              const radio = document.querySelector(`input[name="mode"][value="${nextMode}"]`);
-              if (radio) radio.checked = true;
               updateModeTexts();
               startTimerForCurrentMode();
               playBeep(); // beep na promenu programa / moda u sekvenci
@@ -2126,7 +2387,7 @@ function setModeInSequence(mode, inSeq) {
       return window.innerHeight >= window.innerWidth;
   }
 
-  function updateRotateOverlay() {
+function updateRotateOverlay() {
   // samo telefon
   const mustRotate = isPortraitOnPhone();
 
@@ -2136,13 +2397,10 @@ function setModeInSequence(mode, inSeq) {
     document.body.classList.remove("needs-rotate");
   }
 
-  // blokiraj Start dok je portrait
-  if (startBtn) {
-    startBtn.disabled = mustRotate;
-    startBtn.style.opacity = mustRotate ? "0.6" : "1";
-    startBtn.style.pointerEvents = mustRotate ? "none" : "auto";
-  }
-  }
+  // NE DIRAJ direktno startBtn ovde!
+  // samo pozovi centralnu logiku dugmadi:
+  updateStartStopButtons();
+}
 
 
 
@@ -2870,36 +3128,61 @@ function palmingFrame(timestamp) {
   }
 
 
-function animationLoop(timestamp) {
-  if (!isRunning) return;
+  function animationLoop(timestamp) {
+    if (!isRunning) return;
 
-  const fn = modeFrames[currentMode];
-  if (fn) fn(timestamp);
+    const fn = modeFrames[currentMode];
+    if (fn) fn(timestamp);
 
-  animationFrameId = requestAnimationFrame(animationLoop);
-}
+    animationFrameId = requestAnimationFrame(animationLoop);
+  }
+
+  function updateStartStopButtons() {
+    const mustRotate = isPortraitOnPhone();
+
+    // Start: disable ako je trening u toku ILI je telefon u portrait
+    const startDisabled = isRunning || mustRotate;
+
+    startBtn.disabled = startDisabled;
+
+    // kad je disabled, ne sme ni da registruje “press”
+    startBtn.style.pointerEvents = startDisabled ? "none" : "auto";
+    startBtn.style.opacity = startDisabled ? "0.45" : "1";
+
+    // Stop: enable samo kad trening radi
+    stopBtn.disabled = !isRunning;
+
+    // opcija A: stop je vidljiv ali disabled (default)
+    // opcija B: sakrij Stop kad trening ne radi (ti si rekao da ti smeta što se vidi)
+    // stopBtn.style.display = isRunning ? "" : "none";
+  }
 
 
   function startAnimation() {
-  isRunning = true;
-  setAndroidKeepScreenOn(true);
-  statusEl.textContent = t("status_running");
-  statusEl.style.color = "#10b981";
+    isRunning = true;
+    updateStartStopButtons();
+    setAndroidKeepScreenOn(true);
+    statusEl.textContent = t("status_running");
+    statusEl.style.color = "#10b981";
 
-  appEl.classList.add("is-training");
-  appEl.classList.remove("menu-open");
+    appEl.classList.add("is-training");
+    appEl.classList.remove("menu-open");
 
-  hideHamburger();
+    // Auto sekvenca ON: pred start uvek uskladi aktivni mod sa sekvencom
+    syncActiveModeToFirstInSequence({ preferMode: pendingStartMode });
+pendingStartMode = null;
 
-  // Resetuj samo state koji pripada aktivnom modu
-  resetModeState(currentMode);
+    hideHamburger();
 
-  try { cancelAnimationFrame(animationFrameId); } catch (e) {}
-  animationFrameId = requestAnimationFrame(animationLoop);
+    // Resetuj samo state koji pripada aktivnom modu
+    resetModeState(currentMode);
 
-  updateHelpBubble();
-  reflowNow();
-  startTimerForCurrentMode();
+    try { cancelAnimationFrame(animationFrameId); } catch (e) {}
+    animationFrameId = requestAnimationFrame(animationLoop);
+
+    updateHelpBubble();
+    reflowNow();
+    startTimerForCurrentMode();
   }
 
   function resetModeState(mode) {
@@ -2944,77 +3227,109 @@ document.addEventListener("visibilitychange", () => {
   }
 });
 
+function resetAllModeState() {
+  // smooth (circle/figure8)
+  smoothDirection = 1;
+  smoothTimeInDir = 0;
+  smoothCyclesDone = 0;
+  getSmoothProgress._lastTime = null;
+
+  // star8
+  star8Direction = 1;
+  star8StepTimeAccum = 0;
+  star8StepIndexTotal = 0;
+  star8CyclesDone = 0;
+  saccadeStar8Frame._lastTime = null;
+
+  // reading
+  readingDirection = 1;
+  readingStepTimeAccum = 0;
+  readingStepIndexTotal = 0;
+  readingCyclesDone = 0;
+  readingBasicFrame._lastTime = null;
+
+  // rain
+  rainMainStartTime = null;
+  rainMainColumn = 0;
+
+  // near/far
+  nearFarLastPhase = null;
+}
 
   function stopAnimation() {
-  isRunning = false;
-  setAndroidKeepScreenOn(false);
+    isRunning = false;
+    updateStartStopButtons();
+    setAndroidKeepScreenOn(false);
 
-  try { cancelAnimationFrame(animationFrameId); } catch (e) {}
-  animationFrameId = null;
+    try { cancelAnimationFrame(animationFrameId); } catch (e) {}
+    animationFrameId = null;
 
-  clearTimer();
+    clearTimer();
+    resetAllModeState();
+    statusEl.textContent = t("status_stopped");
+    statusEl.style.color = "#6b7280";
 
-  statusEl.textContent = t("status_stopped");
-  statusEl.style.color = "#6b7280";
+    helpBubbleEl.style.display = "none";
+    drawBackground();
 
-  helpBubbleEl.style.display = "none";
-  drawBackground();
+    appEl.classList.remove("is-training");
+    appEl.classList.remove("menu-open");
 
-  appEl.classList.remove("is-training");
-  appEl.classList.remove("menu-open");
+    if (hamburgerHideTimeout) {
+      clearTimeout(hamburgerHideTimeout);
+      hamburgerHideTimeout = null;
+    }
+    hamburgerBtn.style.opacity = "0";
+    hamburgerBtn.style.pointerEvents = "none";
 
-  if (hamburgerHideTimeout) {
-    clearTimeout(hamburgerHideTimeout);
-    hamburgerHideTimeout = null;
-  }
-  hamburgerBtn.style.opacity = "0";
-  hamburgerBtn.style.pointerEvents = "none";
+    // počisti phone CSS state
+    document.body.classList.remove("phone-fullscreen-training");
 
-  // počisti phone CSS state
-  document.body.classList.remove("phone-fullscreen-training");
+    // ubij eventualni phantom scroll / offset
+    try { window.scrollTo(0, 0); } catch (e) {}
+    try { document.documentElement.scrollTop = 0; } catch (e) {}
+    try { document.body.scrollTop = 0; } catch (e) {}
 
-  // ubij eventualni phantom scroll / offset
-  try { window.scrollTo(0, 0); } catch (e) {}
-  try { document.documentElement.scrollTop = 0; } catch (e) {}
-  try { document.body.scrollTop = 0; } catch (e) {}
+    // odmah resize po trenutnom layout-u
+    reflowNow();
 
-  // odmah resize po trenutnom layout-u
-  reflowNow();
+    // odmah + posle 2 frame-a (kad se flex layout stabilizuje)
+    requestAnimationFrame(() => {
+    reflowNow();
 
-  // odmah + posle 2 frame-a (kad se flex layout stabilizuje)
-  requestAnimationFrame(() => {
-  reflowNow();
-
-  requestAnimationFrame(() => {
-  reflowNow();
-  });
-  });
+    requestAnimationFrame(() => {
+    reflowNow();
+    });
+    });
   }
 
 
   // Start / Stop
   startBtn.addEventListener("click", () => {
-  // PATCH: ako je telefon u portrait -> ne startuj, samo prikazi overlay
-  if (isPortraitOnPhone()) {
-  updateRotateOverlay();
-  return;
-  }
-      if (!isRunning) {
-          // ako smo na telefonu – probaj fullscreen i landscape
-          if (isPhoneDevice()) {
-  // pokušaj landscape lock (radi samo na nekim browserima, i samo iz user gesture-a)
-  if (screen.orientation && screen.orientation.lock) {
-    screen.orientation.lock("landscape").catch(() => {
-      // ignorisi ako ne uspe
-    });
-  }
-
-  // stanje za CSS – sakrij footer, zabrani scroll, 100vh itd.
-  document.body.classList.add("phone-fullscreen-training");
-  }
-
-          startAnimation();
+    if (enableAutoSequenceEl.checked && !hasAnyModeInSequence()) {
+      showNoSequenceStatus();
+      return;
+    }
+    // PATCH: ako je telefon u portrait -> ne startuj, samo prikazi overlay
+    if (isPortraitOnPhone()) {
+      updateRotateOverlay();
+      return;
+    }
+    if (!isRunning) {
+      // ako smo na telefonu – probaj fullscreen i landscape
+      if (isPhoneDevice()) {
+        // pokušaj landscape lock (radi samo na nekim browserima, i samo iz user gesture-a)
+        if (screen.orientation && screen.orientation.lock) {
+          screen.orientation.lock("landscape").catch(() => {
+            // ignorisi ako ne uspe
+          });
+        }
+      // stanje za CSS – sakrij footer, zabrani scroll, 100vh itd.
+      document.body.classList.add("phone-fullscreen-training");
       }
+      startAnimation();
+      showToast(t("status_running"));
+    }
   });
 
   [
@@ -3039,16 +3354,10 @@ document.addEventListener("visibilitychange", () => {
   el.addEventListener("input", saveUiState);
   });
 
-  // i radio mode
-  document.querySelectorAll('input[name="mode"]').forEach(r => {
-  r.addEventListener("change", () => {
-    saveUiState();
-  });
-  });
-
   stopBtn.addEventListener("click", () => {
       if (isRunning) {
           stopAnimation();
+          showToast(t("status_stopped"));
       }
   });
 
