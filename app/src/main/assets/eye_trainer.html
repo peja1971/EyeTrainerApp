@@ -1,459 +1,465 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="sr">
-
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
   <title>Eye Trainer MVP</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
   <style>
     * {
-        box-sizing: border-box;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      box-sizing: border-box;
+      font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
     }
 
     body {
-        margin: 0;
-        background: #e8ecef;
-        color: #0f172a;
+      margin: 0;
+      background: #e8ecef;
+      color: #0f172a;
     }
 
     :root {
-        --vh: 1vh;                 /* default, JS ce odmah overwrite */
-        --androidInsetTop: 0px;
-        --androidInsetBottom: 0px;
-        }
+      --vh: 1vh; /* default, JS ce odmah overwrite */
+      --androidInsetTop: 0px;
+      --androidInsetBottom: 0px;
+    }
 
     .app {
-        position: relative;
-        background: #f5f7fa;
-        margin: 0;
-        border-radius: 0;
-        box-shadow: none;
-        display: flex;
-        flex-direction: row;
-        overflow: hidden;
-        width: 100%;
-        height: calc(var(--vh) * 100);
+      position: relative;
+      background: #f5f7fa;
+      margin: 0;
+      border-radius: 0;
+      box-shadow: none;
+      display: flex;
+      flex-direction: row;
+      overflow: hidden;
+      width: 100%;
+      height: calc(var(--vh) * 100);
     }
 
     .sidebar {
-        width: 570px;
-        /* širi meni (50% više) */
-        max-width: 630px;
-        padding: 20px 20px 24px;
-        background: #ffffff;
-        border-right: 1px solid rgba(15, 23, 42, 0.06);
-        display: flex;
-        flex-direction: column;
-        gap: 18px;
-        position: relative;
-        z-index: 20;
-        transition: transform 0.2s ease;
-        overflow-y: auto;
+      width: 570px;
+      /* širi meni (50% više) */
+      max-width: 630px;
+      padding: 20px 20px 24px;
+      background: #ffffff;
+      border-right: 1px solid rgba(15, 23, 42, 0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: relative;
+      z-index: 20;
+      transition: transform 0.2s ease;
+      overflow-y: auto;
     }
 
     .title {
-        font-size: 20px;
-        font-weight: 700;
-        letter-spacing: 0.02em;
-        display: flex;
-        align-items: center;
-        gap: 8px;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .subtitle {
-        font-size: 13px;
-        color: #6b7280;
-        margin-top: 4px;
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 4px;
     }
 
     .pill {
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
-        padding: 4px 10px;
-        border-radius: 999px;
-        background: rgba(15, 118, 110, 0.08);
-        color: #0f766e;
-        font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(15, 118, 110, 0.08);
+      color: #0f766e;
+      font-weight: 600;
     }
 
     .section {
-        border-radius: 12px;
-        background: #f9fafb;
-        padding: 12px 12px 14px;
-        border: 1px solid rgba(15, 23, 42, 0.04);
+      border-radius: 12px;
+      background: #f9fafb;
+      padding: 12px 12px 14px;
+      border: 1px solid rgba(15, 23, 42, 0.04);
     }
 
-    .section+.section {
-        margin-top: 4px;
+    .section + .section {
+      margin-top: 4px;
     }
 
     .section-header {
-        font-size: 13px;
-        font-weight: 600;
-        margin-bottom: 8px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     label {
-        font-size: 13px;
-        display: block;
-        margin-bottom: 4px;
-        color: #374151;
+      font-size: 13px;
+      display: block;
+      margin-bottom: 4px;
+      color: #374151;
     }
 
     select,
     button,
     input[type="checkbox"],
     input[type="number"] {
-        font-size: 13px;
+      font-size: 13px;
     }
 
     select {
-        width: 100%;
-        padding: 8px 10px;
-        border-radius: 999px;
-        border: 1px solid rgba(148, 163, 184, 0.9);
-        background: #ffffff;
-        outline: none;
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.9);
+      background: #ffffff;
+      outline: none;
     }
 
     select:focus {
-        border-color: #0f766e;
-        box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.35);
+      border-color: #0f766e;
+      box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.35);
     }
 
     .distance-info {
-        font-size: 12px;
-        color: #4b5563;
-        margin-top: 6px;
-        line-height: 1.4;
+      font-size: 12px;
+      color: #4b5563;
+      margin-top: 6px;
+      line-height: 1.4;
     }
 
     .distance-highlight {
-        font-weight: 600;
-        color: #0f766e;
+      font-weight: 600;
+      color: #0f766e;
     }
 
     .mode-list {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 4px;
     }
 
     .mode-radio {
-        display: flex;
-        align-items: flex-start;
-        gap: 6px;
-        font-size: 13px;
-        padding: 6px 8px;
-        border-radius: 8px;
-        background: rgba(15, 23, 42, 0.01);
-        cursor: pointer;
-        border: 1px solid transparent;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      font-size: 13px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.01);
+      cursor: pointer;
+      border: 1px solid transparent;
     }
 
     .mode-title {
-        font-weight: 600;
+      font-weight: 600;
     }
 
     .mode-description {
-        font-size: 12px;
-        color: #6b7280;
+      font-size: 12px;
+      color: #6b7280;
     }
 
     .mode-config-row {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 6px;
-        margin-top: 4px;
-        font-size: 11px;
-        color: #4b5563;
-        margin-left: 26px; /* poravnava sa tekstom moda */
-        padding-left: 6px; /* mali odmak */
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+      font-size: 11px;
+      color: #4b5563;
+      margin-left: 26px; /* poravnava sa tekstom moda */
+      padding-left: 6px; /* mali odmak */
     }
 
     .mode-config-row input[type="number"] {
-        width: 60px;
-        padding: 4px 6px;
-        border-radius: 999px;
-        border: 1px solid rgba(148, 163, 184, 0.9);
-        outline: none;
+      width: 60px;
+      padding: 4px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.9);
+      outline: none;
     }
 
     .mode-config-row input[type="number"]:focus {
-        border-color: #0f766e;
-        box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.35);
+      border-color: #0f766e;
+      box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.35);
     }
 
     .controls-row {
-        display: flex;
-        gap: 8px;
-        margin-top: 10px;
-        align-items: center;
-        flex-wrap: nowrap;
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      align-items: center;
+      flex-wrap: nowrap;
     }
 
     .btn {
-        flex: 1;
-        border-radius: 999px;
-        border: none;
-        padding: 9px 14px;
-        cursor: pointer;
-        font-weight: 600;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
-        transition: transform 0.06s ease, box-shadow 0.06s ease, background 0.1s ease, border-color 0.1s ease;
-        white-space: nowrap;
+      flex: 1;
+      border-radius: 999px;
+      border: none;
+      padding: 9px 14px;
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition:
+        transform 0.06s ease,
+        box-shadow 0.06s ease,
+        background 0.1s ease,
+        border-color 0.1s ease;
+      white-space: nowrap;
     }
 
     .btn-primary {
-        background: #0f766e;
-        color: white;
-        box-shadow: 0 10px 20px rgba(15, 118, 110, 0.4);
+      background: #0f766e;
+      color: white;
+      box-shadow: 0 10px 20px rgba(15, 118, 110, 0.4);
     }
-
 
     .btn-secondary {
-        background: #e5e7eb;
-        color: #111827;
+      background: #e5e7eb;
+      color: #111827;
     }
-
-
 
     .btn-ghost {
-        flex: 0;
-        padding: 8px 10px;
-        background: transparent;
-        border-radius: 999px;
-        border: 1px solid rgba(148, 163, 184, 0.9);
-        color: #4b5563;
-        font-size: 14px;
-        line-height: 1;
+      flex: 0;
+      padding: 8px 10px;
+      background: transparent;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.9);
+      color: #4b5563;
+      font-size: 14px;
+      line-height: 1;
     }
 
-
-
     .hint {
-        font-size: 11px;
-        color: #6b7280;
-        margin-top: 8px;
-        line-height: 1.4;
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 8px;
+      line-height: 1.4;
     }
 
     .hint strong {
-        color: #0f172a;
+      color: #0f172a;
     }
 
     .status {
-        margin-top: 8px;
-        font-size: 12px;
-        color: #10b981;
-        font-weight: 600;
+      margin-top: 8px;
+      font-size: 12px;
+      color: #10b981;
+      font-weight: 600;
     }
 
     .checkbox-row {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        margin-top: 10px;
-        font-size: 11px;
-        color: #4b5563;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      font-size: 11px;
+      color: #4b5563;
     }
 
     .checkbox-row input {
-        margin: 0;
+      margin: 0;
     }
 
     .training-area {
-    flex: 1 1 auto;
-    min-width: 0; /* KLJUČNO za canvas */
+      flex: 1 1 auto;
+      min-width: 0; /* KLJUČNO za canvas */
     }
 
     .canvas-wrapper {
-        flex: 1;
-        border-radius: 0;
-        background: #e8ecef;
-        border: none;
-        overflow: hidden;
-        position: relative;
-        display: flex;
-        align-items: stretch;
-        justify-content: stretch;
+      flex: 1;
+      border-radius: 0;
+      background: #e8ecef;
+      border: none;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
     }
 
     canvas {
-        width: 100%;
-        height: 100%;
-        display: block;
-        background: #e8ecef;
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: #e8ecef;
     }
 
     .help-bubble {
-        position: absolute;
-        bottom: 10px;
-        right: 10px;
-        max-width: 260px;
-        font-size: 12px;
-        line-height: 1.4;
-        background: #ffffff;
-        border-radius: 10px;
-        padding: 8px 10px;
-        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.28);
-        border: 1px solid rgba(148, 163, 184, 0.6);
-        color: #4b5563;
-        display: none;
-        z-index: 15;
-        cursor: pointer;
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      max-width: 260px;
+      font-size: 12px;
+      line-height: 1.4;
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 8px 10px;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.28);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: #4b5563;
+      display: none;
+      z-index: 15;
+      cursor: pointer;
     }
 
     .help-bubble strong {
-        color: #0f172a;
+      color: #0f172a;
     }
 
     .timer-overlay {
-        position: absolute;
-        bottom: 10px;
-        left: 10px;
-        padding: 4px 8px;
-        border-radius: 999px;
-        background: rgba(15, 23, 42, 0.72);
-        color: #f9fafb;
-        font-size: 11px;
-        line-height: 1;
-        z-index: 15;
-        display: none;
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.72);
+      color: #f9fafb;
+      font-size: 11px;
+      line-height: 1;
+      z-index: 15;
+      display: none;
     }
 
     .hamburger-btn {
-        position: absolute;
-        top: calc(10px + var(--androidInsetTop));
-        left: 10px;
-        border-radius: 999px;
-        border: 1px solid rgba(148, 163, 184, 0.9);
-        background: #ffffff;
-        padding: 6px 9px;
-        cursor: pointer;
-        display: inline-flex;
-        /* uvek u DOM-u */
-        opacity: 0;
-        /* podrazumevano skriven */
-        pointer-events: none;
-        /* da ne hvata klik kad je sakriven */
-        transition: opacity 0.2s ease;
-        align-items: center;
-        justify-content: center;
-        font-size: 16px;
-        line-height: 1;
-        color: #4b5563;
-        box-shadow: 0 4px 10px rgba(15, 23, 42, 0.18);
-        z-index: 16;
+      position: absolute;
+      top: calc(10px + var(--androidInsetTop));
+      left: 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.9);
+      background: #ffffff;
+      padding: 6px 9px;
+      cursor: pointer;
+      display: inline-flex;
+      /* uvek u DOM-u */
+      opacity: 0;
+      /* podrazumevano skriven */
+      pointer-events: none;
+      /* da ne hvata klik kad je sakriven */
+      transition: opacity 0.2s ease;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      line-height: 1;
+      color: #4b5563;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.18);
+      z-index: 16;
     }
 
-
     .app.is-training .sidebar {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        transform: translateX(-100%);
-        width: min(80vw, 570px);
-        max-width: none;
-        border-right: none;
-        border-bottom: none;
-        box-shadow: 0 18px 35px rgba(15, 23, 42, 0.35);
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      transform: translateX(-100%);
+      width: min(80vw, 570px);
+      max-width: none;
+      border-right: none;
+      border-bottom: none;
+      box-shadow: 0 18px 35px rgba(15, 23, 42, 0.35);
     }
 
     .app.is-training.menu-open .sidebar {
-        transform: translateX(0);
-        background: #ffffff;
+      transform: translateX(0);
+      background: #ffffff;
     }
 
     /* Telefon u fullscreen treningu */
     body.phone-fullscreen-training {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        background: #000;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #000;
     }
 
     /* Tokom treninga: nema paddinga, canvas dobija 100% */
     body.phone-fullscreen-training .app {
-    height: calc(var(--vh) * 100);
+      height: calc(var(--vh) * 100);
     }
 
     /* Ako postoji footer na stranici, skloni ga na telefonu u treningu */
     body.phone-fullscreen-training footer {
-        display: none !important;
+      display: none !important;
     }
 
-
-
-
     .rotate-overlay-box {
-        max-width: 320px;
-        text-align: center;
-        color: #e5e7eb;
-        font-size: 14px;
-        line-height: 1.5;
+      max-width: 320px;
+      text-align: center;
+      color: #e5e7eb;
+      font-size: 14px;
+      line-height: 1.5;
     }
 
     .rotate-overlay-icon {
-        font-size: 40px;
-        margin-bottom: 10px;
+      font-size: 40px;
+      margin-bottom: 10px;
     }
 
     .rotate-overlay-title {
-        font-weight: 700;
-        font-size: 16px;
-        margin-bottom: 6px;
-        color: #f9fafb;
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 6px;
+      color: #f9fafb;
     }
 
     .rotate-overlay-text {
-        opacity: 0.9;
-        margin-bottom: 6px;
+      opacity: 0.9;
+      margin-bottom: 6px;
     }
 
     .rotate-overlay-hint {
-        font-size: 12px;
-        opacity: 0.75;
+      font-size: 12px;
+      opacity: 0.75;
     }
 
     /* rotate overlay mora da bude FULLSCREEN i iznad svega */
     #rotateOverlay.rotate-overlay {
-        position: fixed !important;
-        inset: 0 !important;
-        z-index: 99999 !important;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        background: rgba(15, 23, 42, 0.85);
-        padding: 20px;
+      position: fixed !important;
+      inset: 0 !important;
+      z-index: 99999 !important;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.85);
+      padding: 20px;
     }
 
     body.needs-rotate #rotateOverlay.rotate-overlay {
-        display: flex !important;
+      display: flex !important;
     }
     /* PHONE: uvek horizontalni layout (ne sme column posle stop) */
     body.is-phone .app {
-        flex-direction: row !important;
+      flex-direction: row !important;
     }
 
     body.is-phone .training-area {
-        flex: 1 !important;
+      flex: 1 !important;
     }
 
     /* UI hide: voice toggle (TTS ostaje u kodu) */
-    .hide-voice-ui { display: none !important; }
-    .mode-block.hide-mode-ui { display: none !important; }
+    .hide-voice-ui {
+      display: none !important;
+    }
+    .mode-block.hide-mode-ui {
+      display: none !important;
+    }
 
     .lang-toggle {
       display: inline-flex;
@@ -493,7 +499,9 @@
       box-shadow: 0 10px 25px rgba(15, 23, 42, 0.35);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.25s ease, transform 0.25s ease;
+      transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
       z-index: 9999;
     }
 
@@ -511,71 +519,72 @@
     .toast-error {
       background: rgba(220, 38, 38, 0.92); /* crvena, ali čista */
     }
-    .hide-auto-seq { display: none !important; }
+    .hide-auto-seq {
+      display: none !important;
+    }
 
-/* =====================================================
-   Buttons - unified, hardened, with clear pressed state
-   ===================================================== */
+    /* =====================================================
+ Buttons - unified, hardened, with clear pressed state
+ ===================================================== */
 
-/* Global disabled stanje (i dalje vazi i za druge btn ako ih ima) */
-button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
+    /* Global disabled stanje (i dalje vazi i za druge btn ako ih ima) */
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
 
-/* Osnovni btn reset i hardening */
-.btn {
-  /* ukloni native izgled */
-  -webkit-appearance: none;
-  appearance: none;
+    /* Osnovni btn reset i hardening */
+    .btn {
+      /* ukloni native izgled */
+      -webkit-appearance: none;
+      appearance: none;
 
-  /* nema select / copy / long-press callout */
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-touch-callout: none;
+      /* nema select / copy / long-press callout */
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
 
-  /* nema tap flash-a */
-  -webkit-tap-highlight-color: transparent;
+      /* nema tap flash-a */
+      -webkit-tap-highlight-color: transparent;
 
-  /* nema drag-a */
-  -webkit-user-drag: none;
+      /* nema drag-a */
+      -webkit-user-drag: none;
 
-  /* brzi click, bez gesture gluposti */
-  touch-action: manipulation;
+      /* brzi click, bez gesture gluposti */
+      touch-action: manipulation;
 
-  /* vizuelna konzistentnost */
-  outline: none;
-  border-radius: 999px;
-}
+      /* vizuelna konzistentnost */
+      outline: none;
+      border-radius: 999px;
+    }
 
-/* Isto važi i za sadržaj u dugmetu (tekst, span, icon...) */
-.btn,
-.btn * {
-  -webkit-user-select: none;
-  user-select: none;
-}
+    /* Isto važi i za sadržaj u dugmetu (tekst, span, icon...) */
+    .btn,
+    .btn * {
+      -webkit-user-select: none;
+      user-select: none;
+    }
 
-/* Pressed state - vidi se i na short i na long press */
-.btn:active {
-  transform: translateY(1px) scale(0.99);
-  filter: brightness(0.92);
-  border-radius: 999px;
-}
+    /* Pressed state - vidi se i na short i na long press */
+    .btn:active {
+      transform: translateY(1px) scale(0.99);
+      filter: brightness(0.92);
+      border-radius: 999px;
+    }
 
-/* Fokus (tastatura / accessibility) */
-.btn:focus-visible {
-  outline: 2px solid rgba(15, 118, 110, 0.45);
-  outline-offset: 2px;
-  border-radius: 999px;
-}
+    /* Fokus (tastatura / accessibility) */
+    .btn:focus-visible {
+      outline: 2px solid rgba(15, 118, 110, 0.45);
+      outline-offset: 2px;
+      border-radius: 999px;
+    }
 
-/* Disabled dugme nema pressed efekat */
-.btn:disabled,
-.btn:disabled:active {
-  transform: none;
-  filter: none;
-}
-
+    /* Disabled dugme nema pressed efekat */
+    .btn:disabled,
+    .btn:disabled:active {
+      transform: none;
+      filter: none;
+    }
 
     /* opciono: ako želiš da ceo sidebar nema selekciju */
     .sidebar {
@@ -585,48 +594,65 @@ button:disabled {
     }
 
     /* Header blok sidebara */
-.sidebar-header {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+    .sidebar-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
 
-/* Red ispod naslova */
-.header-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-/* Header row: title levo, desni blok skroz desno */
-.sidebar-header-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+    /* Red ispod naslova */
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    /* Header row: title levo, desni blok skroz desno */
+    .sidebar-header-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-/* Desni blok: device + lang */
-.header-right {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+    /* Desni blok: device + lang */
+    .header-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-/* Device debug - diskretno */
-.device-debug {
-  font-size: 12px;
-  color: #9ca3af;
-  opacity: 0.7;
-  user-select: none;
-  white-space: nowrap;
-}
+    /* Device debug - diskretno */
+    .device-debug {
+      font-size: 12px;
+      color: #9ca3af;
+      opacity: 0.7;
+      user-select: none;
+      white-space: nowrap;
+    }
 
-/* Language toggle ostaje desno */
-.lang-toggle {
-  display: flex;
-  gap: 6px;
-}
+    /* Language toggle ostaje desno */
+    .lang-toggle {
+      display: flex;
+      gap: 6px;
+    }
+    /* --- Training screen hardening (no long-press select/callout) --- */
+    .canvas-wrapper,
+    .canvas-wrapper * {
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none; /* iOS/Android long-press menu */
+      -webkit-tap-highlight-color: transparent; /* Android tap flash */
+    }
 
+    /* Najbitnije za Android WebView: spreči gesture/selection na canvas zoni */
+    .canvas-wrapper {
+      touch-action: none;
+    }
+
+    /* Ako WebView ipak pokušava nešto baš na canvas-u */
+    #trainingCanvas {
+      touch-action: none;
+    }
   </style>
 </head>
 
@@ -648,38 +674,33 @@ button:disabled {
     </div>
 
     <div class="section">
-      <div class="section-header">
-        <!--span data-i18n="section_device_title">1. Uređaj i udaljenost</span-->
-      </div>
-
-      <!--div class="mode-config-row" style="margin-top:2px; margin-bottom:4px;">
-        <span data-i18n="device_detected_label">Uređaj:</span>
-        <span style="margin-left:10px;" data-i18n="language_label">Jezik:</span>
-      </div-->
 
       <div class="distance-info">
-        <span data-i18n="distance_label">Preporučena udaljenost:</span><br/>
-        <span class="distance-highlight" id="distanceText">30-40 cm od očiju</span><br/>
+            <span data-i18n="distance_label">Preporučena udaljenost:</span
+            ><br />
+        <span class="distance-highlight" id="distanceText"
+        >30-40 cm od očiju</span
+        ><br />
         <span class="small-label">
-                        Gornja ivica ekrana malo ispod nivoa očiju, glava uspravna, ramena opuštena.
-                    </span>
+              Gornja ivica ekrana malo ispod nivoa očiju, glava uspravna, ramena
+              opuštena.
+            </span>
       </div>
     </div>
 
     <div class="section">
-      <!--div class="section-header">
-        <span data-i18n="section_modes_title">2. Modovi i tajmer</span>
-        <span class="small-label" data-i18n="section_modes_sub">trajanje + sekvenca</span>
-      </div-->
 
       <!-- Programi / gotove sekvence -->
-      <div class="mode-config-row" style="margin-top:2px; margin-bottom:4px;">
+      <div
+              class="mode-config-row"
+              style="margin-top: 2px; margin-bottom: 4px"
+      >
         <!--span data-i18n="program_label">Program:</span-->
-        <select id="programSelect" style="min-width: 220px;">
+        <select id="programSelect" style="min-width: 220px">
           <option value="none">Ručno biranje</option>
-          <option value="screen_relief">Odmor od ekrana - 5 min</option>
-          <option value="focus_reset">Fokus reset - 10 min</option>
-          <option value="intense_15">Intenzivni - 15 min</option>
+          <option value="screen_relief">Odmor od ekrana</option>
+          <option value="focus_reset">Fokus reset</option>
+          <option value="intense_15">Intenzivni</option>
         </select>
       </div>
 
@@ -687,20 +708,25 @@ button:disabled {
         <!-- WARMUP -->
         <div class="mode-block" data-mode="warmup">
           <label class="mode-radio">
-            <input type="checkbox" id="seq_warmup" checked/>
+            <input type="checkbox" id="seq_warmup" checked />
             <div>
               <div class="mode-title">Zagrejavanje</div>
               <div class="mode-description">
-                Fiksaciona tačka u centru, blago „disanje“ mete. Minimalan napor,
-                samo držanje
-                pogleda.
+                Fiksaciona tačka u centru, blago „disanje“ mete. Minimalan
+                napor, samo držanje pogleda.
               </div>
             </div>
           </label>
           <div class="mode-config-row">
             <span>Trajanje:</span>
-            <input type="number" id="duration_warmup" min="5" max="600" step="5"
-                   value="45"/>
+            <input
+                    type="number"
+                    id="duration_warmup"
+                    min="5"
+                    max="600"
+                    step="5"
+                    value="45"
+            />
             <span>s</span>
           </div>
         </div>
@@ -708,19 +734,25 @@ button:disabled {
         <!-- CIRCLE -->
         <div class="mode-block" data-mode="circle">
           <label class="mode-radio">
-            <input type="checkbox" id="seq_circle" checked/>
+            <input type="checkbox" id="seq_circle" checked />
             <div>
               <div class="mode-title">Krug</div>
               <div class="mode-description">
-                Meta kruži po velikoj kružnoj putanji - trening glatkog praćenja po
-                velikoj putanji.
+                Meta kruži po velikoj kružnoj putanji - trening glatkog
+                praćenja po velikoj putanji.
               </div>
             </div>
           </label>
           <div class="mode-config-row">
             <span>Trajanje:</span>
-            <input type="number" id="duration_circle" min="5" max="600" step="5"
-                   value="60"/>
+            <input
+                    type="number"
+                    id="duration_circle"
+                    min="5"
+                    max="600"
+                    step="5"
+                    value="60"
+            />
             <span>s</span>
           </div>
         </div>
@@ -728,18 +760,25 @@ button:disabled {
         <!-- FIGURE 8 -->
         <div class="mode-block" data-mode="figure8">
           <label class="mode-radio">
-            <input type="checkbox" id="seq_figure8" checked/>
+            <input type="checkbox" id="seq_figure8" checked />
             <div>
               <div class="mode-title">Infiniti</div>
               <div class="mode-description">
-                Meta se kreće po ležećoj osmici (∞) - glatko praćenje u dve ravni.
+                Meta se kreće po ležećoj osmici (∞) - glatko praćenje u dve
+                ravni.
               </div>
             </div>
           </label>
           <div class="mode-config-row">
             <span>Trajanje:</span>
-            <input type="number" id="duration_figure8" min="5" max="600" step="5"
-                   value="60"/>
+            <input
+                    type="number"
+                    id="duration_figure8"
+                    min="5"
+                    max="600"
+                    step="5"
+                    value="60"
+            />
             <span>s</span>
           </div>
         </div>
@@ -747,19 +786,25 @@ button:disabled {
         <!-- SACCADE L-R -->
         <div class="mode-block" data-mode="saccade_lr">
           <label class="mode-radio">
-            <input type="checkbox" id="seq_saccade_lr" checked/>
+            <input type="checkbox" id="seq_saccade_lr" checked />
             <div>
               <div class="mode-title">Skokovi levo-desno</div>
               <div class="mode-description">
-                Meta skače maksimalno levo-desno. Brzi skokovi - bez pomeranja
-                glave.
+                Meta skače maksimalno levo-desno. Brzi skokovi - bez
+                pomeranja glave.
               </div>
             </div>
           </label>
           <div class="mode-config-row">
             <span>Trajanje:</span>
-            <input type="number" id="duration_saccade_lr" min="5" max="600" step="5"
-                   value="45"/>
+            <input
+                    type="number"
+                    id="duration_saccade_lr"
+                    min="5"
+                    max="600"
+                    step="5"
+                    value="45"
+            />
             <span>s</span>
           </div>
         </div>
@@ -767,19 +812,25 @@ button:disabled {
         <!-- SACCADE U-D -->
         <div class="mode-block" data-mode="saccade_ud">
           <label class="mode-radio">
-            <input type="checkbox" id="seq_saccade_ud" checked/>
+            <input type="checkbox" id="seq_saccade_ud" checked />
             <div>
               <div class="mode-title">Skokovi gore-dole</div>
               <div class="mode-description">
-                Meta skače maksimalno gore-dole. Aktivira vertikalne napete mišiće
-                od ekrana.
+                Meta skače maksimalno gore-dole. Aktivira vertikalne napete
+                mišiće od ekrana.
               </div>
             </div>
           </label>
           <div class="mode-config-row">
             <span>Trajanje:</span>
-            <input type="number" id="duration_saccade_ud" min="5" max="600" step="5"
-                   value="45"/>
+            <input
+                    type="number"
+                    id="duration_saccade_ud"
+                    min="5"
+                    max="600"
+                    step="5"
+                    value="45"
+            />
             <span>s</span>
           </div>
         </div>
@@ -787,20 +838,25 @@ button:disabled {
         <!-- SACCADE L-C-R -->
         <div class="mode-block" data-mode="saccade_lcr">
           <label class="mode-radio">
-            <input type="checkbox" id="seq_saccade_lcr" checked/>
+            <input type="checkbox" id="seq_saccade_lcr" checked />
             <div>
               <div class="mode-title">Skokovi L-C-R (3 tačke)</div>
               <div class="mode-description">
-                Meta skače: levo → centar → desno → centar… Kombinuje kratke i duge
-                skokove, kao
-                skeniranje reda teksta.
+                Meta skače: levo → centar → desno → centar… Kombinuje kratke
+                i duge skokove, kao skeniranje reda teksta.
               </div>
             </div>
           </label>
           <div class="mode-config-row">
             <span>Trajanje:</span>
-            <input type="number" id="duration_saccade_lcr" min="5" max="600" step="5"
-                   value="30"/>
+            <input
+                    type="number"
+                    id="duration_saccade_lcr"
+                    min="5"
+                    max="600"
+                    step="5"
+                    value="30"
+            />
             <span>s</span>
           </div>
         </div>
@@ -808,20 +864,25 @@ button:disabled {
         <!-- SACCADE CROSS (C + 4 strane) -->
         <div class="mode-block" data-mode="saccade_cross">
           <label class="mode-radio">
-            <input type="checkbox" id="seq_saccade_cross" checked/>
+            <input type="checkbox" id="seq_saccade_cross" checked />
             <div>
               <div class="mode-title">Skokovi krst (C + 4 strane)</div>
               <div class="mode-description">
-                Meta skače centar ↔ levo/desno/gore/dole. Brzi skokovi sa stalnim
-                povratkom u centar
-                - šablon za skeniranje.
+                Meta skače centar ↔ levo/desno/gore/dole. Brzi skokovi sa
+                stalnim povratkom u centar - šablon za skeniranje.
               </div>
             </div>
           </label>
           <div class="mode-config-row">
             <span>Trajanje:</span>
-            <input type="number" id="duration_saccade_cross" min="5" max="600" step="5"
-                   value="40"/>
+            <input
+                    type="number"
+                    id="duration_saccade_cross"
+                    min="5"
+                    max="600"
+                    step="5"
+                    value="40"
+            />
             <span>s</span>
           </div>
         </div>
@@ -829,20 +890,27 @@ button:disabled {
         <!-- SACCADE STAR8 (C + 8 smerova) -->
         <div class="mode-block" data-mode="saccade_star8">
           <label class="mode-radio">
-            <input type="checkbox" id="seq_saccade_star8" checked/>
+            <input type="checkbox" id="seq_saccade_star8" checked />
             <div>
-              <div class="mode-title">Skokovi 8 smerova (krst + dijagonale)</div>
+              <div class="mode-title">
+                Skokovi 8 smerova (krst + dijagonale)
+              </div>
               <div class="mode-description">
                 Centar + 8 smerova (gore, dole, levo, desno i 4 dijagonale).
-                Maksimalno angažuje
-                periferiju u svim pravcima.
+                Maksimalno angažuje periferiju u svim pravcima.
               </div>
             </div>
           </label>
           <div class="mode-config-row">
             <span>Trajanje:</span>
-            <input type="number" id="duration_saccade_star8" min="5" max="600" step="5"
-                   value="45"/>
+            <input
+                    type="number"
+                    id="duration_saccade_star8"
+                    min="5"
+                    max="600"
+                    step="5"
+                    value="45"
+            />
             <span>s</span>
           </div>
         </div>
@@ -850,47 +918,71 @@ button:disabled {
         <!-- READING BASIC -->
         <div class="mode-block" data-mode="reading_basic">
           <label class="mode-radio">
-            <input type="checkbox" id="seq_reading_basic" checked/>
+            <input type="checkbox" id="seq_reading_basic" checked />
             <div>
               <div class="mode-title">Čitanje</div>
               <div class="mode-description">
-                Tri “reda teksta” sa 5 tačaka po redu - simulira horizontalne
-                skokove i prelazak na
-                sledeći red.
+                Tri “reda teksta” sa 5 tačaka po redu - simulira
+                horizontalne skokove i prelazak na sledeći red.
               </div>
             </div>
           </label>
           <div class="mode-config-row">
             <span>Trajanje:</span>
-            <input type="number" id="duration_reading_basic" min="5" max="600" step="5"
-                   value="45"/>
+            <input
+                    type="number"
+                    id="duration_reading_basic"
+                    min="5"
+                    max="600"
+                    step="5"
+                    value="45"
+            />
             <span>s</span>
 
             <span>| redova:</span>
-            <input type="number" id="reading_rows" min="1" max="7" step="1" value="3"/>
+            <input
+                    type="number"
+                    id="reading_rows"
+                    min="1"
+                    max="7"
+                    step="1"
+                    value="3"
+            />
 
             <span>kolona:</span>
-            <input type="number" id="reading_cols" min="2" max="9" step="1" value="5"/>
+            <input
+                    type="number"
+                    id="reading_cols"
+                    min="2"
+                    max="9"
+                    step="1"
+                    value="5"
+            />
           </div>
         </div>
 
         <!-- RAIN BASIC -->
         <div class="mode-block" data-mode="rain_basic">
           <label class="mode-radio">
-            <input type="checkbox" id="seq_rain_basic" checked/>
+            <input type="checkbox" id="seq_rain_basic" checked />
             <div>
               <div class="mode-title">Kiša (glavna + pozadinske)</div>
               <div class="mode-description">
-                Više bledih kapljica + jedna glavna koju pratiš - pada kroz 5 kolona
-                levo-desno,
-                smirujuće.
+                Više bledih kapljica + jedna glavna koju pratiš - pada kroz
+                5 kolona levo-desno, smirujuće.
               </div>
             </div>
           </label>
           <div class="mode-config-row">
             <span>Trajanje:</span>
-            <input type="number" id="duration_rain_basic" min="5" max="600" step="5"
-                   value="60"/>
+            <input
+                    type="number"
+                    id="duration_rain_basic"
+                    min="5"
+                    max="600"
+                    step="5"
+                    value="60"
+            />
             <span>s</span>
           </div>
         </div>
@@ -898,20 +990,25 @@ button:disabled {
         <!-- ZOOM FOCUS -->
         <div class="mode-block" data-mode="zoom_focus">
           <label class="mode-radio">
-            <input type="checkbox" id="seq_zoom_focus" checked/>
+            <input type="checkbox" id="seq_zoom_focus" checked />
             <div>
               <div class="mode-title">Zoom fokus (centrirana tačka)</div>
               <div class="mode-description">
-                Jedna tačka u centru ekrana menja veličinu kao “disanje” - fokus na
-                mirnom pogledu u
-                centar.
+                Jedna tačka u centru ekrana menja veličinu kao “disanje” -
+                fokus na mirnom pogledu u centar.
               </div>
             </div>
           </label>
           <div class="mode-config-row">
             <span>Trajanje:</span>
-            <input type="number" id="duration_zoom_focus" min="5" max="600" step="5"
-                   value="40"/>
+            <input
+                    type="number"
+                    id="duration_zoom_focus"
+                    min="5"
+                    max="600"
+                    step="5"
+                    value="40"
+            />
             <span>s</span>
           </div>
         </div>
@@ -919,22 +1016,27 @@ button:disabled {
         <!-- VERGENCE (2 tačke levo/desno) -->
         <div class="mode-block" data-mode="vergence">
           <label class="mode-radio">
-            <input type="checkbox" id="seq_vergence" checked/>
+            <input type="checkbox" id="seq_vergence" checked />
             <div>
-              <div class="mode-title">Približavanje/udaljavanje (dve tačke
-                levo/desno)
+              <div class="mode-title">
+                Približavanje/udaljavanje (dve tačke levo/desno)
               </div>
               <div class="mode-description">
-                Dve tačke simetrično levo i desno ritmično se približavaju centru i
-                razmiču ka
-                periferiji.
+                Dve tačke simetrično levo i desno ritmično se približavaju
+                centru i razmiču ka periferiji.
               </div>
             </div>
           </label>
           <div class="mode-config-row">
             <span>Trajanje:</span>
-            <input type="number" id="duration_vergence" min="5" max="600" step="5"
-                   value="40"/>
+            <input
+                    type="number"
+                    id="duration_vergence"
+                    min="5"
+                    max="600"
+                    step="5"
+                    value="40"
+            />
             <span>s</span>
           </div>
         </div>
@@ -942,46 +1044,58 @@ button:disabled {
         <!-- NEAR-FAR (blizu / daleko) -->
         <div class="mode-block" data-mode="near_far">
           <label class="mode-radio">
-            <input type="checkbox" id="seq_near_far" checked/>
+            <input type="checkbox" id="seq_near_far" checked />
             <div>
               <div class="mode-title">Blizu - daleko</div>
               <div class="mode-description">
-                Gledaj naizmenično u tačku na ekranu pa u izabranu dalju tačku u
-                prostoru - ekran
-                daje tempo i uputstvo.
+                Gledaj naizmenično u tačku na ekranu pa u izabranu dalju
+                tačku u prostoru - ekran daje tempo i uputstvo.
               </div>
             </div>
           </label>
           <div class="mode-config-row">
             <span>Trajanje:</span>
-            <input type="number" id="duration_near_far" min="10" max="600" step="5"
-                   value="60"/>
+            <input
+                    type="number"
+                    id="duration_near_far"
+                    min="10"
+                    max="600"
+                    step="5"
+                    value="60"
+            />
             <span>s</span>
           </div>
         </div>
 
         <!-- PALMING (manual, non-screen) -->
-        <div class="mode-block hide-mode-ui"  data-mode="palming">
+        <div class="mode-block hide-mode-ui" data-mode="palming">
           <label class="mode-radio">
-            <input type="checkbox" id="seq_palming" checked/>
+            <input type="checkbox" id="seq_palming" checked />
             <div>
               <div class="mode-title">Palming (odmor)</div>
               <div class="mode-description">
-                Prekrij oči dlanovima bez pritiska. Toplina + mrak, mirno disanje.
+                Prekrij oči dlanovima bez pritiska. Toplina + mrak, mirno
+                disanje.
               </div>
             </div>
           </label>
 
           <div class="mode-config-row">
             <span>Trajanje:</span>
-            <input type="number" id="duration_palming" min="10" max="600" step="5" value="60"/>
+            <input
+                    type="number"
+                    id="duration_palming"
+                    min="10"
+                    max="600"
+                    step="5"
+                    value="60"
+            />
             <span>s</span>
           </div>
         </div>
-
       </div>
 
-      <div class="checkbox-row hide-auto-seq" style="margin-top:10px;">
+      <div class="checkbox-row hide-auto-seq" style="margin-top: 10px">
         <input type="checkbox" id="enableAutoSequence" checked />
         <label for="enableAutoSequence" data-i18n="auto_sequence_label">
           Auto sekvenca (pokreni čekirane modove redom)
@@ -989,23 +1103,30 @@ button:disabled {
       </div>
 
       <div class="controls-row">
-        <button id="startBtn" class="btn btn-primary" data-i18n="btn_start">Start</button>
-        <button id="stopBtn" class="btn btn-secondary" data-i18n="btn_stop">Stop</button>
+        <button id="startBtn" class="btn btn-primary" data-i18n="btn_start">
+          Start
+        </button>
+        <button id="stopBtn" class="btn btn-secondary" data-i18n="btn_stop">
+          Stop
+        </button>
       </div>
 
       <div class="checkbox-row">
-        <input type="checkbox" id="showHelp"/>
-        <label for="showHelp" data-i18n="show_help_label">Prikaži uputstvo u balonu tokom treninga</label>
+        <input type="checkbox" id="showHelp" />
+        <label for="showHelp" data-i18n="show_help_label"
+        >Prikaži uputstvo u balonu tokom treninga</label
+        >
       </div>
       <div class="checkbox-row hide-voice-ui">
-        <input type="checkbox" id="useVoice"/>
+        <input type="checkbox" id="useVoice" />
         <label for="useVoice">Glas (umesto beep)</label>
       </div>
       <div class="hint">
         <strong data-i18n="tip_label">Tip:</strong>
         <span data-i18n="tip_text">
-          Pre starta zauzmi pravilan položaj. Tokom treninga ne pomeraj glavu, prati samo očima.
-        </span>
+              Pre starta zauzmi pravilan položaj. Tokom treninga ne pomeraj
+              glavu, prati samo očima.
+            </span>
       </div>
 
       <div id="status" class="status">Spreman za trening.</div>
@@ -1015,7 +1136,9 @@ button:disabled {
   <main class="training-area">
     <div class="canvas-wrapper">
       <canvas id="trainingCanvas"></canvas>
-      <button id="hamburgerBtn" class="hamburger-btn" title="Meni">☰</button>
+      <button id="hamburgerBtn" class="hamburger-btn" title="Meni">
+        ☰
+      </button>
       <div id="helpBubble" class="help-bubble"></div>
       <div id="timerOverlay" class="timer-overlay"></div>
 
@@ -1023,7 +1146,9 @@ button:disabled {
       <div id="rotateOverlay" class="rotate-overlay">
         <div class="rotate-overlay-box">
           <div class="rotate-overlay-icon">📱↻</div>
-          <div class="rotate-overlay-title" data-i18n="rotate_title">Okreni telefon vodoravno</div>
+          <div class="rotate-overlay-title" data-i18n="rotate_title">
+            Okreni telefon vodoravno
+          </div>
           <div class="rotate-overlay-text" data-i18n="rotate_text">
             Za vežbu očiju koristi horizontalni položaj (landscape).
           </div>
@@ -1033,22 +1158,27 @@ button:disabled {
         </div>
       </div>
     </div>
-
   </main>
 </div>
 
 <script>
   window.__setAndroidInsets = function (top, bottom) {
-    document.documentElement.style.setProperty("--androidInsetTop", (top || 0) + "px");
-    document.documentElement.style.setProperty("--androidInsetBottom", (bottom || 0) + "px");
+    document.documentElement.style.setProperty(
+      "--androidInsetTop",
+      (top || 0) + "px",
+    );
+    document.documentElement.style.setProperty(
+      "--androidInsetBottom",
+      (bottom || 0) + "px",
+    );
 
     // kad Android pošalje inset, odmah reflow (2x zbog layout settle)
     setTimeout(reflowNow, 0);
     setTimeout(reflowNow, 250);
   };
 
-
-  const deviceDetectedTextEl = document.getElementById("deviceDetectedText");
+  const deviceDetectedTextEl =
+    document.getElementById("deviceDetectedText");
   const langBtns = Array.from(document.querySelectorAll(".lang-btn"));
   const appEl = document.querySelector(".app");
   const distanceText = document.getElementById("distanceText");
@@ -1060,20 +1190,37 @@ button:disabled {
   const showHelpCheckbox = document.getElementById("showHelp");
   const helpBubbleEl = document.getElementById("helpBubble");
   const hamburgerBtn = document.getElementById("hamburgerBtn");
-  const enableAutoSequenceEl = document.getElementById("enableAutoSequence");
+  const enableAutoSequenceEl =
+    document.getElementById("enableAutoSequence");
   const timerOverlayEl = document.getElementById("timerOverlay");
   const programSelect = document.getElementById("programSelect");
   const durationWarmupEl = document.getElementById("duration_warmup");
   const durationCircleEl = document.getElementById("duration_circle");
-  const durationSaccadeLREl = document.getElementById("duration_saccade_lr");
-  const durationSaccadeUDEl = document.getElementById("duration_saccade_ud");
-  const durationSaccadeLCREl = document.getElementById("duration_saccade_lcr");
+  const durationSaccadeLREl = document.getElementById(
+    "duration_saccade_lr",
+  );
+  const durationSaccadeUDEl = document.getElementById(
+    "duration_saccade_ud",
+  );
+  const durationSaccadeLCREl = document.getElementById(
+    "duration_saccade_lcr",
+  );
   const durationFigure8El = document.getElementById("duration_figure8");
-  const durationSaccadeCrossEl = document.getElementById("duration_saccade_cross");
-  const durationSaccadeStar8El = document.getElementById("duration_saccade_star8");
-  const durationReadingBasicEl = document.getElementById("duration_reading_basic");
-  const durationRainBasicEl = document.getElementById("duration_rain_basic");
-  const durationZoomFocusEl = document.getElementById("duration_zoom_focus");
+  const durationSaccadeCrossEl = document.getElementById(
+    "duration_saccade_cross",
+  );
+  const durationSaccadeStar8El = document.getElementById(
+    "duration_saccade_star8",
+  );
+  const durationReadingBasicEl = document.getElementById(
+    "duration_reading_basic",
+  );
+  const durationRainBasicEl = document.getElementById(
+    "duration_rain_basic",
+  );
+  const durationZoomFocusEl = document.getElementById(
+    "duration_zoom_focus",
+  );
   const durationVergenceEl = document.getElementById("duration_vergence");
   const durationNearFarEl = document.getElementById("duration_near_far");
   const durationPalmingEl = document.getElementById("duration_palming");
@@ -1095,8 +1242,6 @@ button:disabled {
   const seqPalmingEl = document.getElementById("seq_palming");
   const useVoiceEl = document.getElementById("useVoice");
 
-
-
   const durationEls = {
     warmup: durationWarmupEl,
     circle: durationCircleEl,
@@ -1111,7 +1256,7 @@ button:disabled {
     zoom_focus: durationZoomFocusEl,
     vergence: durationVergenceEl,
     near_far: durationNearFarEl,
-    palming: durationPalmingEl
+    palming: durationPalmingEl,
   };
 
   const seqEls = {
@@ -1128,36 +1273,36 @@ button:disabled {
     zoom_focus: seqZoomFocusEl,
     vergence: seqVergenceEl,
     near_far: seqNearFarEl,
-    palming: seqPalmingEl
+    palming: seqPalmingEl,
   };
 
   Object.entries(seqEls).forEach(([mode, el]) => {
     if (!el) return;
 
     el.addEventListener("change", () => {
-        if (!enableAutoSequenceEl.checked) return;
+      if (!enableAutoSequenceEl.checked) return;
 
-        // Ako nema vise nijednog moda u sekvenci
-        if (!hasAnyModeInSequence()) {
-          showNoSequenceStatus();
+      // Ako nema vise nijednog moda u sekvenci
+      if (!hasAnyModeInSequence()) {
+        showNoSequenceStatus();
 
-          // ako trening radi – odmah ga zaustavi
-          if (isRunning) {
-            stopAnimation();
-          }
-          return;
+        // ako trening radi – odmah ga zaustavi
+        if (isRunning) {
+          stopAnimation();
+        }
+        return;
       }
-// Ako trening radi i korisnik čekira mod - NE prebacuj odmah (da ne seče animaciju),
-// ali zapamti da sledeći Start krene od njega.
-if (isRunning && el.checked) {
-  pendingStartMode = mode;
-  return;
-}
-// Ako je korisnik odčekirao mod koji je bio pending - očisti pending
-if (!el.checked && pendingStartMode === mode) {
-  pendingStartMode = null;
-  // ne return - pusti dalje logiku (može da utiče na currentMode ako je aktivan)
-}
+      // Ako trening radi i korisnik čekira mod - NE prebacuj odmah (da ne seče animaciju),
+      // ali zapamti da sledeći Start krene od njega.
+      if (isRunning && el.checked) {
+        pendingStartMode = mode;
+        return;
+      }
+      // Ako je korisnik odčekirao mod koji je bio pending - očisti pending
+      if (!el.checked && pendingStartMode === mode) {
+        pendingStartMode = null;
+        // ne return - pusti dalje logiku (može da utiče na currentMode ako je aktivan)
+      }
       // 1) Ako je korisnik upravo čekirao neki mod i trening NE radi:
       // odmah ga postavi kao aktivan (ovo rešava "čekirao warmup ali krene circle")
       if (!isRunning && el.checked) {
@@ -1168,7 +1313,8 @@ if (!el.checked && pendingStartMode === mode) {
 
       // 2) Ako je iskljucen trenutno aktivan mod (i u idle-u i u run-u):
       if (!el.checked && currentMode === mode) {
-        const next = getNextCheckedModeAfter(mode) || getFirstModeInSequence();
+        const next =
+          getNextCheckedModeAfter(mode) || getFirstModeInSequence();
         if (next) {
           setActiveMode(next);
           resetModeState(next);
@@ -1176,35 +1322,33 @@ if (!el.checked && pendingStartMode === mode) {
           if (isRunning) startTimerForCurrentMode();
         }
         return;
-    }
+      }
 
-    // 3) U idle-u, ako je korisnik isključio neki mod koji nije aktivan,
-    // i dalje držimo pravilo: aktivni = prvi čekirani (da bude stabilno)
-    if (!isRunning) {
-      syncActiveModeToFirstInSequence();
-      updateModeTexts();
-    }
+      // 3) U idle-u, ako je korisnik isključio neki mod koji nije aktivan,
+      // i dalje držimo pravilo: aktivni = prvi čekirani (da bude stabilno)
+      if (!isRunning) {
+        syncActiveModeToFirstInSequence();
+        updateModeTexts();
+      }
+    });
   });
-});
 
-
-const modeFrames = {
-  warmup: warmupFrame,
-  circle: circleFrame,
-  figure8: figure8Frame,
-  saccade_lr: saccadeLRFrame,
-  saccade_ud: saccadeUDFrame,
-  saccade_lcr: saccadeLCRFrame,
-  saccade_cross: saccadeCrossFrame,
-  saccade_star8: saccadeStar8Frame,
-  reading_basic: readingBasicFrame,
-  rain_basic: rainBasicFrame,
-  zoom_focus: zoomFocusFrame,
-  vergence: vergenceFrame,
-  near_far: nearFarFrame,
-  palming: palmingFrame
-};
-
+  const modeFrames = {
+    warmup: warmupFrame,
+    circle: circleFrame,
+    figure8: figure8Frame,
+    saccade_lr: saccadeLRFrame,
+    saccade_ud: saccadeUDFrame,
+    saccade_lcr: saccadeLCRFrame,
+    saccade_cross: saccadeCrossFrame,
+    saccade_star8: saccadeStar8Frame,
+    reading_basic: readingBasicFrame,
+    rain_basic: rainBasicFrame,
+    zoom_focus: zoomFocusFrame,
+    vergence: vergenceFrame,
+    near_far: nearFarFrame,
+    palming: palmingFrame,
+  };
 
   const trainingAreaEl = document.querySelector(".training-area");
   const canvas = document.getElementById("trainingCanvas");
@@ -1218,30 +1362,31 @@ const modeFrames = {
   let timerTotalMs = 0;
   let timerRemainingMs = 0;
   let nearFarLastPhase = null;
+  let nearFarStartTs = null; // start vremena za near_far mod (per-run)
+  let nearFarPhaseStartTs = null;
 
   // Glatki modovi (circle, figure8) – smer i ciklusi
-  let smoothDirection = 1;              // +1 = normalno, -1 = suprotno
-  let smoothTimeInDir = 0;              // vreme unutar trenutnog smera (sekunde)
-  let smoothCyclesDone = 0;             // koliko punih krugova je urađeno u trenutnom smeru
-  const SMOOTH_PERIOD_SEC = 6;          // ~6 s za jedan pun krug/osmicu
-  const SMOOTH_CYCLES_PER_FLIP = 3;     // posle koliko punih krugova menjamo smer
+  let smoothDirection = 1; // +1 = normalno, -1 = suprotno
+  let smoothTimeInDir = 0; // vreme unutar trenutnog smera (sekunde)
+  let smoothCyclesDone = 0; // koliko punih krugova je urađeno u trenutnom smeru
+  const SMOOTH_PERIOD_SEC = 6; // ~6 s za jedan pun krug/osmicu
+  const SMOOTH_CYCLES_PER_FLIP = 3; // posle koliko punih krugova menjamo smer
 
   // Saccade 8 smerova – diskretni koraci i ciklusi
-  let star8Direction = 1;           // +1 = normalan smer, -1 = obrnut
-  let star8StepTimeAccum = 0;       // akumulirano vreme za prelazak na sledeći korak
-  let star8StepIndexTotal = 0;      // koliko koraka ukupno je urađeno
-  let star8CyclesDone = 0;          // broj završenih punih krugova
-  const STAR8_STEP_INTERVAL = 0.4;  // vreme po tački (sekunde)
-  const STAR8_CYCLES_PER_FLIP = 3;  // posle koliko krugova se menja smer
+  let star8Direction = 1; // +1 = normalan smer, -1 = obrnut
+  let star8StepTimeAccum = 0; // akumulirano vreme za prelazak na sledeći korak
+  let star8StepIndexTotal = 0; // koliko koraka ukupno je urađeno
+  let star8CyclesDone = 0; // broj završenih punih krugova
+  const STAR8_STEP_INTERVAL = 0.4; // vreme po tački (sekunde)
+  const STAR8_CYCLES_PER_FLIP = 3; // posle koliko krugova se menja smer
 
   // Reading – smer i ciklusi levo-desno
-  let readingDirection = 1;             // +1 = levo→desno, -1 = desno→levo
+  let readingDirection = 1; // +1 = levo→desno, -1 = desno→levo
   let readingStepTimeAccum = 0;
   let readingStepIndexTotal = 0;
   let readingCyclesDone = 0;
-  const READING_STEP_INTERVAL = 0.28;   // vreme po tački (sekunde)
-  const READING_CYCLES_PER_FLIP = 3;    // posle koliko prolaza menjamo smer
-
+  const READING_STEP_INTERVAL = 0.28; // vreme po tački (sekunde)
+  const READING_CYCLES_PER_FLIP = 3; // posle koliko prolaza menjamo smer
 
   const targetColor = "#0f766e";
   const targetGlow = "rgba(16, 185, 129, 0.65)";
@@ -1251,675 +1396,732 @@ const modeFrames = {
 
   // Kiša - pozadinske kapljice (fiksne, blage)
   let rainMainStartTime = null; // vreme početka tekuće kapljice
-  let rainMainColumn = 0;       // indeks kolone 0..4
+  let rainMainColumn = 0; // indeks kolone 0..4
   const RAIN_BG_COUNT = 18;
   const rainBgDrops = [];
   for (let i = 0; i < RAIN_BG_COUNT; i++) {
-      rainBgDrops.push({
-          xFactor: Math.random(),                         // 0-1 → skala po širini
-          phase: Math.random(),                           // pomeraj faze
-          speedFactor: 0.25 + Math.random() * 0.35        // različite brzine
-      });
+    rainBgDrops.push({
+      xFactor: Math.random(), // 0-1 → skala po širini
+      phase: Math.random(), // pomeraj faze
+      speedFactor: 0.25 + Math.random() * 0.35, // različite brzine
+    });
   }
 
   const LS_KEY = "eyeTrainerState_v1";
 
-function setAndroidKeepScreenOn(on) {
-  try {
-    if (window.AndroidScreen && typeof window.AndroidScreen.keepScreenOn === "function") {
-      window.AndroidScreen.keepScreenOn(!!on);
+  function setAndroidKeepScreenOn(on) {
+    try {
+      if (
+        window.AndroidScreen &&
+        typeof window.AndroidScreen.keepScreenOn === "function"
+      ) {
+        window.AndroidScreen.keepScreenOn(!!on);
+      }
+    } catch (e) {
+      // tiho ignoriši
     }
-  } catch (e) {
-    // tiho ignoriši
   }
-}
 
-function cue(text) {
-  if (useVoiceEl && useVoiceEl.checked) {
-    speak(text);     // Android TTS
-  } else {
-    playBeep();      // postojeći beep
+  function cue(text) {
+    if (useVoiceEl && useVoiceEl.checked) {
+      speak(text); // Android TTS
+    } else {
+      playBeep(); // postojeći beep
+    }
   }
-}
 
   function isUaMobile() {
-  const ua = navigator.userAgent || "";
-  const uaDataMobile = navigator.userAgentData && navigator.userAgentData.mobile;
-  if (typeof uaDataMobile === "boolean") return uaDataMobile;
-  return /Android|iPhone|iPod|IEMobile|Opera Mini/i.test(ua);
+    const ua = navigator.userAgent || "";
+    const uaDataMobile =
+      navigator.userAgentData && navigator.userAgentData.mobile;
+    if (typeof uaDataMobile === "boolean") return uaDataMobile;
+    return /Android|iPhone|iPod|IEMobile|Opera Mini/i.test(ua);
   }
 
   function isRealPhoneScreen() {
-  const w = window.innerWidth || 0;
-  const h = window.innerHeight || 0;
-  const shortSide = Math.min(w, h);
-  // Telefon: mobile UA + kratka stranica mala
-  return isUaMobile() && shortSide > 0 && shortSide < 600;
+    const w = window.innerWidth || 0;
+    const h = window.innerHeight || 0;
+    const shortSide = Math.min(w, h);
+    // Telefon: mobile UA + kratka stranica mala
+    return isUaMobile() && shortSide > 0 && shortSide < 600;
   }
 
-function getDeviceType() {
-  // telefon: mobile UA + kratka stranica mala (tvoj postojeci kriterijum)
-  // tablet: sve ostalo sto je mobile, ali veca kratka stranica
-  const ua = navigator.userAgent || "";
-  const uaDataMobile = navigator.userAgentData && navigator.userAgentData.mobile;
-  const isMobile = (typeof uaDataMobile === "boolean") ? uaDataMobile : /Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(ua);
+  function getDeviceType() {
+    // telefon: mobile UA + kratka stranica mala (tvoj postojeci kriterijum)
+    // tablet: sve ostalo sto je mobile, ali veca kratka stranica
+    const ua = navigator.userAgent || "";
+    const uaDataMobile =
+      navigator.userAgentData && navigator.userAgentData.mobile;
+    const isMobile =
+      typeof uaDataMobile === "boolean"
+        ? uaDataMobile
+        : /Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(ua);
 
-  const w = window.innerWidth || 0;
-  const h = window.innerHeight || 0;
-  const shortSide = Math.min(w, h);
+    const w = window.innerWidth || 0;
+    const h = window.innerHeight || 0;
+    const shortSide = Math.min(w, h);
 
-  if (isMobile && shortSide > 0 && shortSide < 600) return "phone";
-  if (isMobile) return "tablet";
+    if (isMobile && shortSide > 0 && shortSide < 600) return "phone";
+    if (isMobile) return "tablet";
 
-  // desktop/laptop/monitor - tretiraj kao tablet po velicini mete (manje agresivno)
-  return "tablet";
-}
-
-let deviceType = "phone";
-
-function applyDeviceType() {
-  deviceType = getDeviceType();
-
-  if (deviceDetectedTextEl) {
-    deviceDetectedTextEl.textContent =
-      (deviceType === "phone") ? t("device_phone") : t("device_tablet");
+    // desktop/laptop/monitor - tretiraj kao tablet po velicini mete (manje agresivno)
+    return "tablet";
   }
 
-  if (distanceText) {
-    distanceText.textContent =
-      (deviceType === "phone") ? t("distance_phone") : t("distance_tablet");
-  }
-}
+  let deviceType = "phone";
 
-// -------------------------
-// i18n (EN default + SR)
-// -------------------------
-const LS_LANG = "eyeTrainerLang_v1";
+  function applyDeviceType() {
+    deviceType = getDeviceType();
 
-const I18N = {
-  en: {
-    app_title: "Eye training",
-
-    distance_phone: "30-40 cm from eyes",
-    distance_tablet: "40-50 cm from eyes",
-
-    section_device_title: "1. Device and distance",
-    device_detected_label: "Device:",
-    language_label: "Language:",
-    device_phone: "Phone",
-    device_tablet: "Tablet",
-    distance_label: "Recommended distance:",
-    posture_hint:
-      "Top edge of the screen slightly below eye level, head upright, shoulders relaxed.",
-
-    section_modes_title: "2. Modes and timer",
-    section_modes_sub: "duration + sequence",
-
-    program_label: "Program:",
-    program_none: "Manual selection",
-    program_screen_relief: "Screen relief - 5 min",
-    program_focus_reset: "Focus reset - 10 min",
-    program_intense_15: "Intense - 15 min",
-
-    duration_label: "Duration:",
-    seconds_short: "s",
-    in_sequence: "in sequence",
-    rows_label: "rows:",
-    cols_label: "cols:",
-
-    auto_sequence_label: "Auto sequence (run checked modes in order)",
-    btn_start: "Start",
-    btn_stop: "Stop",
-    show_help_label: "Show instruction bubble during training",
-
-    tip_label: "Tip:",
-    tip_text:
-      "Before starting, take a proper posture. During training keep your head still and move only your eyes.",
-
-    rotate_title: "Rotate your phone to landscape",
-    rotate_text: "For eye training use landscape orientation.",
-    rotate_hint: "Rotate the phone. The overlay will disappear automatically.",
-
-    // Status messages
-    status_ready: "Ready.",
-    status_running:
-      "Stop if you feel stronger fatigue or discomfort.",
-    status_stopped:
-      "Blink a few times and rest for a few seconds.",
-    status_program_prefix: "Program: ",
-    status_program_suffix: " Check posture and press Start.",
-
-    // Near/Far cues + labels
-    cue_near: "Near",
-    cue_far: "Far",
-    near_label: "NEAR - look at the dot on the screen",
-    far_label: "FAR - look at a chosen distant point",
-    status_no_sequence: "No modes selected for sequence.",
-    // Help bubble title
-    help_title: "Instruction:"
-  },
-
-  sr: {
-    app_title: "Trening za oči",
-
-    distance_phone: "30-40 cm od očiju",
-    distance_tablet: "40-50 cm od očiju",
-
-    section_device_title: "1. Uređaj i udaljenost",
-    device_detected_label: "Uređaj:",
-    language_label: "Jezik:",
-    device_phone: "Telefon",
-    device_tablet: "Tablet",
-    distance_label: "Preporučena udaljenost:",
-    posture_hint:
-      "Gornja ivica ekrana malo ispod nivoa očiju, glava uspravna, ramena opuštena.",
-
-    section_modes_title: "2. Modovi i tajmer",
-    section_modes_sub: "trajanje + sekvenca",
-
-    program_label: "Program:",
-    program_none: "Ručno biranje",
-    program_screen_relief: "Odmor od ekrana - 5 min",
-    program_focus_reset: "Fokus reset - 10 min",
-    program_intense_15: "Intenzivni - 15 min",
-
-    duration_label: "Trajanje:",
-    seconds_short: "s",
-    in_sequence: "u sekvenci",
-    rows_label: "redova:",
-    cols_label: "kolona:",
-
-    auto_sequence_label: "Auto sekvenca (pokreni čekirane modove redom)",
-    btn_start: "Start",
-    btn_stop: "Stop",
-    show_help_label: "Prikaži uputstvo u balonu tokom treninga",
-
-    tip_label: "Tip:",
-    tip_text:
-      "Pre starta zauzmi pravilan položaj. Tokom treninga ne pomeraj glavu, prati samo očima.",
-
-    rotate_title: "Okreni telefon vodoravno",
-    rotate_text: "Za vežbu očiju koristi horizontalni položaj (landscape).",
-    rotate_hint: "Okreni telefon u stranu. Overlay će nestati automatski.",
-
-    // Status messages
-    status_ready: "Spreman za trening.",
-    status_running:
-      "Zaustavi ako osetiš jači umor ili nelagodnost.",
-    status_stopped:
-      "Trepni nekoliko puta i odmori par sekundi.",
-    status_program_prefix: "Program: ",
-    status_program_suffix: ". Proveri položaj i klikni Start.",
-
-    // Near/Far cues + labels
-    cue_near: "Blizu",
-    cue_far: "Daleko",
-    near_label: "BLIZU - gledaj tačku na ekranu",
-    far_label: "DALEKO - gledaj izabranu tačku u prostoru",
-    status_no_sequence: "Nema izabranih modova za sekvencu.",
-    // Help bubble title
-    help_title: "Uputstvo:"
-  }
-};
-
-let currentLang = "en";
-
-function t(key) {
-  const lang = (currentLang === "sr") ? "sr" : "en";
-  return (I18N[lang] && I18N[lang][key]) ? I18N[lang][key] : key;
-}
-
-function detectLangDefault() {
-  // Default EN, ali ako je sistemski jezik "nasi" -> SR
-  const raw = String(navigator.language || "").toLowerCase(); // "sr-rs", "hr-hr", "en-us"
-  const primary = raw.split("-")[0];
-  const supportedSr = new Set(["sr", "hr", "bs", "sh", "cnr", "me"]);
-  return supportedSr.has(primary) ? "sr" : "en";
-}
-
-function applyI18n() {
-  // 1) Generic data-i18n
-  document.querySelectorAll("[data-i18n]").forEach(el => {
-    const key = el.getAttribute("data-i18n");
-    el.textContent = t(key);
-  });
-
-  // 2) Program options text (values are stable)
-  if (programSelect) {
-    Array.from(programSelect.options).forEach(opt => {
-      if (opt.value === "none") opt.textContent = t("program_none");
-      if (opt.value === "screen_relief") opt.textContent = t("program_screen_relief");
-      if (opt.value === "focus_reset") opt.textContent = t("program_focus_reset");
-      if (opt.value === "intense_15") opt.textContent = t("program_intense_15");
-    });
-  }
-
-  // 3) Mode titles + descriptions (by data-mode)
-  const MODE_I18N = {
-    warmup: {
-      enTitle: "Warm-up",
-      enDesc: "A fixation point in the center with gentle 'breathing'. Minimal effort - just hold your gaze.",
-      srTitle: "Zagrejavanje",
-      srDesc: "Fiksaciona tačka u centru, blago 'disanje' mete. Minimalan napor, samo držanje pogleda."
-    },
-    circle: {
-      enTitle: "Circle",
-      enDesc: "The target moves along a large circular path - smooth pursuit training.",
-      srTitle: "Krug",
-      srDesc: "Meta kruži po velikoj kružnoj putanji - trening glatkog praćenja po velikoj putanji."
-    },
-    figure8: {
-      enTitle: "Infinity",
-      enDesc: "The target moves in a figure-eight (∞) - smooth tracking across two planes.",
-      srTitle: "Infiniti",
-      srDesc: "Meta se kreće po ležećoj osmici (∞) - glatko praćenje u dve ravni."
-    },
-    saccade_lr: {
-      enTitle: "Saccades left-right",
-      enDesc: "Fast jumps to far left/right. Keep head still - eyes only.",
-      srTitle: "Skokovi levo-desno",
-      srDesc: "Meta skače maksimalno levo-desno. Brzi skokovi - bez pomeranja glave."
-    },
-    saccade_ud: {
-      enTitle: "Saccades up-down",
-      enDesc: "Fast jumps to top/bottom. Keep head still - eyes only.",
-      srTitle: "Skokovi gore-dole",
-      srDesc: "Meta skače maksimalno gore-dole. Aktivira vertikalne napete mišiće od ekrana."
-    },
-    saccade_lcr: {
-      enTitle: "Saccades L-C-R (3 points)",
-      enDesc: "Left - center - right - center... Like scanning a line of text.",
-      srTitle: "Skokovi L-C-R (3 tačke)",
-      srDesc: "Meta skače: levo - centar - desno - centar... Kombinuje kratke i duge skokove, kao skeniranje reda teksta."
-    },
-    saccade_cross: {
-      enTitle: "Saccades cross (C + 4 sides)",
-      enDesc: "Center - left/right/up/down. A scanning pattern with constant return to center.",
-      srTitle: "Skokovi krst (C + 4 strane)",
-      srDesc: "Meta skače centar ↔ levo/desno/gore/dole. Brzi skokovi sa stalnim povratkom u centar - šablon za skeniranje."
-    },
-    saccade_star8: {
-      enTitle: "Saccades 8 directions",
-      enDesc: "Center plus 8 directions (cross + diagonals). Engages peripheral vision.",
-      srTitle: "Skokovi 8 smerova (krst + dijagonale)",
-      srDesc: "Centar + 8 smerova (gore, dole, levo, desno i 4 dijagonale). Maksimalno angažuje periferiju u svim pravcima."
-    },
-    reading_basic: {
-      enTitle: "Reading",
-      enDesc: "Rows of points like text lines - quick saccades and line transitions.",
-      srTitle: "Čitanje",
-      srDesc: "Tri 'reda teksta' sa 5 tačaka po redu - simulira horizontalne skokove i prelazak na sledeći red."
-    },
-    rain_basic: {
-      enTitle: "Rain (main + background)",
-      enDesc: "Multiple faint drops plus one main drop you follow - calming motion.",
-      srTitle: "Kiša (glavna + pozadinske)",
-      srDesc: "Više bledih kapljica + jedna glavna koju pratiš - pada kroz 5 kolona levo-desno, smirujuće."
-    },
-    zoom_focus: {
-      enTitle: "Zoom focus",
-      enDesc: "A single centered dot 'breathes' in size - steady focus on the center.",
-      srTitle: "Zoom fokus (centrirana tačka)",
-      srDesc: "Jedna tačka u centru ekrana menja veličinu kao 'disanje' - fokus na mirnom pogledu u centar."
-    },
-    vergence: {
-      enTitle: "Vergence (in-out)",
-      enDesc: "Two symmetric dots move toward the center and back to the periphery.",
-      srTitle: "Približavanje/udaljavanje (dve tačke levo/desno)",
-      srDesc: "Dve tačke simetrično levo i desno ritmično se približavaju centru i razmiču ka periferiji."
-    },
-    near_far: {
-      enTitle: "Near - far",
-      enDesc: "Alternate between the on-screen dot and a chosen distant point in the room.",
-      srTitle: "Blizu - daleko",
-      srDesc: "Gledaj naizmenično u tačku na ekranu pa u izabranu dalju tačku u prostoru - ekran daje tempo i uputstvo."
-    },
-    palming: {
-      enTitle: "Palming (rest)",
-      enDesc: "Cover your eyes with your palms without pressure. Warmth + darkness, calm breathing.",
-      srTitle: "Palming (odmor)",
-      srDesc: "Prekrij oči dlanovima bez pritiska. Toplina + mrak, mirno disanje."
+    if (deviceDetectedTextEl) {
+      deviceDetectedTextEl.textContent =
+        deviceType === "phone" ? t("device_phone") : t("device_tablet");
     }
+
+    if (distanceText) {
+      distanceText.textContent =
+        deviceType === "phone" ? t("distance_phone") : t("distance_tablet");
+    }
+  }
+
+  // -------------------------
+  // i18n (EN default + SR)
+  // -------------------------
+  const LS_LANG = "eyeTrainerLang_v1";
+
+  const I18N = {
+    en: {
+      app_title: "Eye training",
+
+      distance_phone: "30-40 cm from eyes",
+      distance_tablet: "40-50 cm from eyes",
+
+      section_device_title: "1. Device and distance",
+      device_detected_label: "Device:",
+      language_label: "Language:",
+      device_phone: "Phone",
+      device_tablet: "Tablet",
+      distance_label: "Recommended distance:",
+      posture_hint:
+        "Top edge of the screen slightly below eye level, head upright, shoulders relaxed.",
+
+      section_modes_title: "2. Modes and timer",
+      section_modes_sub: "duration + sequence",
+
+      program_label: "Program:",
+      program_none: "Manual selection",
+      program_screen_relief: "Screen relief",
+      program_focus_reset: "Focus reset",
+      program_intense_15: "Intense",
+
+      duration_label: "Duration:",
+      seconds_short: "s",
+      in_sequence: "in sequence",
+      rows_label: "rows:",
+      cols_label: "cols:",
+
+      auto_sequence_label: "Auto sequence (run checked modes in order)",
+      btn_start: "Start",
+      btn_stop: "Stop",
+      show_help_label: "Show instruction bubble during training",
+
+      tip_label: "Tip:",
+      tip_text:
+        "Before starting, take a proper posture. During training keep your head still and move only your eyes.",
+
+      rotate_title: "Rotate your phone to landscape",
+      rotate_text: "For eye training use landscape orientation.",
+      rotate_hint:
+        "Rotate the phone. The overlay will disappear automatically.",
+
+      // Status messages
+      status_ready: "Ready.",
+      status_running: "Stop if you feel stronger fatigue or discomfort.",
+      status_stopped: "Blink a few times and rest for a few seconds.",
+      status_program_prefix: "Program: ",
+      status_program_suffix: " Check posture and press Start.",
+
+      // Near/Far cues + labels
+      cue_near: "Near",
+      cue_far: "Far",
+      near_label: "NEAR - look at the dot on the screen",
+      far_label: "FAR - look at a chosen distant point",
+      status_no_sequence: "No modes selected for sequence.",
+      // Help bubble title
+      help_title: "Instruction:",
+    },
+
+    sr: {
+      app_title: "Trening za oči",
+
+      distance_phone: "30-40 cm od očiju",
+      distance_tablet: "40-50 cm od očiju",
+
+      section_device_title: "1. Uređaj i udaljenost",
+      device_detected_label: "Uređaj:",
+      language_label: "Jezik:",
+      device_phone: "Telefon",
+      device_tablet: "Tablet",
+      distance_label: "Preporučena udaljenost:",
+      posture_hint:
+        "Gornja ivica ekrana malo ispod nivoa očiju, glava uspravna, ramena opuštena.",
+
+      section_modes_title: "2. Modovi i tajmer",
+      section_modes_sub: "trajanje + sekvenca",
+
+      program_label: "Program:",
+      program_none: "Ručno biranje",
+      program_screen_relief: "Odmor od ekrana",
+      program_focus_reset: "Fokus reset",
+      program_intense_15: "Intenzivni",
+
+      duration_label: "Trajanje:",
+      seconds_short: "s",
+      in_sequence: "u sekvenci",
+      rows_label: "redova:",
+      cols_label: "kolona:",
+
+      auto_sequence_label: "Auto sekvenca (pokreni čekirane modove redom)",
+      btn_start: "Start",
+      btn_stop: "Stop",
+      show_help_label: "Prikaži uputstvo u balonu tokom treninga",
+
+      tip_label: "Tip:",
+      tip_text:
+        "Pre starta zauzmi pravilan položaj. Tokom treninga ne pomeraj glavu, prati samo očima.",
+
+      rotate_title: "Okreni telefon vodoravno",
+      rotate_text:
+        "Za vežbu očiju koristi horizontalni položaj (landscape).",
+      rotate_hint:
+        "Okreni telefon u stranu. Overlay će nestati automatski.",
+
+      // Status messages
+      status_ready: "Spreman za trening.",
+      status_running: "Zaustavi ako osetiš jači umor ili nelagodnost.",
+      status_stopped: "Trepni nekoliko puta i odmori par sekundi.",
+      status_program_prefix: "Program: ",
+      status_program_suffix: ". Proveri položaj i klikni Start.",
+
+      // Near/Far cues + labels
+      cue_near: "Blizu",
+      cue_far: "Daleko",
+      near_label: "BLIZU - gledaj tačku na ekranu",
+      far_label: "DALEKO - gledaj izabranu tačku u prostoru",
+      status_no_sequence: "Nema izabranih modova za sekvencu.",
+      // Help bubble title
+      help_title: "Uputstvo:",
+    },
   };
 
-  document.querySelectorAll(".mode-block").forEach(block => {
-    const mode = block.dataset.mode;
-    const meta = MODE_I18N[mode];
-    if (!meta) return;
+  let currentLang = "en";
 
-    const titleEl = block.querySelector(".mode-title");
-    const descEl = block.querySelector(".mode-description");
-    if (titleEl) titleEl.textContent = (currentLang === "sr") ? meta.srTitle : meta.enTitle;
-    if (descEl) descEl.textContent = (currentLang === "sr") ? meta.srDesc : meta.enDesc;
+  function t(key) {
+    const lang = currentLang === "sr" ? "sr" : "en";
+    return I18N[lang] && I18N[lang][key] ? I18N[lang][key] : key;
+  }
 
-    // "Trajanje / Duration" + "u sekvenci / in sequence" - pokupi postojece span/label tekstove unutar config-row
-    const row = block.querySelector(".mode-config-row");
-    if (row) {
-      const spans = row.querySelectorAll("span");
-      // prvi span u config-row je "Trajanje:" u tvojoj strukturi
-      if (spans && spans[0]) spans[0].textContent = t("duration_label");
-      // span za "s"
-      // obicno je spans[1] = "s" ali nekad ima dodatnih spanova (reading)
-      spans.forEach(s => {
-        if (s.textContent.trim() === "s" || s.textContent.trim() === "sec" || s.textContent.trim() === "s.") {
-          s.textContent = t("seconds_short");
-        }
+  function detectLangDefault() {
+    // Default EN, ali ako je sistemski jezik "nasi" -> SR
+    const raw = String(navigator.language || "").toLowerCase(); // "sr-rs", "hr-hr", "en-us"
+    const primary = raw.split("-")[0];
+    const supportedSr = new Set(["sr", "hr", "bs", "sh", "cnr", "me"]);
+    return supportedSr.has(primary) ? "sr" : "en";
+  }
+
+  function applyI18n() {
+    // 1) Generic data-i18n
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
+      const key = el.getAttribute("data-i18n");
+      el.textContent = t(key);
+    });
+
+    // 2) Program options text (values are stable)
+    if (programSelect) {
+      Array.from(programSelect.options).forEach((opt) => {
+        if (opt.value === "none") opt.textContent = t("program_none");
+        if (opt.value === "screen_relief")
+          opt.textContent = t("program_screen_relief");
+        if (opt.value === "focus_reset")
+          opt.textContent = t("program_focus_reset");
+        if (opt.value === "intense_15")
+          opt.textContent = t("program_intense_15");
       });
     }
 
-    // reading rows/cols labeli
-    if (mode === "reading_basic") {
+    // 3) Mode titles + descriptions (by data-mode)
+    const MODE_I18N = {
+      warmup: {
+        enTitle: "Warm-up",
+        enDesc:
+          "A fixation point in the center with gentle 'breathing'. Minimal effort - just hold your gaze.",
+        srTitle: "Zagrejavanje",
+        srDesc:
+          "Fiksaciona tačka u centru, blago 'disanje' mete. Minimalan napor, samo držanje pogleda.",
+      },
+      circle: {
+        enTitle: "Circle",
+        enDesc:
+          "The target moves along a large circular path - smooth pursuit training.",
+        srTitle: "Krug",
+        srDesc:
+          "Meta kruži po velikoj kružnoj putanji - trening glatkog praćenja po velikoj putanji.",
+      },
+      figure8: {
+        enTitle: "Infinity",
+        enDesc:
+          "The target moves in a figure-eight (∞) - smooth tracking across two planes.",
+        srTitle: "Infiniti",
+        srDesc:
+          "Meta se kreće po ležećoj osmici (∞) - glatko praćenje u dve ravni.",
+      },
+      saccade_lr: {
+        enTitle: "Saccades left-right",
+        enDesc:
+          "Fast jumps to far left/right. Keep head still - eyes only.",
+        srTitle: "Skokovi levo-desno",
+        srDesc:
+          "Meta skače maksimalno levo-desno. Brzi skokovi - bez pomeranja glave.",
+      },
+      saccade_ud: {
+        enTitle: "Saccades up-down",
+        enDesc: "Fast jumps to top/bottom. Keep head still - eyes only.",
+        srTitle: "Skokovi gore-dole",
+        srDesc:
+          "Meta skače maksimalno gore-dole. Aktivira vertikalne napete mišiće od ekrana.",
+      },
+      saccade_lcr: {
+        enTitle: "Saccades L-C-R (3 points)",
+        enDesc:
+          "Left - center - right - center... Like scanning a line of text.",
+        srTitle: "Skokovi L-C-R (3 tačke)",
+        srDesc:
+          "Meta skače: levo - centar - desno - centar... Kombinuje kratke i duge skokove, kao skeniranje reda teksta.",
+      },
+      saccade_cross: {
+        enTitle: "Saccades cross (C + 4 sides)",
+        enDesc:
+          "Center - left/right/up/down. A scanning pattern with constant return to center.",
+        srTitle: "Skokovi krst (C + 4 strane)",
+        srDesc:
+          "Meta skače centar ↔ levo/desno/gore/dole. Brzi skokovi sa stalnim povratkom u centar - šablon za skeniranje.",
+      },
+      saccade_star8: {
+        enTitle: "Saccades 8 directions",
+        enDesc:
+          "Center plus 8 directions (cross + diagonals). Engages peripheral vision.",
+        srTitle: "Skokovi 8 smerova (krst + dijagonale)",
+        srDesc:
+          "Centar + 8 smerova (gore, dole, levo, desno i 4 dijagonale). Maksimalno angažuje periferiju u svim pravcima.",
+      },
+      reading_basic: {
+        enTitle: "Reading",
+        enDesc:
+          "Rows of points like text lines - quick saccades and line transitions.",
+        srTitle: "Čitanje",
+        srDesc:
+          "Tri 'reda teksta' sa 5 tačaka po redu - simulira horizontalne skokove i prelazak na sledeći red.",
+      },
+      rain_basic: {
+        enTitle: "Rain (main + background)",
+        enDesc:
+          "Multiple faint drops plus one main drop you follow - calming motion.",
+        srTitle: "Kiša (glavna + pozadinske)",
+        srDesc:
+          "Više bledih kapljica + jedna glavna koju pratiš - pada kroz 5 kolona levo-desno, smirujuće.",
+      },
+      zoom_focus: {
+        enTitle: "Zoom focus",
+        enDesc:
+          "A single centered dot 'breathes' in size - steady focus on the center.",
+        srTitle: "Zoom fokus (centrirana tačka)",
+        srDesc:
+          "Jedna tačka u centru ekrana menja veličinu kao 'disanje' - fokus na mirnom pogledu u centar.",
+      },
+      vergence: {
+        enTitle: "Vergence (in-out)",
+        enDesc:
+          "Two symmetric dots move toward the center and back to the periphery.",
+        srTitle: "Približavanje/udaljavanje (dve tačke levo/desno)",
+        srDesc:
+          "Dve tačke simetrično levo i desno ritmično se približavaju centru i razmiču ka periferiji.",
+      },
+      near_far: {
+        enTitle: "Near - far",
+        enDesc:
+          "Alternate between the on-screen dot and a chosen distant point in the room.",
+        srTitle: "Blizu - daleko",
+        srDesc:
+          "Gledaj naizmenično u tačku na ekranu pa u izabranu dalju tačku u prostoru - ekran daje tempo i uputstvo.",
+      },
+      palming: {
+        enTitle: "Palming (rest)",
+        enDesc:
+          "Cover your eyes with your palms without pressure. Warmth + darkness, calm breathing.",
+        srTitle: "Palming (odmor)",
+        srDesc:
+          "Prekrij oči dlanovima bez pritiska. Toplina + mrak, mirno disanje.",
+      },
+    };
+
+    document.querySelectorAll(".mode-block").forEach((block) => {
+      const mode = block.dataset.mode;
+      const meta = MODE_I18N[mode];
+      if (!meta) return;
+
+      const titleEl = block.querySelector(".mode-title");
+      const descEl = block.querySelector(".mode-description");
+      if (titleEl)
+        titleEl.textContent =
+          currentLang === "sr" ? meta.srTitle : meta.enTitle;
+      if (descEl)
+        descEl.textContent =
+          currentLang === "sr" ? meta.srDesc : meta.enDesc;
+
+      // "Trajanje / Duration" + "u sekvenci / in sequence" - pokupi postojece span/label tekstove unutar config-row
       const row = block.querySelector(".mode-config-row");
       if (row) {
-        const rowSpans = row.querySelectorAll("span");
-        // posle trajanja i s imas "| redova:" i "kolona:"
-        rowSpans.forEach(sp => {
-          const txt = sp.textContent.trim().toLowerCase();
-          if (txt.includes("redova") || txt.includes("rows")) sp.textContent = "| " + t("rows_label");
-          if (txt.includes("kolona") || txt.includes("cols")) sp.textContent = t("cols_label");
+        const spans = row.querySelectorAll("span");
+        // prvi span u config-row je "Trajanje:" u tvojoj strukturi
+        if (spans && spans[0]) spans[0].textContent = t("duration_label");
+        // span za "s"
+        // obicno je spans[1] = "s" ali nekad ima dodatnih spanova (reading)
+        spans.forEach((s) => {
+          if (
+            s.textContent.trim() === "s" ||
+            s.textContent.trim() === "sec" ||
+            s.textContent.trim() === "s."
+          ) {
+            s.textContent = t("seconds_short");
+          }
         });
       }
+
+      // reading rows/cols labeli
+      if (mode === "reading_basic") {
+        const row = block.querySelector(".mode-config-row");
+        if (row) {
+          const rowSpans = row.querySelectorAll("span");
+          // posle trajanja i s imas "| redova:" i "kolona:"
+          rowSpans.forEach((sp) => {
+            const txt = sp.textContent.trim().toLowerCase();
+            if (txt.includes("redova") || txt.includes("rows"))
+              sp.textContent = "| " + t("rows_label");
+            if (txt.includes("kolona") || txt.includes("cols"))
+              sp.textContent = t("cols_label");
+          });
+        }
+      }
+    });
+
+    // 4) Posture hint (small-label unutar distance-info)
+    const posture = document.querySelector(".distance-info .small-label");
+    if (posture) posture.textContent = t("posture_hint");
+  }
+
+  function setLang(lang) {
+    currentLang = lang === "sr" ? "sr" : "en";
+    try {
+      localStorage.setItem(LS_LANG, currentLang);
+    } catch (e) {}
+
+    // dugmici
+    if (Array.isArray(langBtns)) {
+      langBtns.forEach((b) =>
+        b.classList.toggle("active", b.dataset.lang === currentLang),
+      );
     }
-  });
 
-  // 4) Posture hint (small-label unutar distance-info)
-  const posture = document.querySelector(".distance-info .small-label");
-  if (posture) posture.textContent = t("posture_hint");
-}
+    applyI18n();
+    applyDeviceType();
+    updateModeTexts();
+    updateModeVisibilityForProgram();
 
-function setLang(lang) {
-  currentLang = (lang === "sr") ? "sr" : "en";
-  try { localStorage.setItem(LS_LANG, currentLang); } catch (e) {}
-
-  // dugmici
-  if (Array.isArray(langBtns)) {
-    langBtns.forEach(b => b.classList.toggle("active", b.dataset.lang === currentLang));
+    // status u idle stanju
+    if (!isRunning && statusEl) {
+      statusEl.textContent = t("status_ready");
+      statusEl.style.color = "#10b981";
+    }
   }
 
-  applyI18n();
-  applyDeviceType();
-  updateModeTexts();
-  updateModeVisibilityForProgram();
+  function initLang() {
+    let saved = null;
+    try {
+      saved = localStorage.getItem(LS_LANG);
+    } catch (e) {}
+    if (saved === "sr" || saved === "en") currentLang = saved;
+    else currentLang = detectLangDefault();
 
-  // status u idle stanju
-  if (!isRunning && statusEl) {
-    statusEl.textContent = t("status_ready");
-    statusEl.style.color = "#10b981";
-  }
-}
+    if (Array.isArray(langBtns)) {
+      langBtns.forEach((btn) =>
+        btn.addEventListener("click", () => setLang(btn.dataset.lang)),
+      );
+    }
 
-function initLang() {
-  let saved = null;
-  try { saved = localStorage.getItem(LS_LANG); } catch (e) {}
-  if (saved === "sr" || saved === "en") currentLang = saved;
-  else currentLang = detectLangDefault();
-
-  if (Array.isArray(langBtns)) {
-    langBtns.forEach(btn => btn.addEventListener("click", () => setLang(btn.dataset.lang)));
+    // Default EN kao sto si hteo
+    // Ako je sistemski "nas" - prebacice na SR, ali user moze da vrati EN
+    setLang(currentLang);
   }
 
-  // Default EN kao sto si hteo
-  // Ako je sistemski "nas" - prebacice na SR, ali user moze da vrati EN
-  setLang(currentLang);
-}
+  // -------------------------
+  // Help texts (EN + SR)
+  // -------------------------
+  const HELP_TEXTS = {
+    en: {
+      warmup:
+        "Warm-up: sit upright, head still. Gaze at the center calmly. Blink naturally and breathe.",
+      circle:
+        "Circle: track the target along a large circle near the edges. Smooth movement, no head turning.",
+      figure8:
+        "Infinity: track the target along a figure-eight (∞). Smooth pursuit, no head turning.",
+      saccade_lr:
+        "Left-right saccades: fast jumps between far left and far right. Keep head still.",
+      saccade_ud:
+        "Up-down saccades: fast jumps between top and bottom. Keep head still.",
+      saccade_lcr:
+        "L-C-R saccades: left - center - right - center... Like scanning a text line.",
+      saccade_cross:
+        "Cross saccades: center to left/right/up/down with constant return to center.",
+      saccade_star8:
+        "8-direction saccades: center plus 8 directions (including diagonals). Engage peripheral vision.",
+      reading_basic:
+        "Reading: follow points across rows like text lines. Quick saccades, calm fixation between jumps.",
+      rain_basic:
+        "Rain: ignore faint background drops and follow the main drop falling down the screen.",
+      zoom_focus:
+        "Zoom focus: keep gaze on the center while the dot 'breathes' in size. Relaxed blinking.",
+      vergence:
+        "Vergence: two dots move toward the center and back out. Notice the rhythm, keep head still.",
+      near_far:
+        "Near-far: when it says NEAR, look at the on-screen dot. When it says FAR, look at a chosen distant point.",
+    },
+    sr: {
+      warmup:
+        "Zagrejavanje: sedi uspravno, glava mirna. Gledaj u centar mete bez napora. Trepći prirodno i diši mirno.",
+      circle:
+        "Krug: prati metu po velikoj kružnoj putanji skoro do ivica. Pokret očiju glatko, bez okretanja glave.",
+      figure8:
+        "Infiniti: prati metu po ležećoj osmici (∞). Glatko praćenje, bez trzaja i bez okretanja glave.",
+      saccade_lr:
+        "Skokovi levo-desno: brzi skokovi između krajnje leve i desne tačke. Glava mirna - rade samo oči.",
+      saccade_ud:
+        "Skokovi gore-dole: brzi skokovi između gornje i donje tačke. Glava mirna - rade samo oči.",
+      saccade_lcr:
+        "Skokovi L-C-R: levo - centar - desno - centar... Kao skeniranje reda teksta.",
+      saccade_cross:
+        "Skokovi krst: centar pa levo/desno/gore/dole uz stalni povratak u centar.",
+      saccade_star8:
+        "Skokovi 8 smerova: centar plus 8 smerova (uklj. dijagonale). Aktivira periferni vid.",
+      reading_basic:
+        "Čitanje: prati tačke kroz redove kao linije teksta. Brzi skokovi, mirna fiksacija između skokova.",
+      rain_basic:
+        "Kiša: ignoriši blede pozadinske kapljice i prati glavnu koja pada niz ekran.",
+      zoom_focus:
+        "Zoom fokus: gledaj u centar dok tačka 'diše' (menja veličinu). Trepći opušteno.",
+      vergence:
+        "Približavanje/udaljavanje: dve tačke idu ka centru pa nazad. Oseti ritam, glava mirna.",
+      near_far:
+        "Blizu-daleko: kad piše BLIZU gledaj tačku na ekranu; kad piše DALEKO gledaj izabranu dalju tačku u prostoru.",
+    },
+  };
 
-// -------------------------
-// Help texts (EN + SR)
-// -------------------------
-const HELP_TEXTS = {
-  en: {
-    warmup:
-      "Warm-up: sit upright, head still. Gaze at the center calmly. Blink naturally and breathe.",
-    circle:
-      "Circle: track the target along a large circle near the edges. Smooth movement, no head turning.",
-    figure8:
-      "Infinity: track the target along a figure-eight (∞). Smooth pursuit, no head turning.",
-    saccade_lr:
-      "Left-right saccades: fast jumps between far left and far right. Keep head still.",
-    saccade_ud:
-      "Up-down saccades: fast jumps between top and bottom. Keep head still.",
-    saccade_lcr:
-      "L-C-R saccades: left - center - right - center... Like scanning a text line.",
-    saccade_cross:
-      "Cross saccades: center to left/right/up/down with constant return to center.",
-    saccade_star8:
-      "8-direction saccades: center plus 8 directions (including diagonals). Engage peripheral vision.",
-    reading_basic:
-      "Reading: follow points across rows like text lines. Quick saccades, calm fixation between jumps.",
-    rain_basic:
-      "Rain: ignore faint background drops and follow the main drop falling down the screen.",
-    zoom_focus:
-      "Zoom focus: keep gaze on the center while the dot 'breathes' in size. Relaxed blinking.",
-    vergence:
-      "Vergence: two dots move toward the center and back out. Notice the rhythm, keep head still.",
-    near_far:
-      "Near-far: when it says NEAR, look at the on-screen dot. When it says FAR, look at a chosen distant point."
-  },
-  sr: {
-    warmup:
-      "Zagrejavanje: sedi uspravno, glava mirna. Gledaj u centar mete bez napora. Trepći prirodno i diši mirno.",
-    circle:
-      "Krug: prati metu po velikoj kružnoj putanji skoro do ivica. Pokret očiju glatko, bez okretanja glave.",
-    figure8:
-      "Infiniti: prati metu po ležećoj osmici (∞). Glatko praćenje, bez trzaja i bez okretanja glave.",
-    saccade_lr:
-      "Skokovi levo-desno: brzi skokovi između krajnje leve i desne tačke. Glava mirna - rade samo oči.",
-    saccade_ud:
-      "Skokovi gore-dole: brzi skokovi između gornje i donje tačke. Glava mirna - rade samo oči.",
-    saccade_lcr:
-      "Skokovi L-C-R: levo - centar - desno - centar... Kao skeniranje reda teksta.",
-    saccade_cross:
-      "Skokovi krst: centar pa levo/desno/gore/dole uz stalni povratak u centar.",
-    saccade_star8:
-      "Skokovi 8 smerova: centar plus 8 smerova (uklj. dijagonale). Aktivira periferni vid.",
-    reading_basic:
-      "Čitanje: prati tačke kroz redove kao linije teksta. Brzi skokovi, mirna fiksacija između skokova.",
-    rain_basic:
-      "Kiša: ignoriši blede pozadinske kapljice i prati glavnu koja pada niz ekran.",
-    zoom_focus:
-      "Zoom fokus: gledaj u centar dok tačka 'diše' (menja veličinu). Trepći opušteno.",
-    vergence:
-      "Približavanje/udaljavanje: dve tačke idu ka centru pa nazad. Oseti ritam, glava mirna.",
-    near_far:
-      "Blizu-daleko: kad piše BLIZU gledaj tačku na ekranu; kad piše DALEKO gledaj izabranu dalju tačku u prostoru."
+  function getHelpTextForMode() {
+    const pack = currentLang === "sr" ? HELP_TEXTS.sr : HELP_TEXTS.en;
+    return pack[currentMode] || "";
   }
-};
 
-function getHelpTextForMode() {
-  const pack = (currentLang === "sr") ? HELP_TEXTS.sr : HELP_TEXTS.en;
-  return pack[currentMode] || "";
-}
-
-function getSelectedModes() {
-  return allModes.filter(m => seqEls[m]?.checked);
-}
+  function getSelectedModes() {
+    return allModes.filter((m) => seqEls[m]?.checked);
+  }
 
   function collectUiState() {
-  return {
-    device: deviceType,
-    program: programSelect.value,
-    mode: currentMode,
-    autoSeq: enableAutoSequenceEl.checked,
-    showHelp: showHelpCheckbox.checked,
-    useVoice: !!useVoiceEl?.checked,
+    return {
+      device: deviceType,
+      program: programSelect.value,
+      mode: currentMode,
+      autoSeq: enableAutoSequenceEl.checked,
+      showHelp: showHelpCheckbox.checked,
+      useVoice: !!useVoiceEl?.checked,
 
-    durations: {
-      warmup: durationWarmupEl.value,
-      circle: durationCircleEl.value,
-      figure8: durationFigure8El.value,
-      saccade_lr: durationSaccadeLREl.value,
-      saccade_ud: durationSaccadeUDEl.value,
-      saccade_lcr: durationSaccadeLCREl.value,
-      saccade_cross: durationSaccadeCrossEl.value,
-      saccade_star8: durationSaccadeStar8El.value,
-      reading_basic: durationReadingBasicEl.value,
-      rain_basic: durationRainBasicEl.value,
-      zoom_focus: durationZoomFocusEl.value,
-      vergence: durationVergenceEl.value,
-      near_far: durationNearFarEl.value,
-      palming: durationPalmingEl.value
-    },
+      durations: {
+        warmup: durationWarmupEl.value,
+        circle: durationCircleEl.value,
+        figure8: durationFigure8El.value,
+        saccade_lr: durationSaccadeLREl.value,
+        saccade_ud: durationSaccadeUDEl.value,
+        saccade_lcr: durationSaccadeLCREl.value,
+        saccade_cross: durationSaccadeCrossEl.value,
+        saccade_star8: durationSaccadeStar8El.value,
+        reading_basic: durationReadingBasicEl.value,
+        rain_basic: durationRainBasicEl.value,
+        zoom_focus: durationZoomFocusEl.value,
+        vergence: durationVergenceEl.value,
+        near_far: durationNearFarEl.value,
+        palming: durationPalmingEl.value,
+      },
 
-    seq: {
-      warmup: seqWarmupEl.checked,
-      circle: seqCircleEl.checked,
-      figure8: seqFigure8El.checked,
-      saccade_lr: seqSaccadeLREl.checked,
-      saccade_ud: seqSaccadeUDEl.checked,
-      saccade_lcr: seqSaccadeLCREl.checked,
-      saccade_cross: seqSaccadeCrossEl.checked,
-      saccade_star8: seqSaccadeStar8El.checked,
-      reading_basic: seqReadingBasicEl.checked,
-      rain_basic: seqRainBasicEl.checked,
-      zoom_focus: seqZoomFocusEl.checked,
-      vergence: seqVergenceEl.checked,
-      near_far: seqNearFarEl.checked,
-      palming: seqPalmingEl.checked
-    },
+      seq: {
+        warmup: seqWarmupEl.checked,
+        circle: seqCircleEl.checked,
+        figure8: seqFigure8El.checked,
+        saccade_lr: seqSaccadeLREl.checked,
+        saccade_ud: seqSaccadeUDEl.checked,
+        saccade_lcr: seqSaccadeLCREl.checked,
+        saccade_cross: seqSaccadeCrossEl.checked,
+        saccade_star8: seqSaccadeStar8El.checked,
+        reading_basic: seqReadingBasicEl.checked,
+        rain_basic: seqRainBasicEl.checked,
+        zoom_focus: seqZoomFocusEl.checked,
+        vergence: seqVergenceEl.checked,
+        near_far: seqNearFarEl.checked,
+        palming: seqPalmingEl.checked,
+      },
 
-    reading: {
-      rows: readingRowsEl.value,
-      cols: readingColsEl.value
-    }
-  };
+      reading: {
+        rows: readingRowsEl.value,
+        cols: readingColsEl.value,
+      },
+    };
   }
 
   function saveUiState() {
-  try {
-    localStorage.setItem(LS_KEY, JSON.stringify(collectUiState()));
-  } catch (e) {}
+    try {
+      localStorage.setItem(LS_KEY, JSON.stringify(collectUiState()));
+    } catch (e) {}
   }
 
   function restoreUiState() {
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    if (!raw) return false;
-    const st = JSON.parse(raw);
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if (!raw) return false;
+      const st = JSON.parse(raw);
 
-    // Device se sada detektuje automatski (phone/tablet)
-    applyDeviceType();
+      // Device se sada detektuje automatski (phone/tablet)
+      applyDeviceType();
 
-    if (st.program) programSelect.value = st.program;
+      if (st.program) programSelect.value = st.program;
 
-    // durations
-    if (st.durations) {
-      Object.entries(st.durations).forEach(([k, v]) => {
-        if (v == null) return;
-        setModeDuration(k, parseInt(v, 10));
-      });
+      // durations
+      if (st.durations) {
+        Object.entries(st.durations).forEach(([k, v]) => {
+          if (v == null) return;
+          setModeDuration(k, parseInt(v, 10));
+        });
+      }
+
+      // seq
+      if (st.seq) {
+        Object.entries(st.seq).forEach(([k, v]) =>
+          setModeInSequence(k, !!v),
+        );
+      }
+
+      // reading
+      if (st.reading) {
+        if (st.reading.rows) readingRowsEl.value = st.reading.rows;
+        if (st.reading.cols) readingColsEl.value = st.reading.cols;
+      }
+
+      enableAutoSequenceEl.checked = !!st.autoSeq;
+      showHelpCheckbox.checked = !!st.showHelp;
+      if (useVoiceEl) useVoiceEl.checked = !!st.useVoice;
+      if (useVoiceEl) useVoiceEl.checked = false; //  temp
+      if (seqPalmingEl) seqPalmingEl.checked = false; // temp
+      if (st.mode) {
+        currentMode = st.mode;
+      }
+      // refresh UI texts + visibility
+      updateModeVisibilityForProgram();
+      updateModeTexts();
+
+      return true;
+    } catch (e) {
+      return false;
     }
-
-    // seq
-    if (st.seq) {
-      Object.entries(st.seq).forEach(([k, v]) => setModeInSequence(k, !!v));
-    }
-
-    // reading
-    if (st.reading) {
-      if (st.reading.rows) readingRowsEl.value = st.reading.rows;
-      if (st.reading.cols) readingColsEl.value = st.reading.cols;
-    }
-
-    enableAutoSequenceEl.checked = !!st.autoSeq;
-    showHelpCheckbox.checked = !!st.showHelp;
-    if (useVoiceEl) useVoiceEl.checked = !!st.useVoice;
-    if (useVoiceEl) useVoiceEl.checked = false;    //  temp
-    if (seqPalmingEl) seqPalmingEl.checked = false;  // temp
-    if (st.mode) {
-      currentMode = st.mode;
-    }
-    // refresh UI texts + visibility
-    updateModeVisibilityForProgram();
-    updateModeTexts();
-
-    return true;
-  } catch (e) {
-    return false;
-  }
   }
 
   const allModes = [
-      "warmup",
-      "circle",
-      "figure8",
-      "saccade_lr",
-      "saccade_ud",
-      "saccade_lcr",
-      "saccade_cross",
-      "saccade_star8",
-      "reading_basic",
-      "rain_basic",
-      "zoom_focus",
-      "vergence",
-      "near_far",
-      "palming"
+    "warmup",
+    "circle",
+    "figure8",
+    "saccade_lr",
+    "saccade_ud",
+    "saccade_lcr",
+    "saccade_cross",
+    "saccade_star8",
+    "reading_basic",
+    "rain_basic",
+    "zoom_focus",
+    "vergence",
+    "near_far",
+    "palming",
   ];
 
   // Gotovi programi (sekvence)
   const programs = {
-      screen_relief: {
-          label: "Screen relief - 5 min",
-          sequence: [
-              { mode: "warmup", duration: 30 },
-              { mode: "circle", duration: 60 },
-              { mode: "saccade_lr", duration: 45 },
-              { mode: "saccade_ud", duration: 45 },
-              { mode: "zoom_focus", duration: 60 }
-          ],
-          reading: null
-      },
-      focus_reset: {
-          label: "Focus reset - 10 min",
-          sequence: [
-              { mode: "warmup", duration: 45 },
-              { mode: "figure8", duration: 60 },
-              { mode: "saccade_star8", duration: 60 },
-              { mode: "reading_basic", duration: 60 },
-              { mode: "rain_basic", duration: 60 },
-              { mode: "near_far", duration: 120 }
-          ],
-          reading: { rows: 3, cols: 5 }
-      },
-      intense_15: {
-          label: "Intenzivni - 15 min",
-          sequence: [
-              { mode: "warmup", duration: 45 },
-              { mode: "figure8", duration: 90 },
-              { mode: "saccade_cross", duration: 60 },
-              { mode: "saccade_star8", duration: 60 },
-              { mode: "reading_basic", duration: 90 },
-              { mode: "vergence", duration: 60 },
-              { mode: "zoom_focus", duration: 60 }
-          ],
-          reading: { rows: 4, cols: 6 }
-      }
+    screen_relief: {
+      label: "Screen relief",
+      sequence: [
+        { mode: "warmup", duration: 30 },
+        { mode: "circle", duration: 60 },
+        { mode: "saccade_lr", duration: 45 },
+        { mode: "saccade_ud", duration: 45 },
+        { mode: "zoom_focus", duration: 60 },
+      ],
+      reading: null,
+    },
+    focus_reset: {
+      label: "Focus reset",
+      sequence: [
+        { mode: "warmup", duration: 45 },
+        { mode: "figure8", duration: 60 },
+        { mode: "saccade_star8", duration: 60 },
+        { mode: "reading_basic", duration: 60 },
+        { mode: "rain_basic", duration: 60 },
+        { mode: "near_far", duration: 120 },
+      ],
+      reading: { rows: 3, cols: 5 },
+    },
+    intense_15: {
+      label: "Intenzivni",
+      sequence: [
+        { mode: "warmup", duration: 45 },
+        { mode: "figure8", duration: 90 },
+        { mode: "saccade_cross", duration: 60 },
+        { mode: "saccade_star8", duration: 60 },
+        { mode: "reading_basic", duration: 90 },
+        { mode: "vergence", duration: 60 },
+        { mode: "zoom_focus", duration: 60 },
+      ],
+      reading: { rows: 4, cols: 6 },
+    },
   };
 
   // --- Prikaz / skrivanje modova po programu ---
   const modeBlocks = document.querySelectorAll(".mode-block");
 
   function updateModeVisibilityForProgram() {
-      const value = programSelect.value;
+    const value = programSelect.value;
 
-      // Ručno biranje ili nepoznat program → pokaži sve
-      if (!value || value === "none" || !programs[value]) {
-          modeBlocks.forEach(block => {
-              block.style.display = "block";
-          });
-          return;
-      }
-
-      const program = programs[value];
-      const used = new Set((program.sequence || []).map(step => step.mode));
-
-      modeBlocks.forEach(block => {
-          const mode = block.dataset.mode;
-          if (!mode) {
-              block.style.display = "block";
-              return;
-          }
-          block.style.display = used.has(mode) ? "block" : "none";
+    // Ručno biranje ili nepoznat program → pokaži sve
+    if (!value || value === "none" || !programs[value]) {
+      modeBlocks.forEach((block) => {
+        block.style.display = "block";
       });
+      return;
+    }
+
+    const program = programs[value];
+    const used = new Set((program.sequence || []).map((step) => step.mode));
+
+    modeBlocks.forEach((block) => {
+      const mode = block.dataset.mode;
+      if (!mode) {
+        block.style.display = "block";
+        return;
+      }
+      block.style.display = used.has(mode) ? "block" : "none";
+    });
   }
 
   // Učitavanje programa
@@ -1927,16 +2129,16 @@ function getSelectedModes() {
     const value = programSelect.value;
     const program = programs[value];
     if (!program) {
-        updateModeVisibilityForProgram();
-        return;
+      updateModeVisibilityForProgram();
+      return;
     }
-    allModes.forEach(m => setModeInSequence(m, false));
+    allModes.forEach((m) => setModeInSequence(m, false));
 
     // primeni trajanja i uključi modove iz programa
     program.sequence.forEach((step, index) => {
-        setModeDuration(step.mode, step.duration);
-        setModeInSequence(step.mode, true);
-        // prvi mod iz programa postaje aktivan
+      setModeDuration(step.mode, step.duration);
+      setModeInSequence(step.mode, true);
+      // prvi mod iz programa postaje aktivan
       if (index === 0) {
         currentMode = step.mode;
       }
@@ -1950,14 +2152,19 @@ function getSelectedModes() {
 
     enableAutoSequenceEl.checked = true;
     updateModeTexts();
-    updateModeVisibilityForProgram();   // sakrij/ prikaži relevantne modove
+    updateModeVisibilityForProgram(); // sakrij/ prikaži relevantne modove
 
     const labelKey =
-      (value === "screen_relief") ? "program_screen_relief" :
-      (value === "focus_reset") ? "program_focus_reset" :
-      (value === "intense_15") ? "program_intense_15" : "program_none";
+      value === "screen_relief"
+        ? "program_screen_relief"
+        : value === "focus_reset"
+          ? "program_focus_reset"
+          : value === "intense_15"
+            ? "program_intense_15"
+            : "program_none";
 
-    statusEl.textContent = t("status_program_prefix") + t(labelKey) + t("status_program_suffix");
+    statusEl.textContent =
+      t("status_program_prefix") + t(labelKey) + t("status_program_suffix");
     statusEl.style.color = "#0f766e";
     playBeep();
   });
@@ -2019,64 +2226,63 @@ function getSelectedModes() {
   function setActiveMode(mode) {
     if (!mode) return;
     currentMode = mode;
-    const radio = document.querySelector(`input[name="mode"][value="${mode}"]`);
+    const radio = document.querySelector(
+      `input[name="mode"][value="${mode}"]`,
+    );
     if (radio) radio.checked = true;
     updateModeTexts();
   }
 
-    function ensureActiveModeIsInSequence() {
-      // radi samo kad je auto sekvenca ukljucena
-      if (!enableAutoSequenceEl.checked) return;
+  function ensureActiveModeIsInSequence() {
+    // radi samo kad je auto sekvenca ukljucena
+    if (!enableAutoSequenceEl.checked) return;
 
-      const seq = getSequenceList();
-      if (!seq.length) return;
+    const seq = getSequenceList();
+    if (!seq.length) return;
 
-      if (!seq.includes(currentMode)) {
-        setActiveMode(seq[0]);
-      }
+    if (!seq.includes(currentMode)) {
+      setActiveMode(seq[0]);
+    }
+  }
+
+  function hasAnyModeInSequence() {
+    return getSequenceList().length > 0;
+  }
+
+  function showNoSequenceStatus() {
+    showToast(t("status_no_sequence"), { type: "error" });
+  }
+
+  let toastTimeoutId = null;
+
+  function showToast(message, { type = "default", duration = 2200 } = {}) {
+    const toast = document.getElementById("toast");
+    if (!toast) return;
+
+    toast.textContent = message;
+
+    // reset klasa (bitno)
+    toast.className = "toast";
+
+    if (type === "error") {
+      toast.classList.add("toast-error");
+    } else {
+      toast.classList.add("toast-default");
     }
 
-    function hasAnyModeInSequence() {
-      return getSequenceList().length > 0;
+    // force reflow da bi animacija uvek radila
+    toast.offsetHeight;
+
+    toast.classList.add("show");
+
+    if (toastTimeoutId) {
+      clearTimeout(toastTimeoutId);
     }
 
-    function showNoSequenceStatus() {
-      showToast(t("status_no_sequence"), { type: "error" });
-    }
-
-    let toastTimeoutId = null;
-
-
-    function showToast(message, { type = "default", duration = 2200 } = {}) {
-      const toast = document.getElementById("toast");
-      if (!toast) return;
-
-      toast.textContent = message;
-
-      // reset klasa (bitno)
-      toast.className = "toast";
-
-      if (type === "error") {
-        toast.classList.add("toast-error");
-      } else {
-        toast.classList.add("toast-default");
-      }
-
-      // force reflow da bi animacija uvek radila
-      toast.offsetHeight;
-
-      toast.classList.add("show");
-
-      if (toastTimeoutId) {
-        clearTimeout(toastTimeoutId);
-      }
-
-      toastTimeoutId = setTimeout(() => {
-        toast.classList.remove("show");
-      }, duration);
-    }
-
-
+    toastTimeoutId = setTimeout(() => {
+      toast.classList.remove("show");
+    }, duration);
+  }
 
   function isPhoneDevice() {
     return isRealPhoneScreen();
@@ -2096,7 +2302,7 @@ function getSelectedModes() {
       document.body.classList.add("is-phone");
     }
 
-    initLang();        // setLang() u sebi radi applyI18n + aktivira dugmice
+    initLang(); // setLang() u sebi radi applyI18n + aktivira dugmice
     applyDeviceType(); // koristi t(), pa mora posle initLang()
 
     // 1) restore UI state
@@ -2123,61 +2329,61 @@ function getSelectedModes() {
   });
 
   function updateModeTexts() {
-      updateHelpBubble();
+    updateHelpBubble();
   }
 
   function showHamburger() {
-      if (!isRunning) return;
-      hamburgerBtn.style.opacity = "1";
-      hamburgerBtn.style.pointerEvents = "auto";
+    if (!isRunning) return;
+    hamburgerBtn.style.opacity = "1";
+    hamburgerBtn.style.pointerEvents = "auto";
 
-      if (hamburgerHideTimeout) {
-          clearTimeout(hamburgerHideTimeout);
-      }
-      hamburgerHideTimeout = setTimeout(() => {
-          hideHamburger();
-      }, 2000); // 2 s posle poslednjeg pomeranja miša
+    if (hamburgerHideTimeout) {
+      clearTimeout(hamburgerHideTimeout);
+    }
+    hamburgerHideTimeout = setTimeout(() => {
+      hideHamburger();
+    }, 2000); // 2 s posle poslednjeg pomeranja miša
   }
 
   function hideHamburger() {
-      if (!isRunning) return;
-      hamburgerBtn.style.opacity = "0";
-      hamburgerBtn.style.pointerEvents = "none";
+    if (!isRunning) return;
+    hamburgerBtn.style.opacity = "0";
+    hamburgerBtn.style.pointerEvents = "none";
   }
 
   function ensureAudioContext() {
-      if (!audioCtx) {
-          const AC = window.AudioContext || window.webkitAudioContext;
-          if (!AC) return;
-          audioCtx = new AC();
-      }
+    if (!audioCtx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      audioCtx = new AC();
+    }
   }
 
   function playBeep() {
-      try {
-          ensureAudioContext();
-          if (!audioCtx) return;
+    try {
+      ensureAudioContext();
+      if (!audioCtx) return;
 
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
 
-          osc.type = "sine";
-          osc.frequency.value = 1100; // kratak, visok beep
+      osc.type = "sine";
+      osc.frequency.value = 1100; // kratak, visok beep
 
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
 
-          const now = audioCtx.currentTime;
-          const duration = 0.07;
+      const now = audioCtx.currentTime;
+      const duration = 0.07;
 
-          gain.gain.setValueAtTime(0.14, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+      gain.gain.setValueAtTime(0.14, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
-          osc.start(now);
-          osc.stop(now + duration);
-      } catch (e) {
-          // ako browser blokira audio – ćuti
-      }
+      osc.start(now);
+      osc.stop(now + duration);
+    } catch (e) {
+      // ako browser blokira audio – ćuti
+    }
   }
 
   // Trajanje po modu
@@ -2194,8 +2400,8 @@ function getSelectedModes() {
     return !!(el && el.checked);
   }
 
-    // Pomoćne fn za setovanje trajanja i učešća u sekvenci
-   function setModeDuration(mode, seconds) {
+  // Pomoćne fn za setovanje trajanja i učešća u sekvenci
+  function setModeDuration(mode, seconds) {
     const el = durationEls[mode];
     if (!el) return;
     const val = Math.max(5, Math.min(600, seconds | 0));
@@ -2209,15 +2415,15 @@ function getSelectedModes() {
   }
 
   function getSequenceList() {
-    return allModes.filter(m => isModeInSequence(m));
+    return allModes.filter((m) => isModeInSequence(m));
   }
 
   function getNextModeInSequence(mode) {
     const seq = getSequenceList();
     if (!seq.length) return null;
     const idx = seq.indexOf(mode);
-    if (idx === -1) return seq[0];              // ako iz nekog razloga nije u listi
-    if (idx >= seq.length - 1) return null;     // nema sledećeg
+    if (idx === -1) return seq[0]; // ako iz nekog razloga nije u listi
+    if (idx >= seq.length - 1) return null; // nema sledećeg
     return seq[idx + 1];
   }
 
@@ -2246,887 +2452,918 @@ function getSelectedModes() {
     }
   }
 
-
   function updateHelpBubble() {
-      if (!isRunning || !showHelpCheckbox.checked) {
-          helpBubbleEl.style.display = "none";
-          return;
-      }
-      const txt = getHelpTextForMode();
-      if (!txt) {
-          helpBubbleEl.style.display = "none";
-          return;
-      }
-      helpBubbleEl.innerHTML = "<strong>" + t("help_title") + "</strong> " + txt;
-      helpBubbleEl.style.display = "block";
+    if (!isRunning || !showHelpCheckbox.checked) {
+      helpBubbleEl.style.display = "none";
+      return;
+    }
+    const txt = getHelpTextForMode();
+    if (!txt) {
+      helpBubbleEl.style.display = "none";
+      return;
+    }
+    helpBubbleEl.innerHTML =
+      "<strong>" + t("help_title") + "</strong> " + txt;
+    helpBubbleEl.style.display = "block";
   }
 
   showHelpCheckbox.addEventListener("change", () => {
-      updateHelpBubble();
+    updateHelpBubble();
   });
 
   helpBubbleEl.addEventListener("click", (e) => {
-      e.stopPropagation();
-      helpBubbleEl.style.display = "none";
-      showHelpCheckbox.checked = false;
+    e.stopPropagation();
+    helpBubbleEl.style.display = "none";
+    showHelpCheckbox.checked = false;
   });
 
   // Timer overlay
   function updateTimerOverlay() {
-      if (!isRunning || timerTotalMs <= 0) {
-          timerOverlayEl.style.display = "none";
-          return;
-      }
-      const seconds = Math.max(0, Math.ceil(timerRemainingMs / 1000));
-      const mm = Math.floor(seconds / 60);
-      const ss = seconds % 60;
-      const text = mm > 0 ? `${mm}:${ss < 10 ? "0" + ss : ss}` : `${ss} s`;
-      timerOverlayEl.textContent = text;
-      timerOverlayEl.style.display = "block";
+    if (!isRunning || timerTotalMs <= 0) {
+      timerOverlayEl.style.display = "none";
+      return;
+    }
+    const seconds = Math.max(0, Math.ceil(timerRemainingMs / 1000));
+    const mm = Math.floor(seconds / 60);
+    const ss = seconds % 60;
+    const text = mm > 0 ? `${mm}:${ss < 10 ? "0" + ss : ss}` : `${ss} s`;
+    timerOverlayEl.textContent = text;
+    timerOverlayEl.style.display = "block";
   }
 
   function clearTimer() {
-      if (timerIntervalId !== null) {
-          clearInterval(timerIntervalId);
-          timerIntervalId = null;
-      }
-      timerTotalMs = 0;
-      timerRemainingMs = 0;
-      timerOverlayEl.style.display = "none";
+    if (timerIntervalId !== null) {
+      clearInterval(timerIntervalId);
+      timerIntervalId = null;
+    }
+    timerTotalMs = 0;
+    timerRemainingMs = 0;
+    timerOverlayEl.style.display = "none";
   }
 
   function startTimerForCurrentMode() {
-      clearTimer();
-      const durationSec = getModeDurationSeconds(currentMode);
-      if (!durationSec || durationSec <= 0) return;
-      timerTotalMs = durationSec * 1000;
-      timerRemainingMs = timerTotalMs;
-      updateTimerOverlay();
+    clearTimer();
+    const durationSec = getModeDurationSeconds(currentMode);
+    if (!durationSec || durationSec <= 0) return;
+    timerTotalMs = durationSec * 1000;
+    timerRemainingMs = timerTotalMs;
+    updateTimerOverlay();
 
-      timerIntervalId = setInterval(() => {
-          timerRemainingMs -= 200;
-          if (timerRemainingMs <= 0) {
-              clearInterval(timerIntervalId);
-              timerIntervalId = null;
-              timerRemainingMs = 0;
-              updateTimerOverlay();
-              handleTimerEnd();
-          } else {
-              updateTimerOverlay();
-          }
-      }, 200);
+    timerIntervalId = setInterval(() => {
+      timerRemainingMs -= 200;
+      if (timerRemainingMs <= 0) {
+        clearInterval(timerIntervalId);
+        timerIntervalId = null;
+        timerRemainingMs = 0;
+        updateTimerOverlay();
+        handleTimerEnd();
+      } else {
+        updateTimerOverlay();
+      }
+    }, 200);
   }
 
   function handleTimerEnd() {
-      if (!isRunning) return;
+    if (!isRunning) return;
 
-      if (enableAutoSequenceEl.checked) {
-          const nextMode = getNextCheckedModeAfter(currentMode);
-          if (nextMode) {
-              currentMode = nextMode;
-              resetModeState(nextMode);
-              updateModeTexts();
-              startTimerForCurrentMode();
-              playBeep(); // beep na promenu programa / moda u sekvenci
-              return;
-          }
+    if (enableAutoSequenceEl.checked) {
+      const nextMode = getNextCheckedModeAfter(currentMode);
+      if (nextMode) {
+        currentMode = nextMode;
+        resetModeState(nextMode);
+        updateModeTexts();
+        startTimerForCurrentMode();
+        // Near/Far sam daje cue odmah (cue() -> beep), da ne bude duplo
+        if (nextMode !== "near_far") {
+          playBeep();
+        }
+        return;
       }
+    }
 
-      stopAnimation();
+    stopAnimation();
   }
 
-
   window.addEventListener("orientationchange", () => {
-      // sačekaj da se UI sredi pa onda računaj visinu
-      setTimeout(() => {
-  reflowNow();
-      }, 300);
+    // sačekaj da se UI sredi pa onda računaj visinu
+    setTimeout(() => {
+      reflowNow();
+    }, 300);
   });
 
   // Hamburger
   hamburgerBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      if (!appEl.classList.contains("is-training")) return;
-      appEl.classList.toggle("menu-open");
+    e.stopPropagation();
+    if (!appEl.classList.contains("is-training")) return;
+    appEl.classList.toggle("menu-open");
   });
 
   trainingAreaEl.addEventListener("click", () => {
-      if (appEl.classList.contains("is-training") && appEl.classList.contains("menu-open")) {
-          appEl.classList.remove("menu-open");
-      }
+    if (
+      appEl.classList.contains("is-training") &&
+      appEl.classList.contains("menu-open")
+    ) {
+      appEl.classList.remove("menu-open");
+    }
   });
 
   // Na telefonu: dodir ekrana tokom treninga kratko prikazuje hamburger
-  trainingAreaEl.addEventListener("pointerdown", () => {
-  showHamburger();
-  }, { passive: true });
+  trainingAreaEl.addEventListener(
+    "pointerdown",
+    () => {
+      showHamburger();
+    },
+    { passive: true },
+  );
 
   function updateRealVh() {
-  const vv = window.visualViewport;
-  const h = vv && vv.height ? vv.height : window.innerHeight;
-  document.documentElement.style.setProperty("--vh", (h * 0.01) + "px");
+    const vv = window.visualViewport;
+    const h = vv && vv.height ? vv.height : window.innerHeight;
+    document.documentElement.style.setProperty("--vh", h * 0.01 + "px");
   }
-  ["resize"].forEach(evt => {
-  window.addEventListener(evt, () => {
-  reflowNow();
-  }, { passive: true });
+  ["resize"].forEach((evt) => {
+    window.addEventListener(
+      evt,
+      () => {
+        reflowNow();
+      },
+      { passive: true },
+    );
   });
 
   if (window.visualViewport) {
-  window.visualViewport.addEventListener("resize", () => {
-  reflowNow();
-  }, { passive: true });
+    window.visualViewport.addEventListener(
+      "resize",
+      () => {
+        reflowNow();
+      },
+      { passive: true },
+    );
   }
 
   function isPortraitOnPhone() {
-      if (!isPhoneDevice()) return false;
-      if (window.matchMedia) {
-          return window.matchMedia("(orientation: portrait)").matches;
-      }
-      // fallback – više visina nego širina
-      return window.innerHeight >= window.innerWidth;
+    if (!isPhoneDevice()) return false;
+    if (window.matchMedia) {
+      return window.matchMedia("(orientation: portrait)").matches;
+    }
+    // fallback – više visina nego širina
+    return window.innerHeight >= window.innerWidth;
   }
 
-function updateRotateOverlay() {
-  // samo telefon
-  const mustRotate = isPortraitOnPhone();
+  function updateRotateOverlay() {
+    // samo telefon
+    const mustRotate = isPortraitOnPhone();
 
-  if (mustRotate) {
-    document.body.classList.add("needs-rotate");
-  } else {
-    document.body.classList.remove("needs-rotate");
+    if (mustRotate) {
+      document.body.classList.add("needs-rotate");
+    } else {
+      document.body.classList.remove("needs-rotate");
+    }
+
+    // NE DIRAJ direktno startBtn ovde!
+    // samo pozovi centralnu logiku dugmadi:
+    updateStartStopButtons();
   }
-
-  // NE DIRAJ direktno startBtn ovde!
-  // samo pozovi centralnu logiku dugmadi:
-  updateStartStopButtons();
-}
-
-
 
   // Canvas dimenzije
   function getViewportSize() {
-  const vv = window.visualViewport;
-  const w = vv && vv.width ? vv.width : window.innerWidth;
-  const h = vv && vv.height ? vv.height : window.innerHeight;
-  return { w, h };
+    const vv = window.visualViewport;
+    const w = vv && vv.width ? vv.width : window.innerWidth;
+    const h = vv && vv.height ? vv.height : window.innerHeight;
+    return { w, h };
   }
 
   function resizeCanvas() {
-  const dpr = Math.max(1, window.devicePixelRatio || 1);
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
 
-  // U treningu (fullscreen) hocemo 100% viewport
-  if (isRunning || document.body.classList.contains("phone-fullscreen-training")) {
-    const { w, h } = getViewportSize();
+    // U treningu (fullscreen) hocemo 100% viewport
+    if (
+      isRunning ||
+      document.body.classList.contains("phone-fullscreen-training")
+    ) {
+      const { w, h } = getViewportSize();
 
-    canvas.width  = Math.floor(w * dpr);
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+
+      canvas.style.width = w + "px";
+      canvas.style.height = h + "px";
+
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return;
+    }
+
+    // Van treninga: canvas mora da prati wrapper (ne viewport)
+    const wrapper = document.querySelector(".canvas-wrapper");
+    const r = wrapper
+      ? wrapper.getBoundingClientRect()
+      : canvas.getBoundingClientRect();
+    const w = Math.max(1, Math.floor(r.width));
+    const h = Math.max(1, Math.floor(r.height));
+
+    canvas.width = Math.floor(w * dpr);
     canvas.height = Math.floor(h * dpr);
 
-    canvas.style.width  = w + "px";
+    canvas.style.width = w + "px";
     canvas.style.height = h + "px";
 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    return;
-  }
-
-  // Van treninga: canvas mora da prati wrapper (ne viewport)
-  const wrapper = document.querySelector(".canvas-wrapper");
-  const r = wrapper ? wrapper.getBoundingClientRect() : canvas.getBoundingClientRect();
-  const w = Math.max(1, Math.floor(r.width));
-  const h = Math.max(1, Math.floor(r.height));
-
-  canvas.width  = Math.floor(w * dpr);
-  canvas.height = Math.floor(h * dpr);
-
-  canvas.style.width  = w + "px";
-  canvas.style.height = h + "px";
-
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
   // Crtanje
   function drawBackground() {
-  const rect = canvas.getBoundingClientRect();
-  ctx.fillStyle = "#e8ecef";
-  ctx.fillRect(0, 0, rect.width, rect.height);
+    const rect = canvas.getBoundingClientRect();
+    ctx.fillStyle = "#e8ecef";
+    ctx.fillRect(0, 0, rect.width, rect.height);
   }
 
   function drawTarget(x, y, baseRadius, pulse) {
-      const radius = baseRadius * (1 + 0.2 * pulse);
+    const radius = baseRadius * (1 + 0.2 * pulse);
 
-      const gradient = ctx.createRadialGradient(
-          x, y, radius * 0.2,
-          x, y, radius * 1.6
-      );
-      gradient.addColorStop(0, targetGlow);
-      gradient.addColorStop(1, "rgba(16, 185, 129, 0)");
+    const gradient = ctx.createRadialGradient(
+      x,
+      y,
+      radius * 0.2,
+      x,
+      y,
+      radius * 1.6,
+    );
+    gradient.addColorStop(0, targetGlow);
+    gradient.addColorStop(1, "rgba(16, 185, 129, 0)");
 
-      ctx.beginPath();
-      ctx.fillStyle = gradient;
-      ctx.arc(x, y, radius * 1.6, 0, Math.PI * 2);
-      ctx.fill();
+    ctx.beginPath();
+    ctx.fillStyle = gradient;
+    ctx.arc(x, y, radius * 1.6, 0, Math.PI * 2);
+    ctx.fill();
 
-      ctx.beginPath();
-      ctx.fillStyle = targetColor;
-      ctx.arc(x, y, radius, 0, Math.PI * 2);
-      ctx.fill();
+    ctx.beginPath();
+    ctx.fillStyle = targetColor;
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
 
-      ctx.beginPath();
-      ctx.fillStyle = "#ffffff";
-      ctx.arc(x, y, radius * 0.25, 0, Math.PI * 2);
-      ctx.fill();
+    ctx.beginPath();
+    ctx.fillStyle = "#ffffff";
+    ctx.arc(x, y, radius * 0.25, 0, Math.PI * 2);
+    ctx.fill();
   }
 
   // Helper za baznu veličinu mete – veći target na manjim ekranima
   function baseR(rect, factor = 0.024, minPx = 10) {
-      // veća meta na telefonu
-      const scale = deviceType === "phone" ? 1.4 : 1;
+    // veća meta na telefonu
+    const scale = deviceType === "phone" ? 1.4 : 1;
 
-      const dim = Math.min(rect.width, rect.height);
-      const raw = dim * factor * scale;
+    const dim = Math.min(rect.width, rect.height);
+    const raw = dim * factor * scale;
 
-      return Math.max(minPx, raw);
+    return Math.max(minPx, raw);
   }
 
   function warmupFrame(timestamp) {
-      const rect = canvas.getBoundingClientRect();
+    const rect = canvas.getBoundingClientRect();
 
-      drawBackground();
+    drawBackground();
 
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
 
-      const crossLenX = rect.width * 0.06;
-      const crossLenY = rect.height * 0.06;
+    const crossLenX = rect.width * 0.06;
+    const crossLenY = rect.height * 0.06;
 
-      ctx.beginPath();
-      ctx.strokeStyle = "rgba(15, 23, 42, 0.18)";
-      ctx.lineWidth = 1;
-      ctx.moveTo(centerX - crossLenX, centerY);
-      ctx.lineTo(centerX + crossLenX, centerY);
-      ctx.moveTo(centerX, centerY - crossLenY);
-      ctx.lineTo(centerX, centerY + crossLenY);
-      ctx.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle = "rgba(15, 23, 42, 0.18)";
+    ctx.lineWidth = 1;
+    ctx.moveTo(centerX - crossLenX, centerY);
+    ctx.lineTo(centerX + crossLenX, centerY);
+    ctx.moveTo(centerX, centerY - crossLenY);
+    ctx.lineTo(centerX, centerY + crossLenY);
+    ctx.stroke();
 
-      const pulse = 0.5 + 0.5 * Math.sin(timestamp / 800);
-      const baseRadius = baseR(rect, 0.03, 14); // veći i lakši za gađanje
+    const pulse = 0.5 + 0.5 * Math.sin(timestamp / 800);
+    const baseRadius = baseR(rect, 0.03, 14); // veći i lakši za gađanje
 
-      drawTarget(centerX, centerY, baseRadius, pulse);
+    drawTarget(centerX, centerY, baseRadius, pulse);
   }
 
   function circleFrame(timestamp) {
-      const rect = canvas.getBoundingClientRect();
+    const rect = canvas.getBoundingClientRect();
 
-      drawBackground();
+    drawBackground();
 
-      const minDim = Math.min(rect.width, rect.height);
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
+    const minDim = Math.min(rect.width, rect.height);
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
 
-      const baseRadius = baseR(rect, 0.022, 10);
-      const orbitRadius = minDim / 2 - baseRadius * 2 - 6;
+    const baseRadius = baseR(rect, 0.022, 10);
+    const orbitRadius = minDim / 2 - baseRadius * 2 - 6;
 
-      const p = getSmoothProgress(timestamp);
-      const angle = p * 2 * Math.PI;
+    const p = getSmoothProgress(timestamp);
+    const angle = p * 2 * Math.PI;
 
-      const x = centerX + orbitRadius * Math.cos(angle);
-      const y = centerY + orbitRadius * Math.sin(angle);
+    const x = centerX + orbitRadius * Math.cos(angle);
+    const y = centerY + orbitRadius * Math.sin(angle);
 
-      const pulse = 0; // stabilna meta
+    const pulse = 0; // stabilna meta
 
-      ctx.beginPath();
-      ctx.strokeStyle = "rgba(15, 23, 42, 0.16)";
-      ctx.lineWidth = 1;
-      ctx.arc(centerX, centerY, orbitRadius, 0, Math.PI * 2);
-      ctx.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle = "rgba(15, 23, 42, 0.16)";
+    ctx.lineWidth = 1;
+    ctx.arc(centerX, centerY, orbitRadius, 0, Math.PI * 2);
+    ctx.stroke();
 
-      drawTarget(x, y, baseRadius, pulse);
+    drawTarget(x, y, baseRadius, pulse);
   }
 
   function figure8Frame(timestamp) {
-      const rect = canvas.getBoundingClientRect();
+    const rect = canvas.getBoundingClientRect();
 
-      drawBackground();
+    drawBackground();
 
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
 
-      const baseRadius = baseR(rect, 0.022, 10);
+    const baseRadius = baseR(rect, 0.022, 10);
 
-      const radiusX = rect.width / 2 - baseRadius - 12;
-      const radiusY = rect.height / 2 - baseRadius - 12;
+    const radiusX = rect.width / 2 - baseRadius - 12;
+    const radiusY = rect.height / 2 - baseRadius - 12;
 
-      const p = getSmoothProgress(timestamp);
-      const angle = p * 2 * Math.PI;
+    const p = getSmoothProgress(timestamp);
+    const angle = p * 2 * Math.PI;
 
-      const x = centerX + radiusX * Math.sin(angle);
-      const y = centerY + radiusY * 0.95 * Math.sin(2 * angle);
+    const x = centerX + radiusX * Math.sin(angle);
+    const y = centerY + radiusY * 0.95 * Math.sin(2 * angle);
 
-      const pulse = 0;
+    const pulse = 0;
 
-      // bleda osmica
-      ctx.beginPath();
-      ctx.strokeStyle = "rgba(15, 23, 42, 0.12)";
-      ctx.lineWidth = 1;
-      const steps = 80;
-      for (let i = 0; i <= steps; i++) {
-          const a = (i / steps) * 2 * Math.PI;
-          const px = centerX + radiusX * Math.sin(a);
-          const py = centerY + radiusY * 0.95 * Math.sin(2 * a);
-          if (i === 0) ctx.moveTo(px, py);
-          else ctx.lineTo(px, py);
-      }
-      ctx.stroke();
+    // bleda osmica
+    ctx.beginPath();
+    ctx.strokeStyle = "rgba(15, 23, 42, 0.12)";
+    ctx.lineWidth = 1;
+    const steps = 80;
+    for (let i = 0; i <= steps; i++) {
+      const a = (i / steps) * 2 * Math.PI;
+      const px = centerX + radiusX * Math.sin(a);
+      const py = centerY + radiusY * 0.95 * Math.sin(2 * a);
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
 
-      drawTarget(x, y, baseRadius, pulse);
+    drawTarget(x, y, baseRadius, pulse);
   }
 
   function saccadeLRFrame(timestamp) {
-      const rect = canvas.getBoundingClientRect();
+    const rect = canvas.getBoundingClientRect();
 
-      drawBackground();
+    drawBackground();
 
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
 
-      const baseRadius = baseR(rect, 0.022, 10);
+    const baseRadius = baseR(rect, 0.022, 10);
 
-      const margin = 8;
-      const offset = rect.width / 2 - baseRadius - margin;
+    const margin = 8;
+    const offset = rect.width / 2 - baseRadius - margin;
 
-      ctx.beginPath();
-      ctx.strokeStyle = "rgba(15, 23, 42, 0.16)";
-      ctx.lineWidth = 1;
-      ctx.moveTo(centerX - offset, centerY);
-      ctx.lineTo(centerX + offset, centerY);
-      ctx.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle = "rgba(15, 23, 42, 0.16)";
+    ctx.lineWidth = 1;
+    ctx.moveTo(centerX - offset, centerY);
+    ctx.lineTo(centerX + offset, centerY);
+    ctx.stroke();
 
-      const t = timestamp / 1000;
-      const interval = 0.6;
-      const phase = Math.floor(t / interval) % 2;
+    const t = timestamp / 1000;
+    const interval = 0.6;
+    const phase = Math.floor(t / interval) % 2;
 
-      const targetX = centerX + (phase === 0 ? -offset : offset);
-      const targetY = centerY;
+    const targetX = centerX + (phase === 0 ? -offset : offset);
+    const targetY = centerY;
 
-      const pulse = 0;
+    const pulse = 0;
 
-      drawTarget(targetX, targetY, baseRadius, pulse);
+    drawTarget(targetX, targetY, baseRadius, pulse);
   }
 
   function saccadeUDFrame(timestamp) {
-      const rect = canvas.getBoundingClientRect();
+    const rect = canvas.getBoundingClientRect();
 
-      drawBackground();
+    drawBackground();
 
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
 
-      const baseRadius = baseR(rect, 0.022, 10);
+    const baseRadius = baseR(rect, 0.022, 10);
 
-      const margin = 8;
-      const offset = rect.height / 2 - baseRadius - margin;
+    const margin = 8;
+    const offset = rect.height / 2 - baseRadius - margin;
 
-      ctx.beginPath();
-      ctx.strokeStyle = "rgba(15, 23, 42, 0.16)";
-      ctx.lineWidth = 1;
-      ctx.moveTo(centerX, centerY - offset);
-      ctx.lineTo(centerX, centerY + offset);
-      ctx.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle = "rgba(15, 23, 42, 0.16)";
+    ctx.lineWidth = 1;
+    ctx.moveTo(centerX, centerY - offset);
+    ctx.lineTo(centerX, centerY + offset);
+    ctx.stroke();
 
-      const t = timestamp / 1000;
-      const interval = 0.6;
-      const phase = Math.floor(t / interval) % 2;
+    const t = timestamp / 1000;
+    const interval = 0.6;
+    const phase = Math.floor(t / interval) % 2;
 
-      const targetX = centerX;
-      const targetY = centerY + (phase === 0 ? -offset : offset);
+    const targetX = centerX;
+    const targetY = centerY + (phase === 0 ? -offset : offset);
 
-      const pulse = 0;
+    const pulse = 0;
 
-      drawTarget(targetX, targetY, baseRadius, pulse);
+    drawTarget(targetX, targetY, baseRadius, pulse);
   }
 
   function saccadeLCRFrame(timestamp) {
-      const rect = canvas.getBoundingClientRect();
+    const rect = canvas.getBoundingClientRect();
 
-      drawBackground();
+    drawBackground();
 
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
 
-      const baseRadius = baseR(rect, 0.022, 10);
+    const baseRadius = baseR(rect, 0.022, 10);
 
-      const margin = 8;
-      const offset = rect.width / 2 - baseRadius - margin;
+    const margin = 8;
+    const offset = rect.width / 2 - baseRadius - margin;
 
-      const leftX = centerX - offset;
-      const rightX = centerX + offset;
-      const middleX = centerX;
+    const leftX = centerX - offset;
+    const rightX = centerX + offset;
+    const middleX = centerX;
 
+    ctx.beginPath();
+    ctx.strokeStyle = "rgba(15, 23, 42, 0.16)";
+    ctx.lineWidth = 1;
+    ctx.moveTo(leftX, centerY);
+    ctx.lineTo(rightX, centerY);
+    ctx.stroke();
+
+    const markerR = 3;
+    [leftX, middleX, rightX].forEach((x) => {
       ctx.beginPath();
-      ctx.strokeStyle = "rgba(15, 23, 42, 0.16)";
-      ctx.lineWidth = 1;
-      ctx.moveTo(leftX, centerY);
-      ctx.lineTo(rightX, centerY);
-      ctx.stroke();
+      ctx.fillStyle = "rgba(15, 23, 42, 0.35)";
+      ctx.arc(x, centerY, markerR, 0, Math.PI * 2);
+      ctx.fill();
+    });
 
-      const markerR = 3;
-      [leftX, middleX, rightX].forEach((x) => {
-          ctx.beginPath();
-          ctx.fillStyle = "rgba(15, 23, 42, 0.35)";
-          ctx.arc(x, centerY, markerR, 0, Math.PI * 2);
-          ctx.fill();
-      });
+    const t = timestamp / 1000;
+    const interval = 0.5;
+    const sequence = [leftX, middleX, rightX, middleX];
+    const index = Math.floor(t / interval) % sequence.length;
 
-      const t = timestamp / 1000;
-      const interval = 0.5;
-      const sequence = [leftX, middleX, rightX, middleX];
-      const index = Math.floor(t / interval) % sequence.length;
+    const targetX = sequence[index];
+    const targetY = centerY;
 
-      const targetX = sequence[index];
-      const targetY = centerY;
+    const pulse = 0;
 
-      const pulse = 0;
-
-      drawTarget(targetX, targetY, baseRadius, pulse);
+    drawTarget(targetX, targetY, baseRadius, pulse);
   }
 
   function saccadeCrossFrame(timestamp) {
-      const rect = canvas.getBoundingClientRect();
+    const rect = canvas.getBoundingClientRect();
 
-      drawBackground();
+    drawBackground();
 
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-      const baseRadius = baseR(rect, 0.022, 10);
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const baseRadius = baseR(rect, 0.022, 10);
 
-      const margin = 8;
-      const offsetX = rect.width / 2 - baseRadius - margin;
-      const offsetY = rect.height / 2 - baseRadius - margin;
+    const margin = 8;
+    const offsetX = rect.width / 2 - baseRadius - margin;
+    const offsetY = rect.height / 2 - baseRadius - margin;
 
-      const positions = [
-          { x: centerX, y: centerY },
-          { x: centerX - offsetX, y: centerY },
-          { x: centerX, y: centerY },
-          { x: centerX + offsetX, y: centerY },
-          { x: centerX, y: centerY },
-          { x: centerX, y: centerY - offsetY },
-          { x: centerX, y: centerY },
-          { x: centerX, y: centerY + offsetY }
-      ];
+    const positions = [
+      { x: centerX, y: centerY },
+      { x: centerX - offsetX, y: centerY },
+      { x: centerX, y: centerY },
+      { x: centerX + offsetX, y: centerY },
+      { x: centerX, y: centerY },
+      { x: centerX, y: centerY - offsetY },
+      { x: centerX, y: centerY },
+      { x: centerX, y: centerY + offsetY },
+    ];
 
-      const t = timestamp / 1000;
-      const interval = 0.45;
-      const index = Math.floor(t / interval) % positions.length;
-      const pos = positions[index];
+    const t = timestamp / 1000;
+    const interval = 0.45;
+    const index = Math.floor(t / interval) % positions.length;
+    const pos = positions[index];
 
-      ctx.beginPath();
-      ctx.strokeStyle = "rgba(15, 23, 42, 0.16)";
-      ctx.lineWidth = 1;
-      ctx.moveTo(centerX - offsetX, centerY);
-      ctx.lineTo(centerX + offsetX, centerY);
-      ctx.moveTo(centerX, centerY - offsetY);
-      ctx.lineTo(centerX, centerY + offsetY);
-      ctx.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle = "rgba(15, 23, 42, 0.16)";
+    ctx.lineWidth = 1;
+    ctx.moveTo(centerX - offsetX, centerY);
+    ctx.lineTo(centerX + offsetX, centerY);
+    ctx.moveTo(centerX, centerY - offsetY);
+    ctx.lineTo(centerX, centerY + offsetY);
+    ctx.stroke();
 
-      const pulse = 0;
-      drawTarget(pos.x, pos.y, baseRadius, pulse);
+    const pulse = 0;
+    drawTarget(pos.x, pos.y, baseRadius, pulse);
   }
 
   function saccadeStar8Frame(timestamp) {
-      const rect = canvas.getBoundingClientRect();
+    const rect = canvas.getBoundingClientRect();
 
-      drawBackground();
+    drawBackground();
 
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-      const baseRadius = baseR(rect, 0.022, 10);
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const baseRadius = baseR(rect, 0.022, 10);
 
-      const margin = 10;
-      const radiusX = rect.width / 2 - baseRadius - margin;
-      const radiusY = rect.height / 2 - baseRadius - margin;
+    const margin = 10;
+    const radiusX = rect.width / 2 - baseRadius - margin;
+    const radiusY = rect.height / 2 - baseRadius - margin;
 
-      const dirs = [
-          { dx: 0, dy: -1 },
-          { dx: 1, dy: -1 },
-          { dx: 1, dy: 0 },
-          { dx: 1, dy: 1 },
-          { dx: 0, dy: 1 },
-          { dx: -1, dy: 1 },
-          { dx: -1, dy: 0 },
-          { dx: -1, dy: -1 }
-      ];
+    const dirs = [
+      { dx: 0, dy: -1 },
+      { dx: 1, dy: -1 },
+      { dx: 1, dy: 0 },
+      { dx: 1, dy: 1 },
+      { dx: 0, dy: 1 },
+      { dx: -1, dy: 1 },
+      { dx: -1, dy: 0 },
+      { dx: -1, dy: -1 },
+    ];
 
-      const usedDirs = (star8Direction === 1) ? dirs : dirs.slice().reverse();
+    const usedDirs = star8Direction === 1 ? dirs : dirs.slice().reverse();
 
-      const positions = [];
-      for (let i = 0; i < usedDirs.length; i++) {
-          const d = usedDirs[i];
-          positions.push({ x: centerX, y: centerY });
-          positions.push({
-              x: centerX + d.dx * radiusX,
-              y: centerY + d.dy * radiusY
-          });
-      }
+    const positions = [];
+    for (let i = 0; i < usedDirs.length; i++) {
+      const d = usedDirs[i];
+      positions.push({ x: centerX, y: centerY });
+      positions.push({
+        x: centerX + d.dx * radiusX,
+        y: centerY + d.dy * radiusY,
+      });
+    }
 
-      const nowSec = timestamp / 1000;
-      if (!saccadeStar8Frame._lastTime) {
-          saccadeStar8Frame._lastTime = nowSec;
-      }
-      const dt = nowSec - saccadeStar8Frame._lastTime;
+    const nowSec = timestamp / 1000;
+    if (!saccadeStar8Frame._lastTime) {
       saccadeStar8Frame._lastTime = nowSec;
+    }
+    const dt = nowSec - saccadeStar8Frame._lastTime;
+    saccadeStar8Frame._lastTime = nowSec;
 
-      star8StepTimeAccum += dt;
+    star8StepTimeAccum += dt;
 
-      while (star8StepTimeAccum >= STAR8_STEP_INTERVAL) {
-          star8StepTimeAccum -= STAR8_STEP_INTERVAL;
-          star8StepIndexTotal++;
-
-          const stepsPerCycle = positions.length;
-          if (star8StepIndexTotal % stepsPerCycle === 0) {
-              star8CyclesDone++;
-              if (star8CyclesDone >= STAR8_CYCLES_PER_FLIP) {
-                  star8Direction = -star8Direction;
-                  star8CyclesDone = 0;
-                  if (typeof playBeep === "function") {
-                      playBeep();
-                  }
-              }
-          }
-      }
+    while (star8StepTimeAccum >= STAR8_STEP_INTERVAL) {
+      star8StepTimeAccum -= STAR8_STEP_INTERVAL;
+      star8StepIndexTotal++;
 
       const stepsPerCycle = positions.length;
-      const indexInCycle = star8StepIndexTotal % stepsPerCycle;
-      const pos = positions[indexInCycle];
+      if (star8StepIndexTotal % stepsPerCycle === 0) {
+        star8CyclesDone++;
+        if (star8CyclesDone >= STAR8_CYCLES_PER_FLIP) {
+          star8Direction = -star8Direction;
+          star8CyclesDone = 0;
+          if (typeof playBeep === "function") {
+            playBeep();
+          }
+        }
+      }
+    }
 
-      ctx.beginPath();
-      ctx.strokeStyle = "rgba(15, 23, 42, 0.14)";
-      ctx.lineWidth = 1;
-      dirs.forEach(dir => {
-          const px = centerX + dir.dx * radiusX;
-          const py = centerY + dir.dy * radiusY;
-          ctx.moveTo(centerX, centerY);
-          ctx.lineTo(px, py);
-      });
-      ctx.stroke();
+    const stepsPerCycle = positions.length;
+    const indexInCycle = star8StepIndexTotal % stepsPerCycle;
+    const pos = positions[indexInCycle];
 
-      const pulse = 0;
-      drawTarget(pos.x, pos.y, baseRadius, pulse);
+    ctx.beginPath();
+    ctx.strokeStyle = "rgba(15, 23, 42, 0.14)";
+    ctx.lineWidth = 1;
+    dirs.forEach((dir) => {
+      const px = centerX + dir.dx * radiusX;
+      const py = centerY + dir.dy * radiusY;
+      ctx.moveTo(centerX, centerY);
+      ctx.lineTo(px, py);
+    });
+    ctx.stroke();
+
+    const pulse = 0;
+    drawTarget(pos.x, pos.y, baseRadius, pulse);
   }
 
   function readingBasicFrame(timestamp) {
-      const rect = canvas.getBoundingClientRect();
-      drawBackground();
+    const rect = canvas.getBoundingClientRect();
+    drawBackground();
 
-      const width = rect.width;
-      const height = rect.height;
+    const width = rect.width;
+    const height = rect.height;
 
-      let rows = parseInt(readingRowsEl.value, 10);
-      let cols = parseInt(readingColsEl.value, 10);
+    let rows = parseInt(readingRowsEl.value, 10);
+    let cols = parseInt(readingColsEl.value, 10);
 
-      if (isNaN(rows) || rows < 1) rows = 3;
-      if (rows > 7) rows = 7;
-      if (isNaN(cols) || cols < 2) cols = 5;
-      if (cols > 9) cols = 9;
+    if (isNaN(rows) || rows < 1) rows = 3;
+    if (rows > 7) rows = 7;
+    if (isNaN(cols) || cols < 2) cols = 5;
+    if (cols > 9) cols = 9;
 
-      const topMargin = height * 0.08;
-      const bottomMargin = height * 0.08;
-      const availableHeight = height - topMargin - bottomMargin;
-      const rowSpacing = rows > 1 ? availableHeight / (rows - 1) : 0;
+    const topMargin = height * 0.08;
+    const bottomMargin = height * 0.08;
+    const availableHeight = height - topMargin - bottomMargin;
+    const rowSpacing = rows > 1 ? availableHeight / (rows - 1) : 0;
 
-      const leftMargin = width * 0.06;
-      const rightMargin = width * 0.06;
-      const usableWidth = width - leftMargin - rightMargin;
+    const leftMargin = width * 0.06;
+    const rightMargin = width * 0.06;
+    const usableWidth = width - leftMargin - rightMargin;
 
-      ctx.beginPath();
-      ctx.strokeStyle = "rgba(15, 23, 42, 0.14)";
-      ctx.lineWidth = 1;
-      for (let r = 0; r < rows; r++) {
-          const y = topMargin + r * rowSpacing;
-          ctx.moveTo(leftMargin, y);
-          ctx.lineTo(width - rightMargin, y);
+    ctx.beginPath();
+    ctx.strokeStyle = "rgba(15, 23, 42, 0.14)";
+    ctx.lineWidth = 1;
+    for (let r = 0; r < rows; r++) {
+      const y = topMargin + r * rowSpacing;
+      ctx.moveTo(leftMargin, y);
+      ctx.lineTo(width - rightMargin, y);
+    }
+    ctx.stroke();
+
+    const positions = [];
+    for (let r = 0; r < rows; r++) {
+      const y = topMargin + r * rowSpacing;
+      if (readingDirection === 1) {
+        for (let c = 0; c < cols; c++) {
+          const x = leftMargin + (c / (cols - 1)) * usableWidth;
+          positions.push({ x, y });
+        }
+      } else {
+        for (let c = cols - 1; c >= 0; c--) {
+          const x = leftMargin + (c / (cols - 1)) * usableWidth;
+          positions.push({ x, y });
+        }
       }
-      ctx.stroke();
+    }
 
-      const positions = [];
-      for (let r = 0; r < rows; r++) {
-          const y = topMargin + r * rowSpacing;
-          if (readingDirection === 1) {
-              for (let c = 0; c < cols; c++) {
-                  const x = leftMargin + (c / (cols - 1)) * usableWidth;
-                  positions.push({ x, y });
-              }
-          } else {
-              for (let c = cols - 1; c >= 0; c--) {
-                  const x = leftMargin + (c / (cols - 1)) * usableWidth;
-                  positions.push({ x, y });
-              }
-          }
-      }
+    const stepsPerCycle = positions.length;
+    if (!stepsPerCycle) return;
 
-      const stepsPerCycle = positions.length;
-      if (!stepsPerCycle) return;
-
-      const tSec = timestamp / 1000;
-      if (readingBasicFrame._lastTime == null) {
-          readingBasicFrame._lastTime = tSec;
-      }
-      const dt = tSec - readingBasicFrame._lastTime;
+    const tSec = timestamp / 1000;
+    if (readingBasicFrame._lastTime == null) {
       readingBasicFrame._lastTime = tSec;
+    }
+    const dt = tSec - readingBasicFrame._lastTime;
+    readingBasicFrame._lastTime = tSec;
 
-      readingStepTimeAccum += dt;
-      while (readingStepTimeAccum >= READING_STEP_INTERVAL) {
-          readingStepTimeAccum -= READING_STEP_INTERVAL;
-          readingStepIndexTotal++;
+    readingStepTimeAccum += dt;
+    while (readingStepTimeAccum >= READING_STEP_INTERVAL) {
+      readingStepTimeAccum -= READING_STEP_INTERVAL;
+      readingStepIndexTotal++;
 
-          if (readingStepIndexTotal % stepsPerCycle === 0) {
-              readingCyclesDone++;
-              if (readingCyclesDone >= READING_CYCLES_PER_FLIP) {
-                  readingDirection = -readingDirection;
-                  readingCyclesDone = 0;
-                  if (typeof playBeep === "function") {
-                      playBeep();
-                  }
-              }
+      if (readingStepIndexTotal % stepsPerCycle === 0) {
+        readingCyclesDone++;
+        if (readingCyclesDone >= READING_CYCLES_PER_FLIP) {
+          readingDirection = -readingDirection;
+          readingCyclesDone = 0;
+          if (typeof playBeep === "function") {
+            playBeep();
           }
+        }
       }
+    }
 
-      const indexInCycle = readingStepIndexTotal % stepsPerCycle;
-      const pos = positions[indexInCycle];
+    const indexInCycle = readingStepIndexTotal % stepsPerCycle;
+    const pos = positions[indexInCycle];
 
-      const baseRadius = baseR(rect, 0.022, 10);
-      const pulse = 0;
-      drawTarget(pos.x, pos.y, baseRadius, pulse);
+    const baseRadius = baseR(rect, 0.022, 10);
+    const pulse = 0;
+    drawTarget(pos.x, pos.y, baseRadius, pulse);
   }
 
   function rainBasicFrame(timestamp) {
-      const rect = canvas.getBoundingClientRect();
-      drawBackground();
+    const rect = canvas.getBoundingClientRect();
+    drawBackground();
 
-      const width = rect.width;
-      const height = rect.height;
-      const t = timestamp / 1000;
+    const width = rect.width;
+    const height = rect.height;
+    const t = timestamp / 1000;
 
-      // META – ista kao u većini modova
-      const baseRadius = baseR(rect, 0.022, 10);  // <--- isto kao circle / figure8 / saccade
-      const marginX = baseRadius * 2;
+    // META – ista kao u većini modova
+    const baseRadius = baseR(rect, 0.022, 10); // <--- isto kao circle / figure8 / saccade
+    const marginX = baseRadius * 2;
 
-      // pozadinske kapi – manje od glavne
-      const bgRadius = baseR(rect, 0.008, 3);
-      const innerWidthBg = Math.max(0, width - 2 * marginX);
+    // pozadinske kapi – manje od glavne
+    const bgRadius = baseR(rect, 0.008, 3);
+    const innerWidthBg = Math.max(0, width - 2 * marginX);
 
-      // pozadinske kapljice
-      rainBgDrops.forEach((d) => {
-          const local = (t * d.speedFactor + d.phase) % 1;
-          const x = marginX + d.xFactor * innerWidthBg;
-          const y = -0.2 * height + local * 1.2 * height;
+    // pozadinske kapljice
+    rainBgDrops.forEach((d) => {
+      const local = (t * d.speedFactor + d.phase) % 1;
+      const x = marginX + d.xFactor * innerWidthBg;
+      const y = -0.2 * height + local * 1.2 * height;
 
-          ctx.beginPath();
-          ctx.fillStyle = "rgba(15, 23, 42, 0.06)";
-          ctx.arc(x, y, bgRadius, 0, Math.PI * 2);
-          ctx.fill();
-      });
+      ctx.beginPath();
+      ctx.fillStyle = "rgba(15, 23, 42, 0.06)";
+      ctx.arc(x, y, bgRadius, 0, Math.PI * 2);
+      ctx.fill();
+    });
 
-      // glavna kap – 5 kolona
-      const cols = 5;
-      const innerWidth = Math.max(0, width - 2 * marginX);
-      const step = cols > 1 ? innerWidth / (cols - 1) : 0;
+    // glavna kap – 5 kolona
+    const cols = 5;
+    const innerWidth = Math.max(0, width - 2 * marginX);
+    const step = cols > 1 ? innerWidth / (cols - 1) : 0;
 
-      const cycleDuration = 2.5;
-      const tSec = t;
+    const cycleDuration = 2.5;
+    const tSec = t;
 
-      if (rainMainStartTime === null) {
-          rainMainStartTime = tSec;
-          rainMainColumn = Math.floor(cols / 2);
-      }
+    if (rainMainStartTime === null) {
+      rainMainStartTime = tSec;
+      rainMainColumn = Math.floor(cols / 2);
+    }
 
-      let localMain = (tSec - rainMainStartTime) / cycleDuration;
+    let localMain = (tSec - rainMainStartTime) / cycleDuration;
 
-      if (localMain > 1) {
-          rainMainStartTime = tSec;
-          rainMainColumn = (rainMainColumn + 1) % cols;
-          localMain = 0;
-      }
+    if (localMain > 1) {
+      rainMainStartTime = tSec;
+      rainMainColumn = (rainMainColumn + 1) % cols;
+      localMain = 0;
+    }
 
-      const xMain = marginX + rainMainColumn * step;
-      const yMain = -0.2 * height + localMain * 1.2 * height;
+    const xMain = marginX + rainMainColumn * step;
+    const yMain = -0.2 * height + localMain * 1.2 * height;
 
-      const pulse = 0; // kiša – bez disanja
-      drawTarget(xMain, yMain, baseRadius, pulse);
+    const pulse = 0; // kiša – bez disanja
+    drawTarget(xMain, yMain, baseRadius, pulse);
   }
 
   function zoomFocusFrame(timestamp) {
-      const rect = canvas.getBoundingClientRect();
-      drawBackground();
+    const rect = canvas.getBoundingClientRect();
+    drawBackground();
 
-      const width = rect.width;
-      const height = rect.height;
+    const width = rect.width;
+    const height = rect.height;
 
-      const centerX = width / 2;
-      const centerY = height / 2;
+    const centerX = width / 2;
+    const centerY = height / 2;
 
-      // min/max preko baseR, oba skalirana po uređaju
-      const minR = baseR(rect, 0.018, 10);  // manja tačka
-      const maxR = baseR(rect, 0.055, 14);  // veća tačka
+    // min/max preko baseR, oba skalirana po uređaju
+    const minR = baseR(rect, 0.018, 10); // manja tačka
+    const maxR = baseR(rect, 0.055, 14); // veća tačka
 
-      const t = timestamp / 1000;
-      const s = (Math.sin(t * 2 * Math.PI / 6) + 1) / 2; // ~6 s ceo ciklus
-      const baseRadius = minR + (maxR - minR) * s;
+    const t = timestamp / 1000;
+    const s = (Math.sin((t * 2 * Math.PI) / 6) + 1) / 2; // ~6 s ceo ciklus
+    const baseRadius = minR + (maxR - minR) * s;
 
-      const pulse = 0.5 + 0.5 * Math.sin(timestamp / 800);
-      drawTarget(centerX, centerY, baseRadius, pulse);
+    const pulse = 0.5 + 0.5 * Math.sin(timestamp / 800);
+    drawTarget(centerX, centerY, baseRadius, pulse);
   }
 
-
   function vergenceFrame(timestamp) {
-      const rect = canvas.getBoundingClientRect();
-      drawBackground();
+    const rect = canvas.getBoundingClientRect();
+    drawBackground();
 
-      const width = rect.width;
-      const height = rect.height;
+    const width = rect.width;
+    const height = rect.height;
 
-      const centerX = width / 2;
-      const centerY = height / 2;
+    const centerX = width / 2;
+    const centerY = height / 2;
 
-      const minSep = Math.min(width, height) * 0.12;
-      const maxSep = Math.min(width, height) * 0.45;
+    const minSep = Math.min(width, height) * 0.12;
+    const maxSep = Math.min(width, height) * 0.45;
 
-      const t = timestamp / 1000;
-      const s = (Math.sin(t * 2 * Math.PI / 8) + 1) / 2;
-      const sep = minSep + (maxSep - minSep) * s;
+    const t = timestamp / 1000;
+    const s = (Math.sin((t * 2 * Math.PI) / 8) + 1) / 2;
+    const sep = minSep + (maxSep - minSep) * s;
 
-      const leftX = centerX - sep;
-      const rightX = centerX + sep;
+    const leftX = centerX - sep;
+    const rightX = centerX + sep;
 
-      const baseRadius = baseR(rect, 0.022, 10);
-      const pulse = 0;
+    const baseRadius = baseR(rect, 0.022, 10);
+    const pulse = 0;
 
-      ctx.beginPath();
-      ctx.strokeStyle = "rgba(15, 23, 42, 0.14)";
-      ctx.lineWidth = 1;
-      ctx.moveTo(centerX - maxSep, centerY);
-      ctx.lineTo(centerX + maxSep, centerY);
-      ctx.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle = "rgba(15, 23, 42, 0.14)";
+    ctx.lineWidth = 1;
+    ctx.moveTo(centerX - maxSep, centerY);
+    ctx.lineTo(centerX + maxSep, centerY);
+    ctx.stroke();
 
-      drawTarget(leftX, centerY, baseRadius, pulse);
-      drawTarget(rightX, centerY, baseRadius, pulse);
+    drawTarget(leftX, centerY, baseRadius, pulse);
+    drawTarget(rightX, centerY, baseRadius, pulse);
   }
 
   function nearFarFrame(timestamp) {
-      const rect = canvas.getBoundingClientRect();
-      drawBackground();
+    const rect = canvas.getBoundingClientRect();
+    drawBackground();
 
-      const width = rect.width;
-      const height = rect.height;
+    const width = rect.width;
+    const height = rect.height;
 
-      const centerX = width / 2;
-      const centerY = height / 2 * 0.25;  // blago iznad centra (ostaje!)
+    const centerX = width / 2;
+    const centerY = (height / 2) * 0.25;
 
-      const t = timestamp / 1000;
-      const cycle = 4.0;          // 2 s BLIZU + 2 s DALEKO
-      const phase = t % cycle;
+    // deterministicki: svaka faza (NEAR/FAR) traje tacno 3s,
+    // bez "random" prvog trajanja zbog rAF timestamp-a
+    const PHASE_DURATION = 3.0;
 
-      const nearPhase = phase < 2.0;  // prva polovina = BLIZU
+    // init (prvi ulazak u mod)
+    if (nearFarStartTs === null) {
+      nearFarStartTs = timestamp;
+      nearFarPhaseStartTs = timestamp;
+      nearFarLastPhase = true; // uvek krecemo sa NEAR
+      cue(t("cue_near"));
+    }
 
-      // 🔔 detekcija promene faze
-      if (nearFarLastPhase === null) {
-        nearFarLastPhase = nearPhase;
-      } else if (nearFarLastPhase !== nearPhase) {
-        nearFarLastPhase = nearPhase;
+    // koliko traje trenutna faza
+    const tFromPhaseStartSec = (timestamp - nearFarPhaseStartTs) / 1000;
+
+    // trenutna faza
+    let nearPhase = !!nearFarLastPhase;
+
+    // ako je isteklo 3s - flip fazu i resetuj phase start
+    if (tFromPhaseStartSec >= PHASE_DURATION) {
+      nearPhase = !nearPhase;
+      nearFarLastPhase = nearPhase;
+      nearFarPhaseStartTs = timestamp;
       cue(nearPhase ? t("cue_near") : t("cue_far"));
-      }
+    }
 
-      // 🎨 nežna near pozadina (mnogo blaža)
-      if (nearPhase) {
-          ctx.fillStyle = "rgba(120, 200, 150, 0.18)";
-          ctx.fillRect(0, 0, width, height);
-      }
+    if (nearPhase) {
+      ctx.fillStyle = "rgba(120, 200, 150, 0.18)";
+      ctx.fillRect(0, 0, width, height);
+    }
 
-      if (nearPhase) {
-          // BLIZU – velika, skoro statična meta u centru
-          const baseRadius = baseR(rect, 0.03, 14);
-          const pulse = 0.1 + 0.1 * Math.sin(timestamp / 900);
-          drawTarget(centerX, centerY, baseRadius, pulse);
-      } else {
-          // DALEKO – mali marker
-          const r = Math.min(width, height) * 0.01;
-          ctx.beginPath();
-          ctx.fillStyle = "rgba(15, 23, 42, 0.25)";
-          ctx.arc(centerX, centerY, r, 0, Math.PI * 2);
-          ctx.fill();
-      }
+    if (nearPhase) {
+      const baseRadius = baseR(rect, 0.03, 14);
+      const pulse = 0.1 + 0.1 * Math.sin(timestamp / 900);
+      drawTarget(centerX, centerY, baseRadius, pulse);
+    } else {
+      const r = Math.min(width, height) * 0.01;
+      ctx.beginPath();
+      ctx.fillStyle = "rgba(15, 23, 42, 0.25)";
+      ctx.arc(centerX, centerY, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
 
-      // 📝 veći, čitljiviji tekst
-      const label = nearPhase ? t("near_label") : t("far_label");
-
-      ctx.font = Math.min(width, height) * 0.04 + "px system-ui";  // veće
-      ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
-      ctx.textAlign = "center";
-      ctx.fillText(label, centerX, centerY + Math.min(height * 0.18, 90));
+    const label = nearPhase ? t("near_label") : t("far_label");
+    ctx.font = Math.min(width, height) * 0.04 + "px system-ui";
+    ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
+    ctx.textAlign = "center";
+    ctx.fillText(label, centerX, centerY + Math.min(height * 0.18, 90));
   }
 
-function palmingFrame(timestamp) {
-  const rect = canvas.getBoundingClientRect();
-  drawBackground();
+  function palmingFrame(timestamp) {
+    const rect = canvas.getBoundingClientRect();
+    drawBackground();
 
-  const cx = rect.width / 2;
-  const cy = rect.height / 2;
+    const cx = rect.width / 2;
+    const cy = rect.height / 2;
 
-  ctx.font = Math.min(rect.width, rect.height) * 0.07 + "px system-ui";
-  ctx.fillStyle = "rgba(15, 23, 42, 0.75)";
-  ctx.textAlign = "center";
-  ctx.fillText("PALMING", cx, cy);
+    ctx.font = Math.min(rect.width, rect.height) * 0.07 + "px system-ui";
+    ctx.fillStyle = "rgba(15, 23, 42, 0.75)";
+    ctx.textAlign = "center";
+    ctx.fillText("PALMING", cx, cy);
 
-  ctx.font = Math.min(rect.width, rect.height) * 0.035 + "px system-ui";
-  ctx.fillStyle = "rgba(15, 23, 42, 0.55)";
-  ctx.fillText("Prekrij oči dlanovima. Ne pritiskaj.", cx, cy + Math.min(70, rect.height * 0.12));
-}
+    ctx.font = Math.min(rect.width, rect.height) * 0.035 + "px system-ui";
+    ctx.fillStyle = "rgba(15, 23, 42, 0.55)";
+    ctx.fillText(
+      "Prekrij oči dlanovima. Ne pritiskaj.",
+      cx,
+      cy + Math.min(70, rect.height * 0.12),
+    );
+  }
 
   // 0–1 progres kroz ciklus (po trenutnom smeru), sa promenom smera na kraju kruga
   function getSmoothProgress(timestamp) {
-      const tSec = timestamp / 1000;
+    const tSec = timestamp / 1000;
 
-      if (getSmoothProgress._lastTime == null) {
-          getSmoothProgress._lastTime = tSec;
-          // startujemo uvek iz "početne" tačke ciklusa:
-          smoothTimeInDir = 0;
-          smoothCyclesDone = 0;
-          smoothDirection = 1;
-          return 0;
-      }
-
-      const dt = tSec - getSmoothProgress._lastTime;
+    if (getSmoothProgress._lastTime == null) {
       getSmoothProgress._lastTime = tSec;
+      // startujemo uvek iz "početne" tačke ciklusa:
+      smoothTimeInDir = 0;
+      smoothCyclesDone = 0;
+      smoothDirection = 1;
+      return 0;
+    }
 
-      smoothTimeInDir += dt;
+    const dt = tSec - getSmoothProgress._lastTime;
+    getSmoothProgress._lastTime = tSec;
 
-      let flipped = false;
-      while (smoothTimeInDir >= SMOOTH_PERIOD_SEC) {
-          smoothTimeInDir -= SMOOTH_PERIOD_SEC;
-          smoothCyclesDone++;
+    smoothTimeInDir += dt;
 
-          if (smoothCyclesDone >= SMOOTH_CYCLES_PER_FLIP) {
-              smoothDirection = -smoothDirection;
-              smoothCyclesDone = 0;
-              flipped = true;
-          }
+    let flipped = false;
+    while (smoothTimeInDir >= SMOOTH_PERIOD_SEC) {
+      smoothTimeInDir -= SMOOTH_PERIOD_SEC;
+      smoothCyclesDone++;
+
+      if (smoothCyclesDone >= SMOOTH_CYCLES_PER_FLIP) {
+        smoothDirection = -smoothDirection;
+        smoothCyclesDone = 0;
+        flipped = true;
       }
+    }
 
-      if (flipped && typeof playBeep === "function") {
-          playBeep();
-      }
+    if (flipped && typeof playBeep === "function") {
+      playBeep();
+    }
 
-      const cycleProgress = SMOOTH_PERIOD_SEC > 0
-          ? smoothTimeInDir / SMOOTH_PERIOD_SEC
-          : 0;
+    const cycleProgress =
+      SMOOTH_PERIOD_SEC > 0 ? smoothTimeInDir / SMOOTH_PERIOD_SEC : 0;
 
-      // za smer +1 ide 0→1, za -1 ide 1→0
-      const dirProgress = smoothDirection === 1
-          ? cycleProgress
-          : 1 - cycleProgress;
+    // za smer +1 ide 0→1, za -1 ide 1→0
+    const dirProgress =
+      smoothDirection === 1 ? cycleProgress : 1 - cycleProgress;
 
-      return dirProgress;  // 0..1
+    return dirProgress; // 0..1
   }
-
 
   function animationLoop(timestamp) {
     if (!isRunning) return;
@@ -3157,27 +3394,36 @@ function palmingFrame(timestamp) {
     // stopBtn.style.display = isRunning ? "" : "none";
   }
 
-
   function startAnimation() {
+    // 1) Pre nego sto isRunning postane true, izaberi start mod
+    if (enableAutoSequenceEl.checked) {
+      const first = getFirstModeInSequence();
+      if (first) setActiveMode(first);
+    } else if (pendingStartMode) {
+      // (ako ikad koristis manual start iz pending-a)
+      setActiveMode(pendingStartMode);
+    }
+    pendingStartMode = null;
+
+    // 2) Sad tek pali trening
     isRunning = true;
     updateStartStopButtons();
     setAndroidKeepScreenOn(true);
+
     statusEl.textContent = t("status_running");
     statusEl.style.color = "#10b981";
 
     appEl.classList.add("is-training");
     appEl.classList.remove("menu-open");
 
-    // Auto sekvenca ON: pred start uvek uskladi aktivni mod sa sekvencom
-    syncActiveModeToFirstInSequence({ preferMode: pendingStartMode });
-pendingStartMode = null;
-
     hideHamburger();
 
-    // Resetuj samo state koji pripada aktivnom modu
+    // Resetuj state za mod od kog krecemo (sad je currentMode vec prvi u sekvenci)
     resetModeState(currentMode);
 
-    try { cancelAnimationFrame(animationFrameId); } catch (e) {}
+    try {
+      cancelAnimationFrame(animationFrameId);
+    } catch (e) {}
     animationFrameId = requestAnimationFrame(animationLoop);
 
     updateHelpBubble();
@@ -3186,86 +3432,99 @@ pendingStartMode = null;
   }
 
   function resetModeState(mode) {
-  if (mode === "circle" || mode === "figure8") {
+    if (mode === "circle" || mode === "figure8") {
+      smoothDirection = 1;
+      smoothTimeInDir = 0;
+      smoothCyclesDone = 0;
+      getSmoothProgress._lastTime = null;
+    }
+
+    if (mode === "saccade_star8") {
+      star8Direction = 1;
+      star8StepTimeAccum = 0;
+      star8StepIndexTotal = 0;
+      star8CyclesDone = 0;
+      saccadeStar8Frame._lastTime = null; // dodaj, da ne vuce staro vreme
+    }
+
+    if (mode === "reading_basic") {
+      readingDirection = 1;
+      readingStepTimeAccum = 0;
+      readingStepIndexTotal = 0;
+      readingCyclesDone = 0;
+      readingBasicFrame._lastTime = null;
+    }
+
+    if (mode === "rain_basic") {
+      rainMainStartTime = null;
+      rainMainColumn = 0;
+    }
+
+    if (mode === "near_far") {
+      nearFarLastPhase = null;
+      nearFarStartTs = null;
+      nearFarPhaseStartTs = null;
+    }
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible" && isRunning) {
+      setAndroidKeepScreenOn(true);
+    } else {
+      setAndroidKeepScreenOn(false);
+    }
+  });
+
+  function resetAllModeState() {
+    // smooth (circle/figure8)
     smoothDirection = 1;
     smoothTimeInDir = 0;
     smoothCyclesDone = 0;
     getSmoothProgress._lastTime = null;
-  }
 
-  if (mode === "saccade_star8") {
+    // star8
     star8Direction = 1;
     star8StepTimeAccum = 0;
     star8StepIndexTotal = 0;
     star8CyclesDone = 0;
-    saccadeStar8Frame._lastTime = null; // dodaj, da ne vuce staro vreme
-  }
+    saccadeStar8Frame._lastTime = null;
 
-  if (mode === "reading_basic") {
+    // reading
     readingDirection = 1;
     readingStepTimeAccum = 0;
     readingStepIndexTotal = 0;
     readingCyclesDone = 0;
     readingBasicFrame._lastTime = null;
-  }
 
-  if (mode === "rain_basic") {
+    // rain
     rainMainStartTime = null;
     rainMainColumn = 0;
-  }
 
-  if (mode === "near_far") {
+    // near/far
     nearFarLastPhase = null;
+    nearFarStartTs = null;
+    nearFarPhaseStartTs = null;
   }
-  }
-
-document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible" && isRunning) {
-    setAndroidKeepScreenOn(true);
-  } else {
-    setAndroidKeepScreenOn(false);
-  }
-});
-
-function resetAllModeState() {
-  // smooth (circle/figure8)
-  smoothDirection = 1;
-  smoothTimeInDir = 0;
-  smoothCyclesDone = 0;
-  getSmoothProgress._lastTime = null;
-
-  // star8
-  star8Direction = 1;
-  star8StepTimeAccum = 0;
-  star8StepIndexTotal = 0;
-  star8CyclesDone = 0;
-  saccadeStar8Frame._lastTime = null;
-
-  // reading
-  readingDirection = 1;
-  readingStepTimeAccum = 0;
-  readingStepIndexTotal = 0;
-  readingCyclesDone = 0;
-  readingBasicFrame._lastTime = null;
-
-  // rain
-  rainMainStartTime = null;
-  rainMainColumn = 0;
-
-  // near/far
-  nearFarLastPhase = null;
-}
 
   function stopAnimation() {
     isRunning = false;
     updateStartStopButtons();
     setAndroidKeepScreenOn(false);
 
-    try { cancelAnimationFrame(animationFrameId); } catch (e) {}
+    try {
+      cancelAnimationFrame(animationFrameId);
+    } catch (e) {}
     animationFrameId = null;
 
     clearTimer();
     resetAllModeState();
+
+    // dodatno: vrati currentMode na prvi iz sekvence
+    if (enableAutoSequenceEl.checked) {
+      const first = getFirstModeInSequence();
+      if (first) setActiveMode(first);
+    }
+
     statusEl.textContent = t("status_stopped");
     statusEl.style.color = "#6b7280";
 
@@ -3286,23 +3545,28 @@ function resetAllModeState() {
     document.body.classList.remove("phone-fullscreen-training");
 
     // ubij eventualni phantom scroll / offset
-    try { window.scrollTo(0, 0); } catch (e) {}
-    try { document.documentElement.scrollTop = 0; } catch (e) {}
-    try { document.body.scrollTop = 0; } catch (e) {}
+    try {
+      window.scrollTo(0, 0);
+    } catch (e) {}
+    try {
+      document.documentElement.scrollTop = 0;
+    } catch (e) {}
+    try {
+      document.body.scrollTop = 0;
+    } catch (e) {}
 
     // odmah resize po trenutnom layout-u
     reflowNow();
 
     // odmah + posle 2 frame-a (kad se flex layout stabilizuje)
     requestAnimationFrame(() => {
-    reflowNow();
+      reflowNow();
 
-    requestAnimationFrame(() => {
-    reflowNow();
-    });
+      requestAnimationFrame(() => {
+        reflowNow();
+      });
     });
   }
-
 
   // Start / Stop
   startBtn.addEventListener("click", () => {
@@ -3324,8 +3588,8 @@ function resetAllModeState() {
             // ignorisi ako ne uspe
           });
         }
-      // stanje za CSS – sakrij footer, zabrani scroll, 100vh itd.
-      document.body.classList.add("phone-fullscreen-training");
+        // stanje za CSS – sakrij footer, zabrani scroll, 100vh itd.
+        document.body.classList.add("phone-fullscreen-training");
       }
       startAnimation();
       showToast(t("status_running"));
@@ -3333,49 +3597,70 @@ function resetAllModeState() {
   });
 
   [
-  programSelect,
-  enableAutoSequenceEl,
-  showHelpCheckbox,
-  durationWarmupEl, durationCircleEl, durationFigure8El,
-  durationSaccadeLREl, durationSaccadeUDEl, durationSaccadeLCREl,
-  durationSaccadeCrossEl, durationSaccadeStar8El,
-  durationReadingBasicEl, durationRainBasicEl,
-  durationZoomFocusEl, durationVergenceEl, durationNearFarEl,
-  readingRowsEl, readingColsEl,
-  seqWarmupEl, seqCircleEl, seqFigure8El,
-  seqSaccadeLREl, seqSaccadeUDEl, seqSaccadeLCREl,
-  seqSaccadeCrossEl, seqSaccadeStar8El,
-  seqReadingBasicEl, seqRainBasicEl,
-  seqZoomFocusEl, seqVergenceEl, seqNearFarEl, useVoiceEl,
-  durationPalmingEl, seqPalmingEl
-  ].forEach(el => {
-  if (!el) return;
-  el.addEventListener("change", saveUiState);
-  el.addEventListener("input", saveUiState);
+    programSelect,
+    enableAutoSequenceEl,
+    showHelpCheckbox,
+    durationWarmupEl,
+    durationCircleEl,
+    durationFigure8El,
+    durationSaccadeLREl,
+    durationSaccadeUDEl,
+    durationSaccadeLCREl,
+    durationSaccadeCrossEl,
+    durationSaccadeStar8El,
+    durationReadingBasicEl,
+    durationRainBasicEl,
+    durationZoomFocusEl,
+    durationVergenceEl,
+    durationNearFarEl,
+    readingRowsEl,
+    readingColsEl,
+    seqWarmupEl,
+    seqCircleEl,
+    seqFigure8El,
+    seqSaccadeLREl,
+    seqSaccadeUDEl,
+    seqSaccadeLCREl,
+    seqSaccadeCrossEl,
+    seqSaccadeStar8El,
+    seqReadingBasicEl,
+    seqRainBasicEl,
+    seqZoomFocusEl,
+    seqVergenceEl,
+    seqNearFarEl,
+    useVoiceEl,
+    durationPalmingEl,
+    seqPalmingEl,
+  ].forEach((el) => {
+    if (!el) return;
+    el.addEventListener("change", saveUiState);
+    el.addEventListener("input", saveUiState);
   });
 
   stopBtn.addEventListener("click", () => {
-      if (isRunning) {
-          stopAnimation();
-          showToast(t("status_stopped"));
-      }
+    if (isRunning) {
+      stopAnimation();
+      showToast(t("status_stopped"));
+    }
   });
 
-function speak(text) {
-  try {
-    if (window.AndroidTTS && typeof window.AndroidTTS.speak === "function") {
-      window.AndroidTTS.speak(String(text || ""));
-    }
-  } catch (e) {}
-}
+  function speak(text) {
+    try {
+      if (
+        window.AndroidTTS &&
+        typeof window.AndroidTTS.speak === "function"
+      ) {
+        window.AndroidTTS.speak(String(text || ""));
+      }
+    } catch (e) {}
+  }
 
-// FUTURE: device scaling (tablet/TV)
-// (trenutno se target skaluje u baseR() preko deviceSelect.value)
-function getTargetScale() {
-  // TODO: phone 1.4, tablet ?, TV ?
-  return 1;
-}
+  // FUTURE: device scaling (tablet/TV)
+  // (trenutno se target skaluje u baseR() preko deviceSelect.value)
+  function getTargetScale() {
+    // TODO: phone 1.4, tablet ?, TV ?
+    return 1;
+  }
 </script>
 </body>
-
 </html>

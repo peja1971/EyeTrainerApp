@@ -37,3 +37,8 @@ app/release/
 Thumbs.db
 captures/
 
+keys/
+*.jks
+*.keystore
+
+
