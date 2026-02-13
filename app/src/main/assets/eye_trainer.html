@@ -722,7 +722,7 @@
             <input
                     type="number"
                     id="duration_warmup"
-                    min="5"
+                    min="10"
                     max="600"
                     step="5"
                     value="45"
@@ -748,7 +748,7 @@
             <input
                     type="number"
                     id="duration_circle"
-                    min="5"
+                    min="10"
                     max="600"
                     step="5"
                     value="60"
@@ -774,7 +774,7 @@
             <input
                     type="number"
                     id="duration_figure8"
-                    min="5"
+                    min="10"
                     max="600"
                     step="5"
                     value="60"
@@ -800,7 +800,7 @@
             <input
                     type="number"
                     id="duration_saccade_lr"
-                    min="5"
+                    min="10"
                     max="600"
                     step="5"
                     value="45"
@@ -826,7 +826,7 @@
             <input
                     type="number"
                     id="duration_saccade_ud"
-                    min="5"
+                    min="10"
                     max="600"
                     step="5"
                     value="45"
@@ -852,7 +852,7 @@
             <input
                     type="number"
                     id="duration_saccade_lcr"
-                    min="5"
+                    min="10"
                     max="600"
                     step="5"
                     value="30"
@@ -878,7 +878,7 @@
             <input
                     type="number"
                     id="duration_saccade_cross"
-                    min="5"
+                    min="10"
                     max="600"
                     step="5"
                     value="40"
@@ -906,7 +906,7 @@
             <input
                     type="number"
                     id="duration_saccade_star8"
-                    min="5"
+                    min="10"
                     max="600"
                     step="5"
                     value="45"
@@ -932,7 +932,7 @@
             <input
                     type="number"
                     id="duration_reading_basic"
-                    min="5"
+                    min="10"
                     max="600"
                     step="5"
                     value="45"
@@ -943,18 +943,19 @@
             <input
                     type="number"
                     id="reading_rows"
-                    min="1"
-                    max="7"
+                    min="2"
+                    max="10"
                     step="1"
                     value="3"
             />
+
 
             <span>kolona:</span>
             <input
                     type="number"
                     id="reading_cols"
                     min="2"
-                    max="9"
+                    max="10"
                     step="1"
                     value="5"
             />
@@ -978,7 +979,7 @@
             <input
                     type="number"
                     id="duration_rain_basic"
-                    min="5"
+                    min="10"
                     max="600"
                     step="5"
                     value="60"
@@ -1004,7 +1005,7 @@
             <input
                     type="number"
                     id="duration_zoom_focus"
-                    min="5"
+                    min="10"
                     max="600"
                     step="5"
                     value="40"
@@ -1032,7 +1033,7 @@
             <input
                     type="number"
                     id="duration_vergence"
-                    min="5"
+                    min="10"
                     max="600"
                     step="5"
                     value="40"
@@ -2284,6 +2285,83 @@
     }, duration);
   }
 
+// -------------------------
+// Input validation (durations + reading rows/cols)
+// -------------------------
+const DUR_MIN = 10;
+const DUR_MAX = 600;
+
+const RC_MIN = 2;
+const RC_MAX = 10;
+
+function clampInt(v, min, max, fallback) {
+  const n = parseInt(String(v ?? ""), 10);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.min(max, Math.max(min, n));
+}
+
+// "soft" = ne spamuj toast dok korisnik kuca; toast samo na blur/change
+function validateNumberInput(el, { min, max, fallback, step = null, soft = false } = {}) {
+  if (!el) return;
+
+  const raw = String(el.value ?? "");
+
+  // DOK KUCAS: pusti prazno (da korisnik moze da obrise i ukuca novo)
+  if (soft && raw.trim() === "") return;
+
+  // KAD ZAVRSI (blur/change): prazno -> fallback
+  if (!soft && raw.trim() === "") {
+    el.value = String(fallback);
+    return fallback;
+  }
+
+  let v = clampInt(raw, min, max, fallback);
+
+  if (step && Number.isFinite(v)) {
+    v = Math.round(v / step) * step;
+    v = Math.min(max, Math.max(min, v));
+  }
+
+  // tek sad setuj (na blur/change)
+  if (!soft) el.value = String(v);
+
+  return v;
+}
+
+function validateAllInputs({ soft = true } = {}) {
+  // durations 10-600
+  Object.entries(durationEls).forEach(([mode, el]) => {
+    if (!el) return;
+    validateNumberInput(el, {
+      min: DUR_MIN,
+      max: DUR_MAX,
+      fallback: DUR_MIN,
+      step: 1,
+      soft,
+    });
+  });
+
+  // reading rows 2-10
+  validateNumberInput(readingRowsEl, {
+    min: RC_MIN,
+    max: RC_MAX,
+    fallback: 3,
+    step: 1,
+    soft,
+  });
+
+  // reading cols 2-10
+  validateNumberInput(readingColsEl, {
+    min: RC_MIN,
+    max: RC_MAX,
+    fallback: 5,
+    step: 1,
+    soft,
+  });
+}
+
+
+
   function isPhoneDevice() {
     return isRealPhoneScreen();
   }
@@ -2387,13 +2465,13 @@
   }
 
   // Trajanje po modu
-  function getModeDurationSeconds(mode) {
-    const el = durationEls[mode];
-    if (!el) return 0;
-    const val = parseInt(el.value, 10);
-    if (isNaN(val) || val <= 0) return 0;
-    return val;
-  }
+function getModeDurationSeconds(mode) {
+  const el = durationEls[mode];
+  if (!el) return 0;
+  const val = parseInt(el.value, 10);
+  if (!Number.isFinite(val)) return DUR_MIN;
+  return Math.max(DUR_MIN, Math.min(DUR_MAX, val));
+}
 
   function isModeInSequence(mode) {
     const el = seqEls[mode];
@@ -2401,12 +2479,12 @@
   }
 
   // Pomoćne fn za setovanje trajanja i učešća u sekvenci
-  function setModeDuration(mode, seconds) {
-    const el = durationEls[mode];
-    if (!el) return;
-    const val = Math.max(5, Math.min(600, seconds | 0));
-    el.value = val;
-  }
+function setModeDuration(mode, seconds) {
+  const el = durationEls[mode];
+  if (!el) return;
+  const val = Math.max(DUR_MIN, Math.min(DUR_MAX, seconds | 0));
+  el.value = val;
+}
 
   function setModeInSequence(mode, inSeq) {
     const el = seqEls[mode];
@@ -3078,20 +3156,23 @@
     ctx.stroke();
 
     const positions = [];
-    for (let r = 0; r < rows; r++) {
-      const y = topMargin + r * rowSpacing;
-      if (readingDirection === 1) {
-        for (let c = 0; c < cols; c++) {
-          const x = leftMargin + (c / (cols - 1)) * usableWidth;
-          positions.push({ x, y });
-        }
-      } else {
-        for (let c = cols - 1; c >= 0; c--) {
-          const x = leftMargin + (c / (cols - 1)) * usableWidth;
-          positions.push({ x, y });
-        }
-      }
+for (let r = 0; r < rows; r++) {
+  const y = topMargin + r * rowSpacing;
+
+  const denom = cols - 1; // sigurno >= 1 jer je RC_MIN = 2
+
+  if (readingDirection === 1) {
+    for (let c = 0; c < cols; c++) {
+      const x = leftMargin + (c / denom) * usableWidth;
+      positions.push({ x, y });
     }
+  } else {
+    for (let c = cols - 1; c >= 0; c--) {
+      const x = leftMargin + (c / denom) * usableWidth;
+      positions.push({ x, y });
+    }
+  }
+}
 
     const stepsPerCycle = positions.length;
     if (!stepsPerCycle) return;
@@ -3570,6 +3651,7 @@
 
   // Start / Stop
   startBtn.addEventListener("click", () => {
+  validateAllInputs({ soft: false });
     if (enableAutoSequenceEl.checked && !hasAnyModeInSequence()) {
       showNoSequenceStatus();
       return;
@@ -3596,46 +3678,61 @@
     }
   });
 
-  [
-    programSelect,
-    enableAutoSequenceEl,
-    showHelpCheckbox,
-    durationWarmupEl,
-    durationCircleEl,
-    durationFigure8El,
-    durationSaccadeLREl,
-    durationSaccadeUDEl,
-    durationSaccadeLCREl,
-    durationSaccadeCrossEl,
-    durationSaccadeStar8El,
-    durationReadingBasicEl,
-    durationRainBasicEl,
-    durationZoomFocusEl,
-    durationVergenceEl,
-    durationNearFarEl,
-    readingRowsEl,
-    readingColsEl,
-    seqWarmupEl,
-    seqCircleEl,
-    seqFigure8El,
-    seqSaccadeLREl,
-    seqSaccadeUDEl,
-    seqSaccadeLCREl,
-    seqSaccadeCrossEl,
-    seqSaccadeStar8El,
-    seqReadingBasicEl,
-    seqRainBasicEl,
-    seqZoomFocusEl,
-    seqVergenceEl,
-    seqNearFarEl,
-    useVoiceEl,
-    durationPalmingEl,
-    seqPalmingEl,
-  ].forEach((el) => {
-    if (!el) return;
-    el.addEventListener("change", saveUiState);
-    el.addEventListener("input", saveUiState);
+[
+  programSelect,
+  enableAutoSequenceEl,
+  showHelpCheckbox,
+  durationWarmupEl,
+  durationCircleEl,
+  durationFigure8El,
+  durationSaccadeLREl,
+  durationSaccadeUDEl,
+  durationSaccadeLCREl,
+  durationSaccadeCrossEl,
+  durationSaccadeStar8El,
+  durationReadingBasicEl,
+  durationRainBasicEl,
+  durationZoomFocusEl,
+  durationVergenceEl,
+  durationNearFarEl,
+  readingRowsEl,
+  readingColsEl,
+  seqWarmupEl,
+  seqCircleEl,
+  seqFigure8El,
+  seqSaccadeLREl,
+  seqSaccadeUDEl,
+  seqSaccadeLCREl,
+  seqSaccadeCrossEl,
+  seqSaccadeStar8El,
+  seqReadingBasicEl,
+  seqRainBasicEl,
+  seqZoomFocusEl,
+  seqVergenceEl,
+  seqNearFarEl,
+  useVoiceEl,
+  durationPalmingEl,
+  seqPalmingEl,
+].forEach((el) => {
+  if (!el) return;
+
+  el.addEventListener("change", () => {
+    // clamp kad user zavrsi unos (enter ili izgubi fokus)
+    validateAllInputs({ soft: false });
+    saveUiState();
   });
+
+  el.addEventListener("input", () => {
+    // dok kuca - ne diraj value (da ne skace kursor)
+    saveUiState();
+  });
+
+  el.addEventListener("blur", () => {
+    // kad izadje iz polja - siguran clamp
+    validateAllInputs({ soft: false });
+    saveUiState();
+  });
+});
 
   stopBtn.addEventListener("click", () => {
     if (isRunning) {
