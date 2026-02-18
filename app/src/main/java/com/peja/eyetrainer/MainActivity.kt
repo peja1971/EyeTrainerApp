@@ -15,80 +15,113 @@ import android.view.View
 import android.view.WindowManager
 import android.speech.tts.TextToSpeech
 import android.webkit.JavascriptInterface
-import java.util.Locale
+import android.content.pm.ActivityInfo
+import android.hardware.SensorManager
+import android.view.OrientationEventListener
 
 class MainActivity : ComponentActivity() {
+
   private var tts: TextToSpeech? = null
-    private fun hideSystemBarsAlways() {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        val controller = WindowInsetsControllerCompat(window, window.decorView)
-        controller.hide(WindowInsetsCompat.Type.systemBars())
-        // BITNO: ne daj da ostanu vidljivi; ako user povuče, vrati se - mi ćemo ih opet sakriti
-        controller.systemBarsBehavior =
-            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+  private var webView: WebView? = null
+  private var orientationListener: OrientationEventListener? = null
+  private var lastOrientationIsLandscape: Boolean? = null
+
+  private fun hideSystemBarsAlways() {
+    WindowCompat.setDecorFitsSystemWindows(window, false)
+    val controller = WindowInsetsControllerCompat(window, window.decorView)
+    controller.hide(WindowInsetsCompat.Type.systemBars())
+    controller.systemBarsBehavior =
+      WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+  }
+
+  @SuppressLint("SetJavaScriptEnabled")
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+    window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    hideSystemBarsAlways()
+
+    tts = TextToSpeech(this) { status ->
+      if (status == TextToSpeech.SUCCESS) {
+        tts?.setSpeechRate(1.05f)
+      }
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-      window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        hideSystemBarsAlways()
-      tts = TextToSpeech(this) { status ->
-        if (status == TextToSpeech.SUCCESS) {
-          //tts?.language = Locale("hr", "HR")
-          //tts?.language = Locale("sr", "RS")
-          tts?.setSpeechRate(1.05f)
+    val appBg = Color.parseColor("#e8ecef")
+    window.statusBarColor = appBg
+    window.navigationBarColor = appBg
+
+    val sys = WindowInsetsControllerCompat(window, window.decorView)
+    sys.isAppearanceLightStatusBars = true
+    sys.isAppearanceLightNavigationBars = true
+
+    val wv = WebView(this)
+    webView = wv
+
+    wv.addJavascriptInterface(TtsBridge(), "AndroidTTS")
+    wv.addJavascriptInterface(ScreenControl(this), "AndroidScreen")
+    wv.setBackgroundColor(appBg)
+    wv.overScrollMode = View.OVER_SCROLL_NEVER
+
+    wv.webViewClient = WebViewClient()
+    wv.webChromeClient = WebChromeClient()
+
+    wv.settings.javaScriptEnabled = true
+    wv.settings.domStorageEnabled = true
+    wv.settings.allowFileAccess = true
+    wv.settings.allowContentAccess = true
+    wv.settings.cacheMode = WebSettings.LOAD_DEFAULT
+    wv.settings.mediaPlaybackRequiresUserGesture = false
+    wv.settings.javaScriptCanOpenWindowsAutomatically = true
+
+    setContentView(wv)
+    wv.loadUrl("file:///android_asset/eye_trainer.html")
+
+    // OrientationEventListener radi i kad je auto-rotate ISKLJUČEN na telefonu.
+    // Koristi direktno akcelerometar/žiroskop, nezavisno od system podešavanja.
+    orientationListener = object : OrientationEventListener(this, SensorManager.SENSOR_DELAY_UI) {
+      override fun onOrientationChanged(orientation: Int) {
+        if (orientation == ORIENTATION_UNKNOWN) return
+        val isLandscape = (orientation in 60..120) || (orientation in 240..300)
+        if (isLandscape != lastOrientationIsLandscape) {
+          lastOrientationIsLandscape = isLandscape
+          // Razlikuj landscape-left (90°) od landscape-right (270°)
+          val orientationStr = when {
+            orientation in 60..120  -> "landscape_right"
+            orientation in 240..300 -> "landscape_left"
+            else -> "portrait"
+          }
+          runOnUiThread {
+            webView?.evaluateJavascript(
+              "if(typeof onPhysicalOrientationChanged==='function') onPhysicalOrientationChanged('$orientationStr');",
+              null
+            )
+          }
         }
       }
-
-// PATCH: boja sistema = boja aplikacije (da nema crnih traka)
-        val appBg = Color.parseColor("#e8ecef")
-        window.statusBarColor = appBg
-        window.navigationBarColor = appBg
-
-        val sys = WindowInsetsControllerCompat(window, window.decorView)
-        sys.isAppearanceLightStatusBars = true
-        sys.isAppearanceLightNavigationBars = true
-
-        val webView = WebView(this)
-      webView.addJavascriptInterface(TtsBridge(), "AndroidTTS")
-        webView.addJavascriptInterface(ScreenControl(this), "AndroidScreen")
-        webView.setBackgroundColor(appBg)
-        webView.overScrollMode = View.OVER_SCROLL_NEVER
-
-        webView.webViewClient = WebViewClient()
-        webView.webChromeClient = WebChromeClient()
-
-        webView.settings.javaScriptEnabled = true
-        webView.settings.domStorageEnabled = true
-        webView.settings.allowFileAccess = true
-        webView.settings.allowContentAccess = true
-        webView.settings.cacheMode = WebSettings.LOAD_DEFAULT
-        webView.settings.mediaPlaybackRequiresUserGesture = false
-
-        // ako hoces fullscreen iz JS-a
-        webView.settings.javaScriptCanOpenWindowsAutomatically = true
-
-        setContentView(webView)
-
-        webView.loadUrl("file:///android_asset/eye_trainer.html")
     }
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) hideSystemBarsAlways()
-    }
+    orientationListener?.enable()
+  }
 
-    override fun onResume() {
-        super.onResume()
-        hideSystemBarsAlways()
-    }
+  override fun onWindowFocusChanged(hasFocus: Boolean) {
+    super.onWindowFocusChanged(hasFocus)
+    if (hasFocus) hideSystemBarsAlways()
+  }
+
+  override fun onResume() {
+    super.onResume()
+    hideSystemBarsAlways()
+  }
 
   override fun onDestroy() {
     super.onDestroy()
+    orientationListener?.disable()
+    orientationListener = null
     tts?.stop()
     tts?.shutdown()
     tts = null
   }
+
   inner class TtsBridge {
     @JavascriptInterface
     fun speak(text: String) {
@@ -96,11 +129,24 @@ class MainActivity : ComponentActivity() {
         tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "eyetrainer_tts")
       }
     }
+
+    @JavascriptInterface
+    fun lockLandscape() {
+      runOnUiThread {
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+      }
+    }
+
+    @JavascriptInterface
+    fun unlockOrientation() {
+      // Namerno prazno - landscape je uvek zaključan via Manifest
+      // JS poziva ovo nakon stop, ali mi ne želimo da otključamo
+    }
   }
 }
 
 class ScreenControl(private val activity: MainActivity) {
-  @android.webkit.JavascriptInterface
+  @JavascriptInterface
   fun keepScreenOn(on: Boolean) {
     activity.runOnUiThread {
       if (on) {
