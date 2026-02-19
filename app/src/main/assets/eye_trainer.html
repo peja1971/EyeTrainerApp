@@ -22,6 +22,10 @@
       margin: 0;
       background: #e8ecef;
       color: #0f172a;
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
     }
 
     :root {
@@ -524,8 +528,8 @@
     }
 
     /* =====================================================
- Buttons - unified, hardened, with clear pressed state
- ===================================================== */
+Buttons - unified, hardened, with clear pressed state
+===================================================== */
 
     /* Global disabled stanje (i dalje vazi i za druge btn ako ih ima) */
     button:disabled {
@@ -665,6 +669,9 @@
       <div class="title" data-i18n="app_title">Trening za oči</div>
       <!-- desno: device + lang -->
       <div class="header-right">
+        <button id="lockRotationBtn" class="btn btn-secondary">
+          Lock rotation
+        </button>
         <span class="device-debug" id="deviceDetectedText">Telefon</span>
         <div class="lang-toggle" role="group" aria-label="Language">
           <button type="button" class="lang-btn" data-lang="en">EN</button>
@@ -674,7 +681,6 @@
     </div>
 
     <div class="section">
-
       <div class="distance-info">
             <span data-i18n="distance_label">Preporučena udaljenost:</span
             ><br />
@@ -689,7 +695,6 @@
     </div>
 
     <div class="section">
-
       <!-- Programi / gotove sekvence -->
       <div
               class="mode-config-row"
@@ -949,7 +954,6 @@
                     value="3"
             />
 
-
             <span>kolona:</span>
             <input
                     type="number"
@@ -1147,15 +1151,9 @@
       <div id="rotateOverlay" class="rotate-overlay">
         <div class="rotate-overlay-box">
           <div class="rotate-overlay-icon">📱↻</div>
-          <div class="rotate-overlay-title" data-i18n="rotate_title">
-            Okreni telefon vodoravno
-          </div>
-          <div class="rotate-overlay-text" data-i18n="rotate_text">
-            Za vežbu očiju koristi horizontalni položaj (landscape).
-          </div>
-          <div class="rotate-overlay-hint" data-i18n="rotate_hint">
-            Okreni telefon u stranu. Overlay će nestati automatski.
-          </div>
+          <div class="rotate-overlay-title" data-i18n="rotate_title"></div>
+          <div class="rotate-overlay-text" data-i18n="rotate_text"></div>
+          <div class="rotate-overlay-hint" data-i18n="rotate_hint"></div>
         </div>
       </div>
     </div>
@@ -1194,6 +1192,23 @@
   const enableAutoSequenceEl =
     document.getElementById("enableAutoSequence");
   const timerOverlayEl = document.getElementById("timerOverlay");
+  const openRotateSettingsBtn = document.getElementById(
+    "openRotateSettingsBtn",
+  );
+
+  if (openRotateSettingsBtn) {
+    openRotateSettingsBtn.addEventListener("click", () => {
+      try {
+        if (
+          window.AndroidScreen &&
+          typeof window.AndroidScreen.openAutoRotateSettings === "function"
+        ) {
+          window.AndroidScreen.openAutoRotateSettings();
+        }
+      } catch (e) {}
+    });
+  }
+
   const programSelect = document.getElementById("programSelect");
   const durationWarmupEl = document.getElementById("duration_warmup");
   const durationCircleEl = document.getElementById("duration_circle");
@@ -1493,6 +1508,8 @@
   const I18N = {
     en: {
       app_title: "Eye training",
+      lock_rotation: "Lock rotation",
+      unlock_rotation: "Unlock rotation",
 
       distance_phone: "30-40 cm from eyes",
       distance_tablet: "40-50 cm from eyes",
@@ -1530,10 +1547,10 @@
       tip_text:
         "Before starting, take a proper posture. During training keep your head still and move only your eyes.",
 
-      rotate_title: "Rotate your phone to landscape",
+      rotate_title: "Rotate your phone horizontally",
       rotate_text: "For eye training use landscape orientation.",
       rotate_hint:
-        "Rotate the phone. The overlay will disappear automatically.",
+        "Auto-rotation must be enabled. Turn on 'Auto-rotate' or disable 'Portrait lock' in Quick Settings (swipe down from the top), then rotate your phone.",
 
       // Status messages
       status_ready: "Ready.",
@@ -1554,6 +1571,8 @@
 
     sr: {
       app_title: "Trening za oči",
+      lock_rotation: "Zaključaj rotaciju",
+      unlock_rotation: "Otključaj rotaciju",
 
       distance_phone: "30-40 cm od očiju",
       distance_tablet: "40-50 cm od očiju",
@@ -1595,7 +1614,7 @@
       rotate_text:
         "Za vežbu očiju koristi horizontalni položaj (landscape).",
       rotate_hint:
-        "Okreni telefon u stranu. Overlay će nestati automatski.",
+        "Auto-rotacija mora biti uključena. Uključi 'Auto-rotate' ili isključi 'Portrait lock' u brzim podešavanjima (povuci odozgo), zatim okreni telefon horizontalno.",
 
       // Status messages
       status_ready: "Spreman za trening.",
@@ -1620,6 +1639,44 @@
   function t(key) {
     const lang = currentLang === "sr" ? "sr" : "en";
     return I18N[lang] && I18N[lang][key] ? I18N[lang][key] : key;
+  }
+
+  // -------------------------
+  // Rotation lock button (GLOBAL - do not put inside applyI18n)
+  // -------------------------
+  let rotationLocked = false;
+
+  const lockRotationBtn = document.getElementById("lockRotationBtn");
+
+  function updateLockRotationBtnText() {
+    if (!lockRotationBtn) return;
+    lockRotationBtn.textContent = rotationLocked
+      ? t("unlock_rotation")
+      : t("lock_rotation");
+  }
+
+  if (lockRotationBtn) {
+    lockRotationBtn.addEventListener("click", () => {
+      try {
+        if (window.AndroidScreen) {
+          if (
+            !rotationLocked &&
+            typeof window.AndroidScreen.lockRotation === "function"
+          ) {
+            window.AndroidScreen.lockRotation();
+            rotationLocked = true;
+          } else if (
+            rotationLocked &&
+            typeof window.AndroidScreen.unlockRotation === "function"
+          ) {
+            window.AndroidScreen.unlockRotation();
+            rotationLocked = false;
+          }
+        }
+      } catch (e) {}
+
+      updateLockRotationBtnText();
+    });
   }
 
   function detectLangDefault() {
@@ -1834,6 +1891,7 @@
     }
 
     applyI18n();
+    updateLockRotationBtnText();
     applyDeviceType();
     updateModeTexts();
     updateModeVisibilityForProgram();
@@ -2285,82 +2343,83 @@
     }, duration);
   }
 
-// -------------------------
-// Input validation (durations + reading rows/cols)
-// -------------------------
-const DUR_MIN = 10;
-const DUR_MAX = 600;
+  // -------------------------
+  // Input validation (durations + reading rows/cols)
+  // -------------------------
+  const DUR_MIN = 10;
+  const DUR_MAX = 600;
 
-const RC_MIN = 2;
-const RC_MAX = 10;
+  const RC_MIN = 2;
+  const RC_MAX = 10;
 
-function clampInt(v, min, max, fallback) {
-  const n = parseInt(String(v ?? ""), 10);
-  if (!Number.isFinite(n)) return fallback;
-  return Math.min(max, Math.max(min, n));
-}
-
-// "soft" = ne spamuj toast dok korisnik kuca; toast samo na blur/change
-function validateNumberInput(el, { min, max, fallback, step = null, soft = false } = {}) {
-  if (!el) return;
-
-  const raw = String(el.value ?? "");
-
-  // DOK KUCAS: pusti prazno (da korisnik moze da obrise i ukuca novo)
-  if (soft && raw.trim() === "") return;
-
-  // KAD ZAVRSI (blur/change): prazno -> fallback
-  if (!soft && raw.trim() === "") {
-    el.value = String(fallback);
-    return fallback;
+  function clampInt(v, min, max, fallback) {
+    const n = parseInt(String(v ?? ""), 10);
+    if (!Number.isFinite(n)) return fallback;
+    return Math.min(max, Math.max(min, n));
   }
 
-  let v = clampInt(raw, min, max, fallback);
-
-  if (step && Number.isFinite(v)) {
-    v = Math.round(v / step) * step;
-    v = Math.min(max, Math.max(min, v));
-  }
-
-  // tek sad setuj (na blur/change)
-  if (!soft) el.value = String(v);
-
-  return v;
-}
-
-function validateAllInputs({ soft = true } = {}) {
-  // durations 10-600
-  Object.entries(durationEls).forEach(([mode, el]) => {
+  // "soft" = ne spamuj toast dok korisnik kuca; toast samo na blur/change
+  function validateNumberInput(
+    el,
+    { min, max, fallback, step = null, soft = false } = {},
+  ) {
     if (!el) return;
-    validateNumberInput(el, {
-      min: DUR_MIN,
-      max: DUR_MAX,
-      fallback: DUR_MIN,
+
+    const raw = String(el.value ?? "");
+
+    // DOK KUCAS: pusti prazno (da korisnik moze da obrise i ukuca novo)
+    if (soft && raw.trim() === "") return;
+
+    // KAD ZAVRSI (blur/change): prazno -> fallback
+    if (!soft && raw.trim() === "") {
+      el.value = String(fallback);
+      return fallback;
+    }
+
+    let v = clampInt(raw, min, max, fallback);
+
+    if (step && Number.isFinite(v)) {
+      v = Math.round(v / step) * step;
+      v = Math.min(max, Math.max(min, v));
+    }
+
+    // tek sad setuj (na blur/change)
+    if (!soft) el.value = String(v);
+
+    return v;
+  }
+
+  function validateAllInputs({ soft = true } = {}) {
+    // durations 10-600
+    Object.entries(durationEls).forEach(([mode, el]) => {
+      if (!el) return;
+      validateNumberInput(el, {
+        min: DUR_MIN,
+        max: DUR_MAX,
+        fallback: DUR_MIN,
+        step: 1,
+        soft,
+      });
+    });
+
+    // reading rows 2-10
+    validateNumberInput(readingRowsEl, {
+      min: RC_MIN,
+      max: RC_MAX,
+      fallback: 3,
       step: 1,
       soft,
     });
-  });
 
-  // reading rows 2-10
-  validateNumberInput(readingRowsEl, {
-    min: RC_MIN,
-    max: RC_MAX,
-    fallback: 3,
-    step: 1,
-    soft,
-  });
-
-  // reading cols 2-10
-  validateNumberInput(readingColsEl, {
-    min: RC_MIN,
-    max: RC_MAX,
-    fallback: 5,
-    step: 1,
-    soft,
-  });
-}
-
-
+    // reading cols 2-10
+    validateNumberInput(readingColsEl, {
+      min: RC_MIN,
+      max: RC_MAX,
+      fallback: 5,
+      step: 1,
+      soft,
+    });
+  }
 
   function isPhoneDevice() {
     return isRealPhoneScreen();
@@ -2381,6 +2440,7 @@ function validateAllInputs({ soft = true } = {}) {
     }
 
     initLang(); // setLang() u sebi radi applyI18n + aktivira dugmice
+    updateLockRotationBtnText();
     applyDeviceType(); // koristi t(), pa mora posle initLang()
 
     // 1) restore UI state
@@ -2465,13 +2525,13 @@ function validateAllInputs({ soft = true } = {}) {
   }
 
   // Trajanje po modu
-function getModeDurationSeconds(mode) {
-  const el = durationEls[mode];
-  if (!el) return 0;
-  const val = parseInt(el.value, 10);
-  if (!Number.isFinite(val)) return DUR_MIN;
-  return Math.max(DUR_MIN, Math.min(DUR_MAX, val));
-}
+  function getModeDurationSeconds(mode) {
+    const el = durationEls[mode];
+    if (!el) return 0;
+    const val = parseInt(el.value, 10);
+    if (!Number.isFinite(val)) return DUR_MIN;
+    return Math.max(DUR_MIN, Math.min(DUR_MAX, val));
+  }
 
   function isModeInSequence(mode) {
     const el = seqEls[mode];
@@ -2479,12 +2539,12 @@ function getModeDurationSeconds(mode) {
   }
 
   // Pomoćne fn za setovanje trajanja i učešća u sekvenci
-function setModeDuration(mode, seconds) {
-  const el = durationEls[mode];
-  if (!el) return;
-  const val = Math.max(DUR_MIN, Math.min(DUR_MAX, seconds | 0));
-  el.value = val;
-}
+  function setModeDuration(mode, seconds) {
+    const el = durationEls[mode];
+    if (!el) return;
+    const val = Math.max(DUR_MIN, Math.min(DUR_MAX, seconds | 0));
+    el.value = val;
+  }
 
   function setModeInSequence(mode, inSeq) {
     const el = seqEls[mode];
@@ -3156,23 +3216,23 @@ function setModeDuration(mode, seconds) {
     ctx.stroke();
 
     const positions = [];
-for (let r = 0; r < rows; r++) {
-  const y = topMargin + r * rowSpacing;
+    for (let r = 0; r < rows; r++) {
+      const y = topMargin + r * rowSpacing;
 
-  const denom = cols - 1; // sigurno >= 1 jer je RC_MIN = 2
+      const denom = cols - 1; // sigurno >= 1 jer je RC_MIN = 2
 
-  if (readingDirection === 1) {
-    for (let c = 0; c < cols; c++) {
-      const x = leftMargin + (c / denom) * usableWidth;
-      positions.push({ x, y });
+      if (readingDirection === 1) {
+        for (let c = 0; c < cols; c++) {
+          const x = leftMargin + (c / denom) * usableWidth;
+          positions.push({ x, y });
+        }
+      } else {
+        for (let c = cols - 1; c >= 0; c--) {
+          const x = leftMargin + (c / denom) * usableWidth;
+          positions.push({ x, y });
+        }
+      }
     }
-  } else {
-    for (let c = cols - 1; c >= 0; c--) {
-      const x = leftMargin + (c / denom) * usableWidth;
-      positions.push({ x, y });
-    }
-  }
-}
 
     const stepsPerCycle = positions.length;
     if (!stepsPerCycle) return;
@@ -3651,7 +3711,7 @@ for (let r = 0; r < rows; r++) {
 
   // Start / Stop
   startBtn.addEventListener("click", () => {
-  validateAllInputs({ soft: false });
+    validateAllInputs({ soft: false });
     if (enableAutoSequenceEl.checked && !hasAnyModeInSequence()) {
       showNoSequenceStatus();
       return;
@@ -3678,61 +3738,61 @@ for (let r = 0; r < rows; r++) {
     }
   });
 
-[
-  programSelect,
-  enableAutoSequenceEl,
-  showHelpCheckbox,
-  durationWarmupEl,
-  durationCircleEl,
-  durationFigure8El,
-  durationSaccadeLREl,
-  durationSaccadeUDEl,
-  durationSaccadeLCREl,
-  durationSaccadeCrossEl,
-  durationSaccadeStar8El,
-  durationReadingBasicEl,
-  durationRainBasicEl,
-  durationZoomFocusEl,
-  durationVergenceEl,
-  durationNearFarEl,
-  readingRowsEl,
-  readingColsEl,
-  seqWarmupEl,
-  seqCircleEl,
-  seqFigure8El,
-  seqSaccadeLREl,
-  seqSaccadeUDEl,
-  seqSaccadeLCREl,
-  seqSaccadeCrossEl,
-  seqSaccadeStar8El,
-  seqReadingBasicEl,
-  seqRainBasicEl,
-  seqZoomFocusEl,
-  seqVergenceEl,
-  seqNearFarEl,
-  useVoiceEl,
-  durationPalmingEl,
-  seqPalmingEl,
-].forEach((el) => {
-  if (!el) return;
+  [
+    programSelect,
+    enableAutoSequenceEl,
+    showHelpCheckbox,
+    durationWarmupEl,
+    durationCircleEl,
+    durationFigure8El,
+    durationSaccadeLREl,
+    durationSaccadeUDEl,
+    durationSaccadeLCREl,
+    durationSaccadeCrossEl,
+    durationSaccadeStar8El,
+    durationReadingBasicEl,
+    durationRainBasicEl,
+    durationZoomFocusEl,
+    durationVergenceEl,
+    durationNearFarEl,
+    readingRowsEl,
+    readingColsEl,
+    seqWarmupEl,
+    seqCircleEl,
+    seqFigure8El,
+    seqSaccadeLREl,
+    seqSaccadeUDEl,
+    seqSaccadeLCREl,
+    seqSaccadeCrossEl,
+    seqSaccadeStar8El,
+    seqReadingBasicEl,
+    seqRainBasicEl,
+    seqZoomFocusEl,
+    seqVergenceEl,
+    seqNearFarEl,
+    useVoiceEl,
+    durationPalmingEl,
+    seqPalmingEl,
+  ].forEach((el) => {
+    if (!el) return;
 
-  el.addEventListener("change", () => {
-    // clamp kad user zavrsi unos (enter ili izgubi fokus)
-    validateAllInputs({ soft: false });
-    saveUiState();
-  });
+    el.addEventListener("change", () => {
+      // clamp kad user zavrsi unos (enter ili izgubi fokus)
+      validateAllInputs({ soft: false });
+      saveUiState();
+    });
 
-  el.addEventListener("input", () => {
-    // dok kuca - ne diraj value (da ne skace kursor)
-    saveUiState();
-  });
+    el.addEventListener("input", () => {
+      // dok kuca - ne diraj value (da ne skace kursor)
+      saveUiState();
+    });
 
-  el.addEventListener("blur", () => {
-    // kad izadje iz polja - siguran clamp
-    validateAllInputs({ soft: false });
-    saveUiState();
+    el.addEventListener("blur", () => {
+      // kad izadje iz polja - siguran clamp
+      validateAllInputs({ soft: false });
+      saveUiState();
+    });
   });
-});
 
   stopBtn.addEventListener("click", () => {
     if (isRunning) {
