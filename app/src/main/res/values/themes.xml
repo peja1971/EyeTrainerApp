@@ -8,4 +8,8 @@
         <item name="android:enforceStatusBarContrast">false</item>
         <item name="android:enforceNavigationBarContrast">false</item>
     </style>
+    <style name="Theme.EyeTrainer.Fullscreen" parent="Theme.EyeTrainer">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+    </style>
 </resources>

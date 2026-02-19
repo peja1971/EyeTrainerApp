@@ -654,6 +654,7 @@
       touch-action: none;
     }
   </style>
+
 </head>
 
 <body>
@@ -665,6 +666,9 @@
       <div class="title" data-i18n="app_title">Trening za oči</div>
       <!-- desno: device + lang -->
       <div class="header-right">
+        <button id="lockRotationBtn" class="btn btn-secondary">
+          Lock rotation
+        </button>
         <span class="device-debug" id="deviceDetectedText">Telefon</span>
         <div class="lang-toggle" role="group" aria-label="Language">
           <button type="button" class="lang-btn" data-lang="en">EN</button>
@@ -1147,15 +1151,9 @@
       <div id="rotateOverlay" class="rotate-overlay">
         <div class="rotate-overlay-box">
           <div class="rotate-overlay-icon">📱↻</div>
-          <div class="rotate-overlay-title" data-i18n="rotate_title">
-            Okreni telefon vodoravno
-          </div>
-          <div class="rotate-overlay-text" data-i18n="rotate_text">
-            Za vežbu očiju koristi horizontalni položaj (landscape).
-          </div>
-          <div class="rotate-overlay-hint" data-i18n="rotate_hint">
-            Okreni telefon u stranu. Overlay će nestati automatski.
-          </div>
+          <div class="rotate-overlay-title" data-i18n="rotate_title"></div>
+          <div class="rotate-overlay-text" data-i18n="rotate_text"></div>
+          <div class="rotate-overlay-hint" data-i18n="rotate_hint"></div>
         </div>
       </div>
     </div>
@@ -1194,6 +1192,18 @@
   const enableAutoSequenceEl =
     document.getElementById("enableAutoSequence");
   const timerOverlayEl = document.getElementById("timerOverlay");
+  const openRotateSettingsBtn = document.getElementById("openRotateSettingsBtn");
+
+if (openRotateSettingsBtn) {
+  openRotateSettingsBtn.addEventListener("click", () => {
+    try {
+      if (window.AndroidScreen && typeof window.AndroidScreen.openAutoRotateSettings === "function") {
+        window.AndroidScreen.openAutoRotateSettings();
+      }
+    } catch (e) {}
+  });
+}
+
   const programSelect = document.getElementById("programSelect");
   const durationWarmupEl = document.getElementById("duration_warmup");
   const durationCircleEl = document.getElementById("duration_circle");
@@ -1493,6 +1503,8 @@
   const I18N = {
     en: {
       app_title: "Eye training",
+      lock_rotation: "Lock rotation",
+unlock_rotation: "Unlock rotation",
 
       distance_phone: "30-40 cm from eyes",
       distance_tablet: "40-50 cm from eyes",
@@ -1530,10 +1542,9 @@
       tip_text:
         "Before starting, take a proper posture. During training keep your head still and move only your eyes.",
 
-      rotate_title: "Rotate your phone to landscape",
+      rotate_title: "Rotate your phone horizontally",
       rotate_text: "For eye training use landscape orientation.",
-      rotate_hint:
-        "Rotate the phone. The overlay will disappear automatically.",
+      rotate_hint: "Auto-rotation must be enabled. Turn on 'Auto-rotate' or disable 'Portrait lock' in Quick Settings (swipe down from the top), then rotate your phone.",
 
       // Status messages
       status_ready: "Ready.",
@@ -1554,6 +1565,8 @@
 
     sr: {
       app_title: "Trening za oči",
+      lock_rotation: "Zaključaj rotaciju",
+unlock_rotation: "Otključaj rotaciju",
 
       distance_phone: "30-40 cm od očiju",
       distance_tablet: "40-50 cm od očiju",
@@ -1595,7 +1608,7 @@
       rotate_text:
         "Za vežbu očiju koristi horizontalni položaj (landscape).",
       rotate_hint:
-        "Okreni telefon u stranu. Overlay će nestati automatski.",
+        "Auto-rotacija mora biti uključena. Uključi 'Auto-rotate' ili isključi 'Portrait lock' u brzim podešavanjima (povuci odozgo), zatim okreni telefon horizontalno.",
 
       // Status messages
       status_ready: "Spreman za trening.",
@@ -1621,6 +1634,38 @@
     const lang = currentLang === "sr" ? "sr" : "en";
     return I18N[lang] && I18N[lang][key] ? I18N[lang][key] : key;
   }
+
+// -------------------------
+// Rotation lock button (GLOBAL - do not put inside applyI18n)
+// -------------------------
+let rotationLocked = false;
+
+const lockRotationBtn = document.getElementById("lockRotationBtn");
+
+function updateLockRotationBtnText() {
+  if (!lockRotationBtn) return;
+  lockRotationBtn.textContent = rotationLocked
+    ? t("unlock_rotation")
+    : t("lock_rotation");
+}
+
+if (lockRotationBtn) {
+  lockRotationBtn.addEventListener("click", () => {
+    try {
+      if (window.AndroidScreen) {
+        if (!rotationLocked && typeof window.AndroidScreen.lockRotation === "function") {
+          window.AndroidScreen.lockRotation();
+          rotationLocked = true;
+        } else if (rotationLocked && typeof window.AndroidScreen.unlockRotation === "function") {
+          window.AndroidScreen.unlockRotation();
+          rotationLocked = false;
+        }
+      }
+    } catch (e) {}
+
+    updateLockRotationBtnText();
+  });
+}
 
   function detectLangDefault() {
     // Default EN, ali ako je sistemski jezik "nasi" -> SR
@@ -1834,6 +1879,7 @@
     }
 
     applyI18n();
+    updateLockRotationBtnText();
     applyDeviceType();
     updateModeTexts();
     updateModeVisibilityForProgram();
@@ -2381,6 +2427,7 @@ function validateAllInputs({ soft = true } = {}) {
     }
 
     initLang(); // setLang() u sebi radi applyI18n + aktivira dugmice
+    updateLockRotationBtnText();
     applyDeviceType(); // koristi t(), pa mora posle initLang()
 
     // 1) restore UI state
